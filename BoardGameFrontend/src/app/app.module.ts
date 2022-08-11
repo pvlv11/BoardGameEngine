@@ -8,7 +8,6 @@ import { FavoritesComponent } from './favorites/favorites.component';
 import { RouterModule } from '@angular/router';
 import { MyAccountComponent } from './my-account/my-account.component';
 
-
 @NgModule({
   declarations: [
     AppComponent,
