@@ -9,6 +9,7 @@ import { MyAccountComponent } from './my-account/my-account.component';
 import { HomeComponent } from './home/home.component';
 import { CommonModule } from '@angular/common';
 import { LayoutModule } from '@angular/cdk/layout';
+import { MaterialModule } from './material-module';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { LayoutModule } from '@angular/cdk/layout';
     HttpClientModule,
     RouterModule,
     CommonModule,
-    LayoutModule
+    LayoutModule,
+    MaterialModule
   ],
   providers: [],
   bootstrap: [AppComponent]

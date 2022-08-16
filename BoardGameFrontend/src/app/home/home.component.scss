@@ -1,0 +1,50 @@
+$background: #FFE5D0;
+$text-color: #371C05;
+
+body {
+    background-color: $background;
+}
+
+.description {
+    font-size: 40px;
+    color: $text-color;
+    width: 50%;
+    float: right;
+    margin-right: 10px;
+    text-justify: auto;
+    position: relative;
+    font-weight: bold;
+}
+
+
+.search {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);   
+}
+
+button {
+    background-color: #653208;
+    color: white;
+    border-radius: 16px;
+    height: 40px;
+}
+
+input {
+    background-color: white;
+    border-radius: 16px;
+    height: 30px;
+    font-size: 14pt;
+    margin: 10px;
+    padding: 5px;
+}
+
+.favorites {
+    position: absolute;
+    bottom: 300px;
+    left: 15px;
+    font-size: 30px;
+    color: $text-color;
+    font-weight: bold;
+}
