@@ -17,4 +17,16 @@ export class AppComponent {
   goToMyAccount() {
     this.router.navigate(['/', 'myAccount']);
   }
+
+  goToHome() {
+    this.router.navigate(['/', 'home']);
+  }
+
+  goToLogin() {
+    this.router.navigate(['/', 'login']);
+  }
+
+  goToRegister() {
+    this.router.navigate(['/', 'register']);
+  }
 }
