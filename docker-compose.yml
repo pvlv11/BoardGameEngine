@@ -9,7 +9,6 @@ services:
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=Admin1234
     volumes:
-#      - ./backup.sql:/docker-entrypoint-initdb.d/backup.sql
       - postgreSQLData:/var/lib/postgresql/data
 
   pgadmin:
@@ -20,19 +19,20 @@ services:
       PGADMIN_DEFAULT_PASSWORD: password
     ports:
       - "5050:80"
-#    volumes:
-#      pgadmindata:/var/lib/pgadmin
     depends_on:
       - db
+#    volumes:
+#      pgadmindata:/var/lib/pgadmin
 
   app:
-    build: ./
+    build: 
+      context: .
     container_name: django_container
-    command: python manage.py runserver 0.0.0.0:8000
-#    volumes:
-#      - .:/code
     ports:
       - "8000:8000"
+    volumes:
+      - ./code:/code
+    command: python manage.py runserver 0.0.0.0:8000
     environment:
       - POSTGRES_NAME=postgres
       - POSTGRES_USER=user

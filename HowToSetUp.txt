@@ -1,0 +1,16 @@
+Django Setup
+docker-compose run  app django-admin.py startproject composeexample .
+docker-compose up -d
+docker-compose exec app python manage.py migrate
+
+Run Docker-Compose
+docker-compose up [-d] -> Flaga [-d] pozwala na działanie docker-compose w tle
+
+Stop docker-compose:
+docker-compose down
+
+Restore Database
+cat backup1.sql | docker exec -i baza_postgre psql -U user
+
+Backup Database
+docker exec -t baza_postgre pg_dumpall -c -U user1 > backup1.sql
