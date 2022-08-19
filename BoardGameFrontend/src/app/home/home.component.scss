@@ -2,26 +2,30 @@ $background: #FFE5D0;
 $text-color: #371C05;
 
 body {
+    width: 100%;
     background-color: $background;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+      
 }
 
 .description {
-    font-size: 40px;
+    font-size: 2vw;
     color: $text-color;
     width: 50%;
-    float: right;
+    align-self: flex-end;
     margin-right: 10px;
+    margin-top: 10px;
+    margin-bottom: 50px;
     text-justify: auto;
-    position: relative;
     font-weight: bold;
 }
 
 
 .search {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);   
+    align-self: center;  
 }
 
 button {
@@ -29,6 +33,10 @@ button {
     color: white;
     border-radius: 16px;
     height: 40px;
+}
+
+button:hover {
+    background-color: #9f5417;
 }
 
 input {
@@ -41,10 +49,27 @@ input {
 }
 
 .favorites {
-    position: absolute;
-    bottom: 300px;
-    left: 15px;
-    font-size: 30px;
+    background-color: $background;
+    font-size: 2vw;
     color: $text-color;
     font-weight: bold;
+    padding: 10px;
 }
+
+img {
+    float: left;
+    width:  100px;
+    height: 300px;
+    object-fit: cover;
+}
+
+img:hover {
+    opacity: 0.5;
+}
+
+.slide {
+    font-size: 1.5vw;
+}
+
+
+

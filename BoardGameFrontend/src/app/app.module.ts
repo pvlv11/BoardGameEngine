@@ -12,6 +12,8 @@ import { LayoutModule } from '@angular/cdk/layout';
 import { MaterialModule } from './material-module';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CarouselModule } from 'ngx-owl-carousel-o';
 
 @NgModule({
   declarations: [
@@ -29,7 +31,9 @@ import { RegisterComponent } from './register/register.component';
     RouterModule,
     CommonModule,
     LayoutModule,
-    MaterialModule
+    MaterialModule,
+    BrowserAnimationsModule,
+    CarouselModule
   ],
   providers: [],
   bootstrap: [AppComponent]
