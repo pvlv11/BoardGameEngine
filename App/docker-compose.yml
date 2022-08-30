@@ -1,0 +1,49 @@
+version: '3.9'
+services:
+  db:
+    container_name: baza_postgre
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=Admin1234
+    volumes:
+      - postgreSQLData:/var/lib/postgresql/data
+
+  pgadmin:
+    container_name: postgre_admin  
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+#    volumes:
+#      pgadmindata:/var/lib/pgadmin
+
+  app:
+    build: .
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    
+    container_name: BoardGame_Service
+    
+    volumes:
+      - .:/BoardGame_Service
+    ports:
+      - "8000:8000"
+
+    environment:
+      - POSTGRES_HOST=baza_postgre
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=Admin1234
+    depends_on:
+      - db
+
+
+volumes:
+  postgreSQLData:
+    driver: local
