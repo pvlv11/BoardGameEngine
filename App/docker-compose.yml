@@ -40,6 +40,7 @@ services:
       - POSTGRES_NAME=postgres
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=Admin1234
+      
     depends_on:
       - db
 
