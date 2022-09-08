@@ -10,3 +10,7 @@ cat backup1.sql | docker exec -i baza_postgre psql -U user
 
 Backup Database
 docker exec -t baza_postgre pg_dumpall -c -U user1 > backup1.sql
+
+
+Widok gier
+select game.name,coalesce(avg(review.review_mark),0) as avg_review from t_game as game left join t_review as review on game.id = review.game_id group by game.name order by avg_review desc
