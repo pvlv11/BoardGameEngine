@@ -1,1 +1,28 @@
-<p>Favorites works</p>
+<body>
+    <div class="row">
+        <div class="header">
+            <h1>My favorites</h1>
+        </div>
+        
+        <div class="search">
+            <input placeholder="Search" size="60">
+            <button mat-raised-button>Search</button>  
+        </div>
+    </div>
+
+    <div class="list">
+        <li *ngFor="let favorite of favorites; let i = index">
+            <div class="image"><img [src]= "favorite.src"></div>
+            <div class="description"><h3>{{ favorite.title }}</h3>
+            {{ favorite.description | slice:0:300 }}... </div>
+            <div><button mat-icon-button (click)="favClick(i)">
+                <mat-icon *ngIf="favorite.state">favorite</mat-icon>
+                <mat-icon *ngIf="!favorite.state">favorite_border</mat-icon>
+            </button></div>
+            <br>
+        </li>
+    </div>
+
+</body>
+
+
