@@ -1,0 +1,81 @@
+$background: #FFE5D0;
+$text-color: #371C05;
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  min-height: 100vh;
+}
+
+.main-div{
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: $background;
+}
+
+.example-card {
+    width: 30%;
+    height: 50%;
+    box-shadow: 0 3px 5px -1px rgba(0, 0, 0, .2), 0 6px 10px 0 rgba(0, 0, 0, .14), 0 1px 18px 0 rgba(0, 0, 0, .12);
+    opacity: 1;
+    padding: 60px 50px 40px 50px;
+    margin: 10px;
+    background: #FFF;
+    border-radius: 10px;
+    text-align: center;
+    color: $text-color;
+    position: relative;
+    float: left;
+    padding: 60px 50px 40px 50px;
+    margin: 5px;
+    width: 100%;
+    background: #FFF;
+    transform: scale(1);
+    -webkit-transform: scale(1);
+    -ms-transform: scale(1);
+    z-index: 5;
+    max-width: 330px;
+}
+
+button {
+  background-color: #653208;
+  color: white;
+  border-radius: 16px;
+  height: 40px;
+}
+
+button:hover {
+  background-color: #9f5417;
+}
+
+
+.profile-dot {
+  position: relative;
+  margin: 0 auto;
+  display: flex;
+  text-align: center;
+  align-items: center; 
+  justify-content: center;
+  height: 7rem;
+  width: 7rem;
+  background: linear-gradient(to bottom, #f5dfbf 0%, #b15e00 100%);
+  border-radius: 50%;
+  border: rgb(255, 255, 255) 2px solid;
+}
+
+.profile-dot h1 {  
+  font-weight: 500;
+  color: #fff;
+  font-style: normal;
+  font-size: 200%;
+}
+
+.uxg-h6 {
+  font-size: small;
+}
