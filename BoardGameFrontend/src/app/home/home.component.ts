@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { OwlOptions } from 'ngx-owl-carousel-o';
 
 
@@ -10,7 +11,11 @@ import { OwlOptions } from 'ngx-owl-carousel-o';
 
 export class HomeComponent implements OnInit {
 
-  constructor() { }
+  constructor(private router: Router) { }
+
+  goToGame() {
+    this.router.navigate(['/', 'game']);
+  }
 
   slides = [
     {

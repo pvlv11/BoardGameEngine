@@ -3,10 +3,10 @@
         <mat-card-content>
             <h1>My account</h1>
             <div class="profile-dot">
-                    <h1>RH</h1>
+                    <h1>{{ user.username | slice:0:1 | uppercase }}</h1>
             </div>
-            <h6 class="uxg-h6">Raya Hristova</h6>
-            <span class="uxg-caption">raya.hristova@finastra.com</span>
+            <h6 class="uxg-h6">{{ user.username }}</h6>
+            <span class="uxg-caption">{{ user.email }}</span>
             <mat-divider></mat-divider>
         </mat-card-content>
         <mat-card-actions>

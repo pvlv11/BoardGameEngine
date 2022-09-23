@@ -1,0 +1,28 @@
+<body>  
+    <div class="info">
+        <div class="image">
+            <a [href]="game.img" target="_blank">
+                <img [src]= "game.img">
+            </a>
+        </div>
+        <div class="parameters">
+            <h1>{{ game.title }}</h1>
+                <div *ngIf="game.state"><button mat-icon-button (click)="favClick()">
+                    <mat-icon>favorite</mat-icon>remove from favorites
+                </button></div>
+                <div *ngIf="!game.state"><button mat-icon-button (click)="favClick()">
+                    <mat-icon>favorite_border</mat-icon>add to favorites
+                </button></div>
+            <div class="rating">rating: <star-rating [starType]="'svg'" [rating]="game.rating"></star-rating></div>
+            <div class="players">players: {{ game.players }}</div>
+            <div class="age">age: {{ game.age }}</div>
+            <div class="time">time: {{ game.time }}</div>
+            <div class="categories">categories: {{ game.categories }}</div>
+        </div>
+    </div>
+    <div class="description">
+        <p style="white-space: pre-wrap">
+            {{ game.description }}
+        </p>
+    </div>
+</body>

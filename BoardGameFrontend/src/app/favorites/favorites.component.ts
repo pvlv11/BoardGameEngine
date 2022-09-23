@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 export interface FavoriteItem { 
   src: string; 
@@ -16,7 +17,11 @@ export class FavoritesComponent implements OnInit {
 
   showFirst = true;
 
-  constructor() { }
+  constructor(private router: Router) { }
+
+  goToGame() {
+    this.router.navigate(['/', 'game']);
+  }
 
   favorites: FavoriteItem[] = [
     {
