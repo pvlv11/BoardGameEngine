@@ -15,8 +15,8 @@ class t_user(models.Model):
 
 
 class  t_friend_list(models.Model):
-    User_Id = models.ForeignKey(t_user),
-    User2_Id = models.ForeignKey(t_user),
+    User_Id = models.ForeignKey(t_user,on_delete=models.CASCADE),
+    User2_Id = models.ForeignKey(t_user, on_delete=models.CASCADE),
     Last_Seen = models.DateField(),
 
     #class Meta:
@@ -24,20 +24,24 @@ class  t_friend_list(models.Model):
     #        ("check_name", Check(proj_name__like!=User_Id)))
 
     class Meta:
+        unique_together = ['User_Id', 'User2_Id']
         constraints = [
             # Ensures constraint on DB level, raises IntegrityError (500 on debug=False)
-            CheckConstraint(
+            models.CheckConstraint(
                 check=Q(F('User_ID')!=F('User2_ID')), name='check_same_user_IDs',
             ),
+
         ]
 
-    def clean(self):
-        # Ensures constraint on model level, raises ValidationError
-        if self.User_Id == self.User2_Id:
-            # raise error for field
-            raise ValidationError({'same_ID2': _('user cannot be his own friend.')})
 
-    Constraint fk_user1 FOREIGN KEY(User_Id) References t_user(Id),
-    Constraint fk_user2 FOREIGN KEY(User2_Id) References t_user(Id),
-    Constraint different_User_Id check (User_Id <> User2_Id),
-    Unique (User_Id,User2_Id)
+    #def clean(self): chyba nie jest potrzebne
+    #    # Ensures constraint on model level, raises ValidationError
+    #    if self.User_Id == self.User2_Id:
+    #        # raise error for field
+    #        raise ValidationError({'same_ID2': _('user cannot be his own friend.')})
+
+class t_user_activity:
+    User_Id=models.ForeignKey(t_user,on_delete=models.CASCADE) ,
+    Activity_Type= models.CharField(max_length=30,unique=True,null=False, blank=False),
+    Activity_Timestamp =models.DateTimeField(),
+
