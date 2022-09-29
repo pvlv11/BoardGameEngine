@@ -18,6 +18,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SingleGameComponent } from './single-game/single-game.component';
 import { StarRatingModule } from 'angular-star-rating';
+import { SearchComponent } from './search/search.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { StarRatingModule } from 'angular-star-rating';
     HomeComponent,
     LoginComponent,
     RegisterComponent,
-    SingleGameComponent
+    SingleGameComponent,
+    SearchComponent,
   ],
   imports: [
     BrowserModule,
@@ -42,7 +44,7 @@ import { StarRatingModule } from 'angular-star-rating';
     FlexLayoutModule,
     FormsModule,
     ReactiveFormsModule,
-    StarRatingModule.forRoot()
+    StarRatingModule.forRoot(),
   ],
   providers: [],
   bootstrap: [AppComponent]

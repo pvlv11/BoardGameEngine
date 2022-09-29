@@ -7,6 +7,7 @@ import { MyAccountComponent } from './my-account/my-account.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { SingleGameComponent } from './single-game/single-game.component';
+import { SearchComponent } from './search/search.component';
 
 const routes: Routes = [
   {
@@ -37,6 +38,10 @@ const routes: Routes = [
   {
     path: 'game',
     component: SingleGameComponent
+  },
+  {
+    path: 'search',
+    component: SearchComponent
   }
 ];
 

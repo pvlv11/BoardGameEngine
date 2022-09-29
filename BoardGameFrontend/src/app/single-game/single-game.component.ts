@@ -1,15 +1,26 @@
 import { Component, OnInit } from '@angular/core';
+import { ThemePalette } from '@angular/material/core';
 
 export interface GameItem { 
   img: string,
   title: string,
   state: boolean,
   rating: number, 
+  label: string,
   players: string,
   age: string, 
   time: string,
   categories: Array<string>,
   description: string
+}
+
+interface Rating {
+  value: number;
+  max: number;
+  color?: ThemePalette;
+  disabled?: boolean;
+  dense?: boolean;
+  readonly?: boolean;
 }
 
 @Component({
@@ -24,11 +35,19 @@ export class SingleGameComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  rating: Rating = {
+    value: 4,
+    max: 5,
+    color: "accent",
+    readonly: true
+  }
+
   game: GameItem = {
     img: 'https://cf.geekdo-images.com/7k_nOxpO9OGIjhLq2BUZdA__imagepage/img/zoz-t_z9nqqxL7OwQenbqp9PRl8=/fit-in/900x600/filters:no_upscale():strip_icc()/pic3163924.jpg',
     title: 'Scythe',
     state: true,
-    rating: 4.2,
+    rating: 4.5,
+    label: '4.5',
     players: '1-5',
     age: '14+',
     time: '90-115 min',

@@ -17,6 +17,10 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/', 'game']);
   }
 
+  goToSearch() {
+    this.router.navigate(['/','search']);
+  }
+
   slides = [
     {
       id: '1',

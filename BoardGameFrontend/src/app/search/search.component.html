@@ -1,0 +1,78 @@
+<body>
+    <div class="filter">
+        <mat-card>
+            <mat-card-header class="card-header">
+                <mat-card-title class="card-title"><h3>FILTERS</h3></mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <h4>PLAYERS</h4>
+                <ul>
+                    <li><mat-checkbox color="secondary">2 players</mat-checkbox></li>
+                    <li><mat-checkbox color="secondary">3-5 players</mat-checkbox></li>
+                    <li><mat-checkbox color="secondary">5+ players</mat-checkbox></li>
+                </ul>
+                <h4>TIME</h4>
+                <ul>
+                    <li><mat-checkbox color="secondary">>15 min</mat-checkbox></li>
+                    <li><mat-checkbox color="secondary">>30 min</mat-checkbox></li>
+                    <li><mat-checkbox color="secondary">>60 min</mat-checkbox></li>
+                    <li><mat-checkbox color="secondary">60+ min</mat-checkbox></li>
+                </ul>
+                <h4>AGE</h4>
+                <ul>
+                    <li><mat-checkbox color="secondary">8+</mat-checkbox></li>
+                    <li><mat-checkbox color="secondary">12+</mat-checkbox></li>
+                    <li><mat-checkbox color="secondary">16+</mat-checkbox></li>
+                </ul>
+                <h4>CATEGORIES</h4>
+                <ul>
+                    <li><mat-checkbox color="secondary">abstract strategy</mat-checkbox></li>
+                    <li><mat-checkbox color="secondary">area control</mat-checkbox></li>
+                    <li><mat-checkbox color="secondary">cooperative</mat-checkbox></li>
+                    <li><mat-checkbox color="secondary">eurogame</mat-checkbox></li>
+                    <li><mat-checkbox color="secondary">party</mat-checkbox></li>
+                </ul>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div class="content">
+        
+        <div class="search-sort">
+            <div class="search">
+                <input placeholder="Search" size="60">
+                <button mat-raised-button>Search</button>  
+            </div>
+        
+            <div class="sort">
+                <mat-form-field appearance="fill">
+                    <mat-label>Sort</mat-label>
+                    <mat-select>
+                      <mat-option value="A-Z">A-Z</mat-option>
+                      <mat-option value="Z-A">Z-A</mat-option>
+                      <mat-option value="rating ascending">rating ascending</mat-option>
+                      <mat-option value="rating descending">rating descending</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+            </div>
+        </div>
+
+        
+        <div class="list">
+            <li *ngFor="let game of games; let i = index">
+                <div class="image"><img [src]= "game.src" (click)="goToGame()"></div>
+                <div class="description"><h3>{{ game.title }}</h3>
+                {{ game.description | slice:0:300 }}... </div>
+                <div><button mat-icon-button (click)="favClick(i)">
+                    <mat-icon *ngIf="game.state">favorite</mat-icon>
+                    <mat-icon *ngIf="!game.state">favorite_border</mat-icon>
+                </button></div>
+                <div class="rating">
+                    <star-rating [starType]="'svg'" [rating]="game.rating" [labelText]="game.label"
+                [labelPosition]="'right'" [showHalfStars]="true" [readOnly]="true"></star-rating>
+                </div>
+                <br>
+            </li>
+        </div>
+    </div>
+</body>
