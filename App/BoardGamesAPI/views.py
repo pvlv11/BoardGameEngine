@@ -1,5 +1,6 @@
 import json
 from django.shortcuts import render
+from BoardGamesAPI.models import t_genre
 
 # Create your views here.
 from django.shortcuts import render
@@ -50,4 +51,8 @@ def top10(request):
         jsone[iter] = row
     
     return JsonResponse(jsone)
+
+def test(request):
+    table_list = t_genre(genre_name="nazwaaa")
+    table_list.save()
 

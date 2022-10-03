@@ -17,3 +17,47 @@ Widok top 10 most rated games
 select game.name,coalesce(avg(review.review_mark),0) as avg_review 
 from t_game as game left join t_review as review on game.id = review.game_id 
 group by game.name order by avg_review desc
+
+
+
+from os import environ
+import django
+import psycopg2 as postgre
+django.setup()
+
+from BoardGamesAPI.models import t_genre,t_game,t_game_genre,t_friend_list,t_review,t_user,t_user_activity,t_user_game
+
+def add_genre(row):
+    table_row = t_genre(genre_name=row[1])
+    table_row.save()
+
+def add_game(row):
+    table_row = t_game(name=row[1],min_player=row[2],max_player=row[3])
+    table_row.save()
+
+def add_game_genre(row):
+    table_row = t_game_genre(gamd_id=row[1],genre_id=row[2])
+    table_row.save()
+
+def populate_models():
+    postgre_connection = postgre.connect(database=environ.get('POSTGRES_NAME'), 
+                                        user=environ.get('POSTGRES_USER'),
+                                        password=environ.get('POSTGRES_PASSWORD'), 
+                                        host=environ.get('POSTGRES_HOST'), port='5432')
+    
+    postgre_cursor = postgre_connection.cursor()
+
+    postgre_cursor.execute("select * from t_genre")
+    for row in postgre_cursor.fetchall():
+        add_genre(row)
+
+    postgre_cursor.execute("select Id, name, min_player,max_player from t_game")
+    for row in postgre_cursor.fetchall():
+        add_game(row)
+    
+    postgre_cursor.execute("select * from t_game_genre")
+    for row in postgre_cursor.fetchall():
+        add_game_genre(row)
+
+
+
