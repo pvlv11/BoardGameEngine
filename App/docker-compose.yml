@@ -21,18 +21,14 @@ services:
       - "5050:80"
     depends_on:
       - db
-#    volumes:
-#      pgadmindata:/var/lib/pgadmin
+    volumes:
+      - pgadmindata:/var/lib/pgadmin
 
   app:
     build: .
-    #command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
-    command: >
-      sh -c "python3 manage.py migrate &&
-             python3 manage.py runserver 0.0.0.0:8000"
-
+#    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: bash -c "python3 manage.py makemigrations && python3 manage.py migrate --noinput && python3 manage.py createsuperuser && python3 manage.py runserver 0.0.0.0:8000"   
     container_name: BoardGame_Service
-    
     volumes:
       - .:/BoardGame_Service
     ports:
@@ -50,4 +46,4 @@ services:
 
 volumes:
   postgreSQLData:
-    driver: local
+  pgadmindata:
