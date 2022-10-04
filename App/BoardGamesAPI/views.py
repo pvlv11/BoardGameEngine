@@ -1,6 +1,8 @@
 import json
 from django.shortcuts import render
-from BoardGamesAPI.models import t_genre
+from .models import t_genre, t_game
+from rest_framework import viewsets
+from .serializers import t_gameSerializer
 
 # Create your views here.
 from django.shortcuts import render
@@ -55,4 +57,9 @@ def top10(request):
 def test(request):
     table_list = t_genre(genre_name="nazwaaa")
     table_list.save()
+
+
+def t_game_view(ModelViewSet):#viewsets.ViewSet
+    serializer_class = t_gameSerializer
+    queryset = t_game.objects.all()
 

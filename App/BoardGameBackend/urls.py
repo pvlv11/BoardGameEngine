@@ -15,10 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework import routers
+import BoardGamesAPI.views as view
+#from views
+router = routers.DefaultRouter()
+router.register(r't_game', view.t_game_view, 't_game')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('BoardGamesAPI/',include('BoardGamesAPI.urls')),#edit
+    path('BoardGamesAPI/', include(router.urls)),
 ]
 #http://127.0.0.1:8000/BoardGamesAPI/games/getAllGames
 #http://127.0.0.1:8000/BoardGamesAPI/games/top10
