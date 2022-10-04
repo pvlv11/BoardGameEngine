@@ -13,7 +13,7 @@
     <div class="list">
         <li *ngFor="let favorite of favorites; let i = index">
             <div class="image"><img [src]= "favorite.src" (click)="goToGame()"></div>
-            <div class="description"><h3>{{ favorite.title }}</h3>
+            <div class="description"><a href="./game"><h3>{{ favorite.title }}</h3></a>
             {{ favorite.description | slice:0:300 }}... </div>
             <div><button mat-icon-button (click)="favClick(i)">
                 <mat-icon *ngIf="favorite.state">favorite</mat-icon>

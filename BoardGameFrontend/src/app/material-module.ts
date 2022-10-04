@@ -12,6 +12,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
+import { MatList, MatListModule } from '@angular/material/list';
 
 @NgModule({
     imports: [
@@ -27,7 +28,8 @@ import { MatSelectModule } from '@angular/material/select';
         MatMenuModule,
         MatDividerModule,
         MatCheckboxModule,
-        MatSelectModule
+        MatSelectModule,
+        MatListModule
     ],
     exports: [
         MatTabsModule,
@@ -41,7 +43,8 @@ import { MatSelectModule } from '@angular/material/select';
         MatMenuModule,
         MatDividerModule,
         MatCheckboxModule,
-        MatSelectModule
+        MatSelectModule,
+        MatListModule
     ]
 })
 export class MaterialModule { }
