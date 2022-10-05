@@ -17,6 +17,8 @@
               <ng-template carouselSlide id="i">
                 <img [src]="game.image" [alt]="game.title" [title]="game.title" (click)="goToGame()">
                 <p class="slide">{{ i+1 + ": " + game.title }}</p>
+                <p class="slide"><star-rating [starType]="'svg'" [rating]="game.rating" [labelText]="game.rating.toString()"
+                    [labelPosition]="'right'" [showHalfStars]="true" [readOnly]="true"></star-rating></p>
               </ng-template>
           </ng-container>
         </owl-carousel-o>
