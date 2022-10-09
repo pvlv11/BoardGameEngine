@@ -68,17 +68,17 @@ class t_game(models.Model):
                                                   validators=[
                                                       MaxValueValidator(15),
                                                   ])
-
+"""
     class Meta:
         constraints = [
             models.CheckConstraint(
                 check=models.Q(min_player__lt=F('max_player')),
                 name='min_player_lower_than_max')
         ]
-
+"""
 
 class t_game_genre(models.Model):
-    gamd_id = models.ForeignKey(t_game,
+    game_id = models.ForeignKey(t_game,
                                 on_delete=models.CASCADE)
     genre_id = models.ForeignKey(t_genre,
                                  on_delete=models.CASCADE)
