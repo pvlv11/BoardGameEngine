@@ -32,7 +32,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'BoardGamesAPI.apps.BoardgamesapiConfig',
+    #'BoardGamesAPI.apps.BoardgamesapiConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',#new
     'rest_framework',#new
+    'BoardGamesAPI',
 ]
 
 MIDDLEWARE = [

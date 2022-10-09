@@ -16,18 +16,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
+#from BoardGamesAPI import views# TODO: nie widzi
 
-'''for later
+'''for later'''
 import BoardGamesAPI.views as view
 #from views
 router = routers.DefaultRouter()
-router.register(r't_game', view.t_game_view, 't_game')'''
+router.register(r't_user', view.t_user_view, 't_user')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('BoardGamesAPI/',include('BoardGamesAPI.urls')),#edit
-    #path('BoardGamesAPI/', include(router.urls))
-    # ,
+    #path('BoardGamesAPI/',include('BoardGamesAPI.urls')),#edit
+    path('BoardGamesAPI/', include(router.urls))
+     ,
 ]
 #http://127.0.0.1:8000/BoardGamesAPI/games/getAllGames
 #http://127.0.0.1:8000/BoardGamesAPI/games/top10

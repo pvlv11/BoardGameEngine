@@ -1,8 +1,9 @@
 import json
 from django.shortcuts import render
-from .models import t_genre, t_game
+
 from rest_framework import viewsets
-from .serializers import t_gameSerializer
+from .serializers import *
+from .models import *
 
 # Create your views here.
 from django.shortcuts import render
@@ -14,6 +15,16 @@ from os import environ
 
 # Create your views here.
 
+'''class t_game_view(ModelViewSet):#viewsets.ViewSet
+    serializer_class = t_gameSerializer
+    queryset = t_game.objects.all()'''
+
+class t_user_view(viewsets.ModelViewSet):
+    serializer_class = t_user_Serializer
+    queryset = t_user.objects.all()#nie znajduje tej funkcji
+
+
+'''
 # wyswietl wszytskie gry
 def getAllGames(request):
     # stri="hello world. You are at the polls index"+str(request)
@@ -58,9 +69,6 @@ def test(request):
     table_list = t_genre(genre_name="nazwaaa")
     table_list.save()
 
+'''
 
-
-'''def t_game_view(ModelViewSet):#viewsets.ViewSet
-    serializer_class = t_gameSerializer
-    queryset = t_game.objects.all()'''
 
