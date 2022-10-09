@@ -88,7 +88,7 @@ DATABASES = {
 '''
 
 
-DATABASES = {
+'''DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.environ.get('POSTGRES_NAME'),#nazwa naszej bazy danych
@@ -98,7 +98,22 @@ DATABASES = {
         'PORT': '5432',
     }
 
+}'''
+#localhost database, for migrations testing:
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'myDB',#nazwa naszej bazy danych
+        'USER': 'postgres',#user moze byc postgres czyli glowny user, ale jak nie glowny to trzeba dac nowemu userowi odpowiednie uprawnienia
+        'PASSWORD': 'admin',
+        'HOST': 'localhost',#nazwa Serwera
+        'PORT': '5432',
+    }
+
 }
+
+
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
