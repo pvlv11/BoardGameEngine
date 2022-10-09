@@ -77,5 +77,5 @@ class Migration(migrations.Migration):
             model_name='t_friend_list',
             constraint=models.UniqueConstraint(fields=('user1_id', 'user2_Id'), name='cant be your own friend'),
         ),
-        migrations.RunPython(script.run()),
+        #migrations.RunPython(script.run()),
     ]

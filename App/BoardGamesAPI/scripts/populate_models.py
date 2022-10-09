@@ -70,3 +70,5 @@ def run():
     populate_games(df)
     print("skrypt wykonany")
 
+if __name__ == "__main__":
+    run()
