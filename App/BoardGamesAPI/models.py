@@ -41,7 +41,7 @@ class t_friend_list(models.Model):
         ]
 
 
-class t_user_activity:
+class t_user_activity(models.Model):
     User_Id = models.ForeignKey(t_user, on_delete=models.CASCADE)
     Activity_Type = models.CharField(max_length=30, unique=True, null=False, blank=False)
     Activity_Timestamp = models.DateTimeField()
@@ -83,7 +83,7 @@ class t_game(models.Model):
 
 
 class t_game_genre(models.Model):
-    gamd_id = models.ForeignKey(t_game,
+    game_id = models.ForeignKey(t_game,
                                 on_delete=models.CASCADE)
     genre_id = models.ForeignKey(t_genre,
                                  on_delete=models.CASCADE)

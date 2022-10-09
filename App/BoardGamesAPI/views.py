@@ -59,7 +59,8 @@ def test(request):
     table_list.save()
 
 
-def t_game_view(ModelViewSet):#viewsets.ViewSet
+
+'''def t_game_view(ModelViewSet):#viewsets.ViewSet
     serializer_class = t_gameSerializer
-    queryset = t_game.objects.all()
+    queryset = t_game.objects.all()'''
 
