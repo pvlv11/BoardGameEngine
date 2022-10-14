@@ -21,8 +21,6 @@ services:
       - "5050:80"
     depends_on:
       - db
-    volumes:
-      - pgadmindata:/var/lib/pgadmin
 
   app:
     build: .
@@ -47,4 +45,3 @@ services:
 
 volumes:
   postgreSQLData:
-  pgadmindata:

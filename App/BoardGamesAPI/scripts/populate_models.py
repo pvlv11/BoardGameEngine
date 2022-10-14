@@ -1,4 +1,3 @@
-from unicodedata import name
 from BoardGamesAPI.models import t_genre,t_game,t_game_genre
 import pandas as pd
 
@@ -38,7 +37,7 @@ def assign_games_to_genres(dataframe,game_name,category):
         table_row.save()
 
 def populate_games(dataframe):
-    new_df = dataframe.drop(['bgg_url','min_time','max_time','thumb_url','mechanic'],axis=1)
+    new_df = dataframe.drop(['bgg_url','max_time','thumb_url','mechanic'],axis=1)
     for i,row in new_df.iterrows():
         new_name = row['names'].replace("'","''")
         replaced_designers = row['designer'].replace("'","''")
@@ -48,10 +47,17 @@ def populate_games(dataframe):
         else:
             new_designer = splited_designers[0]
 
+        if(row['year'] <= 0):
+            row['year'] = 2000
+            
         new_publisher = row['publisher'].replace("'","''")
+        print(new_publisher)
         new_weight = row['weight'].replace(",",".")
         
-        table_row = t_game(name=new_name,min_player=row['min_players'],max_player=row['max_players'])
+        table_row = t_game(name=new_name,release_year=row['year'],avg_time=row['min_time'],
+                        min_player=row['min_players'],max_player=row['max_players'],
+                        minimal_age=row['age'],publisher=new_publisher,image_url = row['image_url'])
+
         table_row.save()
         
         df_for_assigment = new_df.drop(['year','designer','publisher',
