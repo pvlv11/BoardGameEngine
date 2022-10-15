@@ -1,8 +1,10 @@
+
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import CheckConstraint, Q, F
 from django.utils.translation import gettext_lazy as _
+
 
 
 # Create your models here.
@@ -59,6 +61,9 @@ class t_game(models.Model):
                             null=False,
                             blank=False)
 
+    release_year = models.PositiveIntegerField(default=2010)
+    avg_time = models.PositiveIntegerField(default=90)
+
     min_player = models.PositiveSmallIntegerField(default=2,
                                                   validators=[
                                                       MinValueValidator(1)
@@ -68,6 +73,12 @@ class t_game(models.Model):
                                                   validators=[
                                                       MaxValueValidator(15),
                                                   ])
+    minimal_age = models.PositiveIntegerField(default=12,
+                                                validators=[
+                                                    MinValueValidator(0)])
+    publisher = models.CharField(default="No Data",max_length=255)                                                                                                
+    image_url = models.CharField(default="No Avaible Image",max_length=255)
+
 """
     class Meta:
         constraints = [
@@ -101,7 +112,9 @@ class t_review(models.Model):
             MaxValueValidator(10)
         ])
 
-    description = models.TextField(max_length=1000)
+    description = models.TextField(max_length=1000,
+                                    null=True,
+                                    blank=True)
 
 
 class t_user_game(models.Model):
