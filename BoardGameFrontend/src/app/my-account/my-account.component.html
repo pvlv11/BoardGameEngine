@@ -1,0 +1,19 @@
+<div class="main-div">
+    <mat-card class="example-card">      
+        <mat-card-content>
+            <h1>My account</h1>
+            <div class="profile-dot">
+                    <h1>{{ user.username | slice:0:1 | uppercase }}</h1>
+            </div>
+            <h6 class="uxg-h6">{{ user.username }}</h6>
+            <span class="uxg-caption">{{ user.email }}</span>
+            <mat-divider></mat-divider>
+        </mat-card-content>
+        <mat-card-actions>
+            <button mat-flat-button dense>
+                <mat-icon>exit_to_app</mat-icon>
+                Logout
+            </button>
+        </mat-card-actions>
+      </mat-card>
+</div>

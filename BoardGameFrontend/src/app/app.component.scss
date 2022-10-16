@@ -1,0 +1,49 @@
+$font-stack: 'Halvetica', 'Lucida Sans';
+
+* {
+    font-family: $font-stack;
+}
+
+div{
+    background-color: #653208;
+    margin: 0;
+    color: white;
+    overflow: hidden;
+    width: 100%;
+
+    ul {
+        margin: 0;
+        padding: 0;
+        display: flex;
+
+        li {
+            display: inline-block;
+            list-style-type: none;
+
+            a {
+                display: block;
+                line-height: 3em;
+                padding: 1em 3em;
+                text-decoration: none;
+            }
+        }
+    }
+}
+
+div ul li:first-child {
+    margin-right: auto;
+}
+
+div ul li a:hover {
+    background-color: #9f5417;
+}
+
+#logo {
+    margin-left: 10px;
+    display: block;
+    text-decoration: none;
+    font-size: 28px;
+    align-self: flex-end;
+    margin-bottom: 5px;
+}
+
