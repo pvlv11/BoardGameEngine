@@ -3,7 +3,8 @@
 import django.core.validators
 from django.db import migrations, models
 import django.db.models.deletion
-import BoardGamesAPI.scripts.populate_models as script
+#import BoardGamesAPI.scripts.populate_models as script
+#import App.BoardGamesAPI.scripts.populate_models
 
 
 class Migration(migrations.Migration):

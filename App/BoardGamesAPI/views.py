@@ -1,6 +1,7 @@
 import json
 import queue
 import BoardGamesAPI.models as table
+
 from django.db.models import Avg
 # Create your views here.
 from django.shortcuts import render
@@ -8,10 +9,14 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 import psycopg2 as postgre
 
+import BoardGamesAPI.scripts.populate_models as script
+
+
 from os import environ
 
 # Create your views here.
-
+def populateDataBase(request):
+    script.run()
 # wyswietl wszytskie gry 
 def getAllGames(request):
     jsone = {}
