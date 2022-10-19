@@ -8,6 +8,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
 import psycopg2 as postgre
+import serializers as serializers
 
 import BoardGamesAPI.scripts.populate_models as script
 
@@ -15,6 +16,19 @@ import BoardGamesAPI.scripts.populate_models as script
 from os import environ
 
 # Create your views here.
+#'BoardGames/games/search/by_string'
+#TODO: przetestowac z postmanem
+def search_by_string(request):
+
+    if request.method=='GET':
+        parameters=request.GET()
+        name_we_are_looking_for=parameters.__getitem__('name_string')
+        found_games=table.t_game.objects.filter(name__contains=name_we_are_looking_for).values()
+        serializer=serializers.t_gameSerializer(found_games, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
+
+
 def populateDataBase(request):
     script.run()
 # wyswietl wszytskie gry 
