@@ -1,12 +1,12 @@
-import json
-import queue
+from unittest import result
 import BoardGamesAPI.models as table
+import BoardGamesAPI.serializer as snipet
 from django.db.models import Avg
+
 # Create your views here.
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
-import psycopg2 as postgre
 
 from os import environ
 
@@ -23,26 +23,32 @@ def getAllGames(request):
 
 
 #http://127.0.0.1:8000/BoardGamesAPI/games/top10
+"""
 def top10(requst):
-    jsone = {}
+    jsone = []
     iter = 0
     result = (table.t_review.objects
                 .values('game_id_id')
                 .annotate(avg_rank=Avg('review_number'))
                 .order_by('-avg_rank'))
+    
     for i in result:
         query = table.t_game.objects.filter(id=i['game_id_id']).first()
         output = {"game_name":query.name,"game_reviews":round(i['avg_rank'],2),"image":query.image_url}
-        jsone[iter] = output
-        iter += 1
+        jsone.append(output)
 
-
-    return JsonResponse(jsone)
-
-def test(request):
-    table_list = t_genre(genre_name="nazwaaa")
-    table_list.save()
-
+    return JsonResponse(jsone,safe=False)
+"""
+#def top10_using_serializer(request):
+def top10(request):
+    if request.method == 'GET':
+        result = (table.t_review.objects
+                .values('game_id_id')
+                .annotate(avg_rank=Avg('review_number'))
+                .order_by('-avg_rank'))
+        print(result)
+        serializer = snipet.ReviewSerializer(result,many=True)
+        return JsonResponse(serializer.data,safe=False)
 """
 def top10(request):
     postgre_connection = postgre.connect(database=environ.get('POSTGRES_NAME'), 
