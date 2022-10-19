@@ -11,7 +11,8 @@ from django.http import JsonResponse
 from os import environ
 
 # Create your views here.
-
+def populateDataBase(request):
+    script.run()
 # wyswietl wszytskie gry 
 def getAllGames(request):
     jsone = {}
