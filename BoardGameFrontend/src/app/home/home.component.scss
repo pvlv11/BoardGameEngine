@@ -1,0 +1,75 @@
+$background: #FFE5D0;
+$text-color: #371C05;
+
+body {
+    width: 100%;
+    background-color: $background;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+      
+}
+
+.description {
+    font-size: 2vw;
+    color: $text-color;
+    width: 50%;
+    align-self: flex-end;
+    margin-right: 10px;
+    margin-top: 10px;
+    margin-bottom: 50px;
+    text-justify: auto;
+    font-weight: bold;
+}
+
+
+.search {
+    align-self: center;  
+}
+
+button {
+    background-color: #653208;
+    color: white;
+    border-radius: 16px;
+    height: 40px;
+}
+
+button:hover {
+    background-color: #9f5417;
+}
+
+input {
+    background-color: white;
+    border-radius: 16px;
+    height: 30px;
+    font-size: 14pt;
+    margin: 10px;
+    padding: 5px;
+}
+
+.favorites {
+    background-color: $background;
+    font-size: 2vw;
+    color: $text-color;
+    font-weight: bold;
+    padding: 10px;
+}
+
+img {
+    float: left;
+    width:  100px;
+    height: 300px;
+    object-fit: cover;
+}
+
+img:hover {
+    opacity: 0.5;
+}
+
+.slide {
+    font-size: 1.5vw;
+}
+
+
+
