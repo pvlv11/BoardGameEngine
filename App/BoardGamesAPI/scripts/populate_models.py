@@ -1,6 +1,7 @@
 from BoardGamesAPI.models import t_genre,t_game,t_game_genre
 import pandas as pd
 
+
 def populate_genres(dataframe):
     list_of_genres = []
     for row in dataframe['category']:

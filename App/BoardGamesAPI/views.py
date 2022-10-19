@@ -45,7 +45,7 @@ def top10(requst):
     return JsonResponse(jsone)
 
 def test(request):
-    table_list = t_genre(genre_name="nazwaaa")
+    table_list = table.t_genre(genre_name="nazwaaa")
     table_list.save()
 
 """
