@@ -1,18 +1,20 @@
-from unittest import result
 import BoardGamesAPI.models as table
 import BoardGamesAPI.serializer as snipet
-from django.db.models import Avg
+import BoardGamesAPI.scripts.populate_models as script
 
-# Create your views here.
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.db.models import Avg
 from django.http import JsonResponse
 
-from os import environ
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.parsers import JSONParser 
+
 
 # Create your views here.
 def populateDataBase(request):
     script.run()
+
 # wyswietl wszytskie gry 
 def getAllGames(request):
     jsone = {}
@@ -23,7 +25,7 @@ def getAllGames(request):
     return JsonResponse(jsone)
 
 
-#http://127.0.0.1:8000/BoardGamesAPI/games/top10
+#http://127.0.0.1:8000/BoardGamesAPI/games/top_10_games
 """
 def top10(requst):
     jsone = []
@@ -41,15 +43,64 @@ def top10(requst):
     return JsonResponse(jsone,safe=False)
 """
 #def top10_using_serializer(request):
-def top10(request):
+@api_view(['GET'])
+def top_10_games(request):
     if request.method == 'GET':
         result = (table.t_review.objects
-                .values('game_id_id')
+                .values('game_id_id',)
                 .annotate(avg_rank=Avg('review_number'))
                 .order_by('-avg_rank'))
         print(result)
-        serializer = snipet.ReviewSerializer(result,many=True)
+        serializer = snipet.Top10Games(result,many=True)
+        #return Response(serializer.data)
         return JsonResponse(serializer.data,safe=False)
+
+@api_view(['GET','PUT','DELETE','UPDATE'])
+
+def games_review(request,user_id,game_id1): 
+    
+    if request.method == 'GET':
+        all_reviews = table.t_review.objects.all()
+        serializer = snipet.GamesReview(all_reviews,many=True)
+        return JsonResponse(serializer.data,safe=False)
+    
+    elif request.method == 'PUT':
+        try:
+            user_info = table.t_user.objects.get(id=user_id)
+        except table.t_user.DoesNotExist:
+            return JsonResponse({"Massage":"Only Users With Account \
+                                        Can Add Reviews"},status=status.HTTP_404_NOT_FOUND)
+        try:
+            game_info = table.t_game.objects.get(id=game_id1)
+        except table.t_game.DoesNotExist:
+            return JsonResponse({"Massage":"Game Does Not Exist In Our Database"},status=status.HTTP_404_NOT_FOUND)
+        
+        review_data = JSONParser().parse(request)
+        serializer = snipet.GamesReview(data=review_data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED) 
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    elif request.method == 'DELETE':
+        try:
+            user_info = table.t_user.objects.get(id=user_id)
+        except table.t_user.DoesNotExist:
+            return JsonResponse({"Massage":"Only Users With Account \
+                                        Can Delete Reviews"},status=status.HTTP_404_NOT_FOUND)
+        try:
+            review_info = table.t_review.objects.get(user_id=user_info.id,game_id=game_id1)
+        except table.t_review.DoesNotExist:
+             return JsonResponse({"Massage":"You haven't Added Review for This Game"},status=status.HTTP_404_NOT_FOUND)
+
+        review_info.delete()
+        return JsonResponse({'Massage': 'Tutorial was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
+
+
+            
+        
+    
 """
 def top10(request):
     postgre_connection = postgre.connect(database=environ.get('POSTGRES_NAME'), 

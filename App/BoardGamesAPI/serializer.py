@@ -2,23 +2,15 @@
 from rest_framework import serializers
 from BoardGamesAPI.models import t_game,t_review
 
-class ReviewSerializer(serializers.Serializer):
-    game_id = serializers.IntegerField(required=True)
-    user_id = serializers.IntegerField(required=True)
-    description = serializers.CharField(max_length=1000)
-    review_number = serializers.FloatField(required=True)
+class Top10Games(serializers.Serializer):
+    game_id_id = serializers.IntegerField(required=True)
+    avg_rank = serializers.FloatField(required=True)
+
+class GamesReview(serializers.Serializer):
+    user_id_id = serializers.IntegerField(required=True)
+    game_id_id = serializers.IntegerField(required=True)
+    review_number = serializers.DecimalField(required=True,max_digits=4,decimal_places=2)
+    description = serializers.CharField(required=False,allow_blank=True,max_length=500)
 
     def create(self, validated_data):
-
         return t_review.objects.create(**validated_data)
-"""
-    def update(self, instance, validated_data):
-#        Update and return an existing `Snippet` instance, given the validated data.
-        
-        instance.title = validated_data.get('title', instance.title)
-        instance.code = validated_data.get('code', instance.code)
-        instance.linenos = validated_data.get('linenos', instance.linenos)
-        instance.language = validated_data.get('language', instance.language)
-        instance.style = validated_data.get('style', instance.style)
-        instance.save()
-        return instance"""
