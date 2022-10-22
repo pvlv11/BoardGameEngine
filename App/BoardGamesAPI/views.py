@@ -24,8 +24,6 @@ def search_by_string(request):
         serializer=serializers.t_gameSerializer(found_games, many=True)
         return JsonResponse(serializer.data, safe=False)
 
-
-
 def populateDataBase(request):
     script.run()
 
@@ -56,9 +54,9 @@ def top_10_games(request):
 
 @api_view(['GET','PUT','DELETE','UPDATE'])
 def games_review(request): 
-    args = request.args
-    user_id1 = args.get('user')
-    game_id1 = args.get('game')
+    args = request.GET()
+    user_id1 = args.__getitem__('user')
+    game_id1 = args.__getitem__('game')
     if request.method == 'GET':
         if user_id1 is None:
             specific_game = table.t_review.objects.filter(game_id=game_id1)
