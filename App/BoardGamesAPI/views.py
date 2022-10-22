@@ -61,12 +61,12 @@ def games_review(request):
     game_id1 = args.get('game')
     if request.method == 'GET':
         if user_id1 is None:
-            specific_game = table.t_review.objects.filter(user_id=user_id1)
+            specific_game = table.t_review.objects.filter(game_id=game_id1)
             serializer = serializers.GamesReview(specific_game,many=True)
             return JsonResponse(serializer.data,safe=False)
 
         elif game_id1 is None:
-            specific_game = table.t_review.objects.filter(game_id=game_id1)
+            specific_game = table.t_review.objects.filter(user_id=user_id1)
             serializer = serializers.GamesReview(specific_game,many=True)
             return JsonResponse(serializer.data,safe=False)
 
