@@ -1,19 +1,16 @@
-import json
-import queue
+from pickle import NONE
 import BoardGamesAPI.models as table
-
-from django.db.models import Avg
-# Create your views here.
-from django.shortcuts import render
-from django.http import HttpResponse
-from django.http import JsonResponse
-import psycopg2 as postgre
-import serializers as serializers
-
+import BoardGamesAPI.serializers as serializers
 import BoardGamesAPI.scripts.populate_models as script
 
+from django.db.models import Avg
+from django.http import JsonResponse
 
-from os import environ
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.parsers import JSONParser 
+
 
 # Create your views here.
 #'BoardGames/games/search/by_string'
@@ -27,10 +24,9 @@ def search_by_string(request):
         serializer=serializers.t_gameSerializer(found_games, many=True)
         return JsonResponse(serializer.data, safe=False)
 
-
-
 def populateDataBase(request):
     script.run()
+
 # wyswietl wszytskie gry 
 def getAllGames(request):
     jsone = {}
@@ -41,27 +37,83 @@ def getAllGames(request):
     return JsonResponse(jsone)
 
 
-#http://127.0.0.1:8000/BoardGamesAPI/games/top10
-def top10(requst):
-    jsone = {}
-    iter = 0
-    result = (table.t_review.objects
-                .values('game_id_id')
+#http://127.0.0.1:8000/BoardGamesAPI/games/top_10_games
+
+#def top10_using_serializer(request):
+@api_view(['GET'])
+def top_10_games(request):
+    if request.method == 'GET':
+        result = (table.t_review.objects
+                .values('game_id_id',)
                 .annotate(avg_rank=Avg('review_number'))
                 .order_by('-avg_rank'))
-    for i in result:
-        query = table.t_game.objects.filter(id=i['game_id_id']).first()
-        output = {"game_name":query.name,"game_reviews":round(i['avg_rank'],2),"image":query.image_url}
-        jsone[iter] = output
-        iter += 1
+        print(result)
+        serializer = serializers.GamesReview(result,many=True)
+        #return Response(serializer.data)
+        return JsonResponse(serializer.data,safe=False)
+
+@api_view(['GET','PUT','DELETE','UPDATE'])
+def games_review(request): 
+    args = request.GET()
+    user_id1 = args.__getitem__('user')
+    game_id1 = args.__getitem__('game')
+    if request.method == 'GET':
+        if user_id1 is None:
+            specific_game = table.t_review.objects.filter(game_id=game_id1)
+            serializer = serializers.GamesReview(specific_game,many=True)
+            return JsonResponse(serializer.data,safe=False)
+
+        elif game_id1 is None:
+            specific_game = table.t_review.objects.filter(user_id=user_id1)
+            serializer = serializers.GamesReview(specific_game,many=True)
+            return JsonResponse(serializer.data,safe=False)
+
+        elif None not in (user_id1,game_id1):
+            specific_review = table.t_review.objects.filter(user_id=user_id1,game_id=game_id1)
+            serializer = serializers(specific_review)
+            return JsonResponse(serializer.data,safe=False)
+        else:
+            all_reviews = table.t_review.objects.all()
+            serializer = serializers.GamesReview(all_reviews,many=True)
+            return JsonResponse(serializer.data,safe=False)
+    
+    elif request.method == 'PUT':
+        try:
+            user_info = table.t_user.objects.get(id=user_id1)
+        except table.t_user.DoesNotExist:
+            return JsonResponse({"Massage":"Only Users With Account \
+                                        Can Add Reviews"},status=status.HTTP_404_NOT_FOUND)
+        try:
+            game_info = table.t_game.objects.get(id=game_id1)
+        except table.t_game.DoesNotExist:
+            return JsonResponse({"Massage":"Game Does Not Exist In Our Database"},status=status.HTTP_404_NOT_FOUND)
+        
+        review_data = JSONParser().parse(request)
+        serializer = serializers.GamesReview(data=review_data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED) 
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    elif request.method == 'DELETE':
+        try:
+            user_info = table.t_user.objects.get(id=user_id1)
+        except table.t_user.DoesNotExist:
+            return JsonResponse({"Massage":"Only Users With Account \
+                                        Can Delete Reviews"},status=status.HTTP_404_NOT_FOUND)
+        try:
+            review_info = table.t_review.objects.get(user_id=user_info.id,game_id=game_id1)
+        except table.t_review.DoesNotExist:
+             return JsonResponse({"Massage":"You haven't Added Review for This Game"},status=status.HTTP_404_NOT_FOUND)
+
+        review_info.delete()
+        return JsonResponse({'Massage': 'Tutorial was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
 
 
-    return JsonResponse(jsone)
-
-def test(request):
-    table_list = table.t_genre(genre_name="nazwaaa")
-    table_list.save()
-
+            
+        
+    
 """
 def top10(request):
     postgre_connection = postgre.connect(database=environ.get('POSTGRES_NAME'), 
@@ -101,4 +153,21 @@ def top10(request):
         j += 1
     # jsone={"wszystkie":"gry"}
     return JsonResponse(jsone)  # HttpResponse(stri)
+"""
+
+"""
+def top10(requst):
+    jsone = []
+    iter = 0
+    result = (table.t_review.objects
+                .values('game_id_id')
+                .annotate(avg_rank=Avg('review_number'))
+                .order_by('-avg_rank'))
+    
+    for i in result:
+        query = table.t_game.objects.filter(id=i['game_id_id']).first()
+        output = {"game_name":query.name,"game_reviews":round(i['avg_rank'],2),"image":query.image_url}
+        jsone.append(output)
+
+    return JsonResponse(jsone,safe=False)
 """
