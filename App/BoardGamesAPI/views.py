@@ -1,5 +1,17 @@
 import BoardGamesAPI.models as table
+<<<<<<< HEAD
 import BoardGamesAPI.serializer as snipet
+=======
+
+from django.db.models import Avg
+# Create your views here.
+from django.shortcuts import render
+from django.http import HttpResponse
+from django.http import JsonResponse
+import psycopg2 as postgre
+import serializers as serializers
+
+>>>>>>> origin/main
 import BoardGamesAPI.scripts.populate_models as script
 
 from django.db.models import Avg
@@ -12,6 +24,19 @@ from rest_framework.parsers import JSONParser
 
 
 # Create your views here.
+#'BoardGames/games/search/by_string'
+#TODO: przetestowac z postmanem
+def search_by_string(request):
+
+    if request.method=='GET':
+        parameters=request.GET()
+        name_we_are_looking_for=parameters.__getitem__('name_string')
+        found_games=table.t_game.objects.filter(name__contains=name_we_are_looking_for).values()
+        serializer=serializers.t_gameSerializer(found_games, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
+
+
 def populateDataBase(request):
     script.run()
 
