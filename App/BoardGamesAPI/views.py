@@ -1,17 +1,6 @@
+from pickle import NONE
 import BoardGamesAPI.models as table
-<<<<<<< HEAD
-import BoardGamesAPI.serializer as snipet
-=======
-
-from django.db.models import Avg
-# Create your views here.
-from django.shortcuts import render
-from django.http import HttpResponse
-from django.http import JsonResponse
-import psycopg2 as postgre
-import serializers as serializers
-
->>>>>>> origin/main
+import BoardGamesAPI.serializers as serializers
 import BoardGamesAPI.scripts.populate_models as script
 
 from django.db.models import Avg
@@ -51,22 +40,7 @@ def getAllGames(request):
 
 
 #http://127.0.0.1:8000/BoardGamesAPI/games/top_10_games
-"""
-def top10(requst):
-    jsone = []
-    iter = 0
-    result = (table.t_review.objects
-                .values('game_id_id')
-                .annotate(avg_rank=Avg('review_number'))
-                .order_by('-avg_rank'))
-    
-    for i in result:
-        query = table.t_game.objects.filter(id=i['game_id_id']).first()
-        output = {"game_name":query.name,"game_reviews":round(i['avg_rank'],2),"image":query.image_url}
-        jsone.append(output)
 
-    return JsonResponse(jsone,safe=False)
-"""
 #def top10_using_serializer(request):
 @api_view(['GET'])
 def top_10_games(request):
@@ -76,22 +50,38 @@ def top_10_games(request):
                 .annotate(avg_rank=Avg('review_number'))
                 .order_by('-avg_rank'))
         print(result)
-        serializer = snipet.Top10Games(result,many=True)
+        serializer = serializers.GamesReview(result,many=True)
         #return Response(serializer.data)
         return JsonResponse(serializer.data,safe=False)
 
 @api_view(['GET','PUT','DELETE','UPDATE'])
-
-def games_review(request,user_id,game_id1): 
-    
+def games_review(request): 
+    args = request.args
+    user_id1 = args.get('user')
+    game_id1 = args.get('game')
     if request.method == 'GET':
-        all_reviews = table.t_review.objects.all()
-        serializer = snipet.GamesReview(all_reviews,many=True)
-        return JsonResponse(serializer.data,safe=False)
+        if user_id1 is None:
+            specific_game = table.t_review.objects.filter(user_id=user_id1)
+            serializer = serializers.GamesReview(specific_game,many=True)
+            return JsonResponse(serializer.data,safe=False)
+
+        elif game_id1 is None:
+            specific_game = table.t_review.objects.filter(game_id=game_id1)
+            serializer = serializers.GamesReview(specific_game,many=True)
+            return JsonResponse(serializer.data,safe=False)
+
+        elif None not in (user_id1,game_id1):
+            specific_review = table.t_review.objects.filter(user_id=user_id1,game_id=game_id1)
+            serializer = serializers(specific_review)
+            return JsonResponse(serializer.data,safe=False)
+        else:
+            all_reviews = table.t_review.objects.all()
+            serializer = serializers.GamesReview(all_reviews,many=True)
+            return JsonResponse(serializer.data,safe=False)
     
     elif request.method == 'PUT':
         try:
-            user_info = table.t_user.objects.get(id=user_id)
+            user_info = table.t_user.objects.get(id=user_id1)
         except table.t_user.DoesNotExist:
             return JsonResponse({"Massage":"Only Users With Account \
                                         Can Add Reviews"},status=status.HTTP_404_NOT_FOUND)
@@ -101,7 +91,7 @@ def games_review(request,user_id,game_id1):
             return JsonResponse({"Massage":"Game Does Not Exist In Our Database"},status=status.HTTP_404_NOT_FOUND)
         
         review_data = JSONParser().parse(request)
-        serializer = snipet.GamesReview(data=review_data)
+        serializer = serializers.GamesReview(data=review_data)
 
         if serializer.is_valid():
             serializer.save()
@@ -110,7 +100,7 @@ def games_review(request,user_id,game_id1):
     
     elif request.method == 'DELETE':
         try:
-            user_info = table.t_user.objects.get(id=user_id)
+            user_info = table.t_user.objects.get(id=user_id1)
         except table.t_user.DoesNotExist:
             return JsonResponse({"Massage":"Only Users With Account \
                                         Can Delete Reviews"},status=status.HTTP_404_NOT_FOUND)
@@ -165,4 +155,21 @@ def top10(request):
         j += 1
     # jsone={"wszystkie":"gry"}
     return JsonResponse(jsone)  # HttpResponse(stri)
+"""
+
+"""
+def top10(requst):
+    jsone = []
+    iter = 0
+    result = (table.t_review.objects
+                .values('game_id_id')
+                .annotate(avg_rank=Avg('review_number'))
+                .order_by('-avg_rank'))
+    
+    for i in result:
+        query = table.t_game.objects.filter(id=i['game_id_id']).first()
+        output = {"game_name":query.name,"game_reviews":round(i['avg_rank'],2),"image":query.image_url}
+        jsone.append(output)
+
+    return JsonResponse(jsone,safe=False)
 """
