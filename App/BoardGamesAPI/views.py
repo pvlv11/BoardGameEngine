@@ -8,7 +8,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
 import psycopg2 as postgre
-import serializers as serializers
+import BoardGamesAPI.serializers as serializers
 
 import BoardGamesAPI.scripts.populate_models as script
 
