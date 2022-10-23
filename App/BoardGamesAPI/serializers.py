@@ -17,12 +17,8 @@ class t_gameSerializer(serializers.ModelSerializer):
         model=t_game
         fields = ('id', 'name', 'release_year','avg_time','min_player', 'max_player','minimal_age','publisher','image_url')
 
-class GamesReview(serializers.ModelSerializer):
+class GamesReview(serializers.Serializer):
 
-    class Meta:
-        model = t_review
-        fields = ('id','game_id_id','user_id_id','review_number','description')
-        """
     user_id_id = serializers.IntegerField(required=True)
     game_id_id = serializers.IntegerField(required=True)
     review_number = serializers.DecimalField(required=True,max_digits=4,decimal_places=2)
@@ -30,7 +26,11 @@ class GamesReview(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return t_review.objects.create(**validated_data)
-        """
+"""
+    class Meta:
+        model = t_review
+        fields = ('id','game_id_id','user_id_id','review_number','description')
+"""
 
 
         

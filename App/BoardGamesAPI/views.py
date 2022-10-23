@@ -73,55 +73,63 @@ def games_review(request):
         game_id1 = args.__getitem__('game')
     except MultiValueDictKeyError:
         game_id1=None
+    
+    #All If Statements works correctly for GET method
     if request.method == 'GET':
-        if None not in (user_id1,game_id1):
+        if all(item is not None for item in [user_id1,game_id1]):
             specific_review = table.t_review.objects.get(user_id=user_id1,game_id=game_id1)
-            print("heeeeeeeeeeeeeeeeeeeeerrrrrrrrrrrrrrrrrr{}".format(specific_review))
             serializer = ser.GamesReview(specific_review)
-            #print("heeeeeeeeeeeeeeeeeeeeerrrrrrrrrrrrrrrrrr{}".format(serializer.data))
             return JsonResponse(serializer.data,safe=False)
-        elif None in (user_id1,game_id1):
+        
+        elif all(item is None for item in [user_id1,game_id1]):
             all_reviews = table.t_review.objects.all()
             serializer = ser.GamesReview(all_reviews,many=True)
             return JsonResponse(serializer.data,safe=False)
+
         elif user_id1 is None:
             specific_game = table.t_review.objects.filter(game_id=game_id1)
             serializer = ser.GamesReview(specific_game,many=True)
             return JsonResponse(serializer.data,safe=False)
+
         elif game_id1 is None:
-            specific_game = table.t_review.objects.filter(user_id=user_id1)
-            serializer = ser.GamesReview(specific_game,many=True)
-           
+            specific_user = table.t_review.objects.filter(user_id=user_id1)
+            serializer = ser.GamesReview(specific_user,many=True)
             return JsonResponse(serializer.data,safe=False)
 
-
-        
-    
+    #PUT method works correctyl
     elif request.method == 'PUT':
-        
-        try:
-            game_id1 = args.__getitem__('game')
-            user_id1 = args.__getitem__('user') 
-            game_score = args.__getitem__('game_score')
-            description = args.__getitem__('description')
-            
-            #user_info = table.t_user.objects.get(id=user_id1)
-        except MultiValueDictKeyError:
-            return JsonResponse({"Massage":"nie udalo sie "})
+    
+        user_added_review = table.t_review.objects.filter(user_id=user_id1,game_id=game_id1)
+        if user_added_review.exists():
+            return JsonResponse({"Massage":"dodales juz recencje do tej gry "},status=status.HTTP_404_NOT_FOUND)
+        else:
+            try:
+                game_score = args.__getitem__('game_score')            
+            except MultiValueDictKeyError:
+                return JsonResponse({"Massage":"nie udalo sie "},status=status.HTTP_404_NOT_FOUND)
+
+            temp={'game_id_id':game_id1,'user_id_id':user_id1,'review_number':game_score}
+            serializer = ser.GamesReview(data=temp)
+            if serializer.is_valid():
+                serializer.save()
+                return JsonResponse({"Massage":"Review was added"},status=status.HTTP_201_CREATED)
+
+
         #except table.t_user.DoesNotExist:
         #    return JsonResponse({"Massage":"Only Users With Account \
         #                                Can Add Reviews"},status=status.HTTP_404_NOT_FOUND)
-        try:
-            game_info = table.t_game.objects.get(id=game_id1)
-        except table.t_game.DoesNotExist:
-            return JsonResponse({"Massage":"Game Does Not Exist In Our Database"},status=status.HTTP_404_NOT_FOUND)
+        #try:
+        #    game_info = table.t_game.objects.get(id=game_id1)
+        #except table.t_game.DoesNotExist:
+        #    return JsonResponse({"Massage":"Game Does Not Exist In Our Database"},status=status.HTTP_404_NOT_FOUND)
         
         #review_data = JSONParser().parse(request)
-        temp={'game_id_id':game_id1,'user_id_id':user_id1,'review_number':game_score,'description':description}
-        serializer = ser.GamesReview(data=temp)
-        if serializer.is_valid():
-            serializer.save()
-        return JsonResponse({"Massage":"udalo sie "})
+       # temp={'game_id_id':game_id1,'user_id_id':user_id1,'review_number':game_score}
+       # serializer = ser.GamesReview(data=temp)
+       # if serializer.is_valid():
+       #     serializer.save()
+       #     return JsonResponse({"Massage":"Review was added"},status=status.HTTP_201_CREATED)
+        #return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         #if serializer.is_valid():
         #    serializer.save()
@@ -130,17 +138,12 @@ def games_review(request):
     
     elif request.method == 'DELETE':
         try:
-            user_info = table.t_user.objects.get(id=user_id1)
-        except table.t_user.DoesNotExist:
-            return JsonResponse({"Massage":"Only Users With Account \
-                                        Can Delete Reviews"},status=status.HTTP_404_NOT_FOUND)
-        try:
-            review_info = table.t_review.objects.get(user_id=user_info.id,game_id=game_id1)
+            review_info = table.t_review.objects.get(user_id=user_id1,game_id=game_id1)
         except table.t_review.DoesNotExist:
              return JsonResponse({"Massage":"You haven't Added Review for This Game"},status=status.HTTP_404_NOT_FOUND)
 
         review_info.delete()
-        return JsonResponse({'Massage': 'Tutorial was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
+        return JsonResponse({'Massage': 'Review was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
 
 
             
