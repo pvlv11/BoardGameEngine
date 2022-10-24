@@ -4,6 +4,12 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import CheckConstraint, Q, F
 from django.utils.translation import gettext_lazy as _
+
+
+#todo: dodaj te modele jako crudy w panelu administratora zeby moc miec dostep "z reki"
+#https://www.digitalocean.com/community/tutorials/build-a-to-do-application-using-django-and-react
+#wszystkie modele w adminie
+
 # Create your models here.
 
 class t_user(models.Model):
@@ -38,7 +44,7 @@ class t_friend_list(models.Model):
         ]
 
 
-class t_user_activity:
+class t_user_activity(models.Model):
     User_Id = models.ForeignKey(t_user, on_delete=models.CASCADE)
     Activity_Type = models.CharField(max_length=30, unique=True, null=False, blank=False)
     Activity_Timestamp = models.DateTimeField()
@@ -83,6 +89,9 @@ class t_game(models.Model):
                 check=models.Q(min_player__lt=F('max_player')),
                 name='min_player_lower_than_max')
         ]
+
+    def _str_(self):
+        return self.title
 """
 
 class t_game_genre(models.Model):
