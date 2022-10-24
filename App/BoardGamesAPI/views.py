@@ -1,7 +1,16 @@
+
+import json
+from django.shortcuts import render
+
+from rest_framework import viewsets
+from .serializers import *
+from .models import *
+
 #from pickle import NONE
 import BoardGamesAPI.models as table
 import BoardGamesAPI.serializers as ser
 import BoardGamesAPI.scripts.populate_models as script
+
 
 from django.db.models import Avg
 from django.http import JsonResponse
@@ -31,7 +40,16 @@ def search_by_string(request):
         serializer=ser.t_gameSerializer(found_games, many=True)
         return JsonResponse(serializer.data, safe=False)
 
+'''class t_game_view(ModelViewSet):#viewsets.ViewSet
+    serializer_class = t_gameSerializer
+    queryset = t_game.objects.all()'''
 
+class t_user_view(viewsets.ModelViewSet):
+    serializer_class = t_user_Serializer
+    queryset = t_user.objects.all()
+
+
+'''
 
 def populateDataBase(request):
     script.run()
@@ -203,6 +221,7 @@ def top10(requst):
         query = table.t_game.objects.filter(id=i['game_id_id']).first()
         output = {"game_name":query.name,"game_reviews":round(i['avg_rank'],2),"image":query.image_url}
         jsone.append(output)
+
 
     return JsonResponse(jsone,safe=False)
 """
