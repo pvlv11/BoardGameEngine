@@ -124,35 +124,15 @@ def games_review(request):
                 game_score = args.__getitem__('game_score')            
             except MultiValueDictKeyError:
                 return JsonResponse({"Massage":"nie udalo sie "},status=status.HTTP_404_NOT_FOUND)
+            
+            description = args.__getitem__('description')
 
-            temp={'game_id_id':game_id1,'user_id_id':user_id1,'review_number':game_score}
+            temp={'game_id_id':game_id1,'user_id_id':user_id1,'review_number':game_score,'description':description}
             serializer = ser.GamesReview(data=temp)
             if serializer.is_valid():
                 serializer.save()
                 return JsonResponse({"Massage":"Review was added"},status=status.HTTP_201_CREATED)
   
-
-        #except table.t_user.DoesNotExist:
-        #    return JsonResponse({"Massage":"Only Users With Account \
-        #                                Can Add Reviews"},status=status.HTTP_404_NOT_FOUND)
-        #try:
-        #    game_info = table.t_game.objects.get(id=game_id1)
-        #except table.t_game.DoesNotExist:
-        #    return JsonResponse({"Massage":"Game Does Not Exist In Our Database"},status=status.HTTP_404_NOT_FOUND)
-        
-        #review_data = JSONParser().parse(request)
-       # temp={'game_id_id':game_id1,'user_id_id':user_id1,'review_number':game_score}
-       # serializer = ser.GamesReview(data=temp)
-       # if serializer.is_valid():
-       #     serializer.save()
-       #     return JsonResponse({"Massage":"Review was added"},status=status.HTTP_201_CREATED)
-        #return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        #if serializer.is_valid():
-        #    serializer.save()
-        #    return JsonResponse(serializer.data, status=status.HTTP_201_CREATED) 
-        #return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
     elif request.method == 'DELETE':
         try:
             review_info = table.t_review.objects.get(user_id=user_id1,game_id=game_id1)
@@ -161,51 +141,6 @@ def games_review(request):
 
         review_info.delete()
         return JsonResponse({'Massage': 'Review was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
-
-
-            
-        
-    
-"""
-def top10(request):
-    postgre_connection = postgre.connect(database=environ.get('POSTGRES_NAME'), 
-                                    user=environ.get('POSTGRES_USER'),
-                                    password=environ.get('POSTGRES_PASSWORD'), 
-                                    host=environ.get('POSTGRES_HOST'), port='5432')
-    postgre_cur = postgre_connection.cursor()
-    postgre_cur.execute(""""""
-        select game.name,Round(coalesce(avg(review.review_number),0),2) as avg_review 
-        from "BoardGamesAPI_t_game" as game left join "BoardGamesAPI_t_review" as review on game.id = review.game_id_id
-        group by game.name order by avg_review desc)""""""
-
-    jsone = {}
-    for iter,row in postgre_cur.fetchmany(10):
-        print(row)
-        jsone[iter] = row
-    
-    return JsonResponse(jsone)
-
-    def getAllGames(request):
-    # stri="hello world. You are at the polls index"+str(request)
-   # return JsonResponse({"R-Va":"Slawek"})
-
-    
-    postgre_connection = postgre.connect(database=environ.get('POSTGRES_NAME'), 
-                                        user=environ.get('POSTGRES_USER'),
-                                        password=environ.get('POSTGRES_PASSWORD'), 
-                                        host=environ.get('POSTGRES_HOST'), port='5432')
-
-    postgr_cur = postgre_connection.cursor()
-    postgr_cur.execute('select * from t_game where id < 50')
-    jsone = {}
-    j = 0
-    for i in postgr_cur.fetchall():
-        print(i)
-        jsone[j] = i
-        j += 1
-    # jsone={"wszystkie":"gry"}
-    return JsonResponse(jsone)  # HttpResponse(stri)
-"""
 
 """
 def top10(requst):
