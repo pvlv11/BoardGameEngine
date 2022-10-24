@@ -32,15 +32,13 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    #'BoardGamesAPI.apps.BoardgamesapiConfig',
+    'BoardGamesAPI.apps.BoardgamesapiConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders',#new
-    'BoardGamesAPI',
     'rest_framework'
 ]
 
@@ -52,7 +50,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-'corsheaders.middleware.CorsMiddleware',#new
 ]
 
 ROOT_URLCONF = 'BoardGameBackend.urls'
@@ -100,21 +97,6 @@ DATABASES = {
     }
 
 }
-#localhost database, for migrations testing:
-
-'''DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'myDB',#nazwa naszej bazy danych
-        'USER': 'postgres',#user moze byc postgres czyli glowny user, ale jak nie glowny to trzeba dac nowemu userowi odpowiednie uprawnienia
-        'PASSWORD': 'admin',
-        'HOST': 'localhost',#nazwa Serwera
-        'PORT': '5432',
-    }
-
-}
-'''
-
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
@@ -155,9 +137,3 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-CORS_ORIGIN_WHITELIST = [#new not sure if it is to be here
-     'http://localhost:3000'#tells to allow conection to frontend
-]
-
-

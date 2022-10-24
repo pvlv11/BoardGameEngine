@@ -1,5 +1,4 @@
 
-import json
 from django.shortcuts import render
 
 from rest_framework import viewsets
@@ -43,13 +42,13 @@ def search_by_string(request):
 '''class t_game_view(ModelViewSet):#viewsets.ViewSet
     serializer_class = t_gameSerializer
     queryset = t_game.objects.all()'''
-
+"""
 class t_user_view(viewsets.ModelViewSet):
     serializer_class = t_user_Serializer
     queryset = t_user.objects.all()
+"""
 
 
-'''
 
 def populateDataBase(request):
     script.run()
