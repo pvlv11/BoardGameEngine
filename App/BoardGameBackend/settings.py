@@ -40,8 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',#new
-    'rest_framework',#new
     'BoardGamesAPI',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [

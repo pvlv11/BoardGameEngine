@@ -1,2 +1,4 @@
 Django
+djangorestframework
+pandas
 psycopg2

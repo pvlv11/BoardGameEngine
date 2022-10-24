@@ -1,0 +1,26 @@
+<body>
+    <div class = "description">
+        Write a single category that you are looking for and we will do the rest! <br><br>
+        You will end up with a list of best of board games that meet your criteria.
+    </div>
+
+
+    <div class="search">   
+        <input placeholder="Search" size="60">
+        <button mat-raised-button (click)="goToSearch()">Search</button>  
+    </div>
+    
+    <div class="favorites">
+        <p>Top 10 most favorite games: </p>
+        <owl-carousel-o [options]="customOptions">
+          <ng-container *ngFor="let game of games; let i = index">
+              <ng-template carouselSlide id="i">
+                <img [src]="game.image" [alt]="game.title" [title]="game.title" (click)="goToGame()">
+                <p class="slide">{{ i+1 + ": " + game.title }}</p>
+                <p class="slide"><star-rating [starType]="'svg'" [rating]="game.rating" [labelText]="game.rating.toString()"
+                    [labelPosition]="'right'" [showHalfStars]="true" [readOnly]="true"></star-rating></p>
+              </ng-template>
+          </ng-container>
+        </owl-carousel-o>
+    </div>
+</body>
