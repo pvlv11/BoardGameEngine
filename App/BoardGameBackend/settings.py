@@ -89,7 +89,7 @@ DATABASES = {
 '''
 
 
-'''DATABASES = {
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.environ.get('POSTGRES_NAME'),#nazwa naszej bazy danych
@@ -99,10 +99,10 @@ DATABASES = {
         'PORT': '5432',
     }
 
-}'''
+}
 #localhost database, for migrations testing:
 
-DATABASES = {
+'''DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'myDB',#nazwa naszej bazy danych
@@ -113,7 +113,7 @@ DATABASES = {
     }
 
 }
-
+'''
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
