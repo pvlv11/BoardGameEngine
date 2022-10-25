@@ -34,13 +34,10 @@ class GamesReview(serializers.Serializer):
         fields = ('id','game_id_id','user_id_id','review_number','description')
 """
 
-
-        
-
-
 class Top10Games(serializers.Serializer):
     game_id_id = serializers.IntegerField(required=True)
     avg_rank = serializers.FloatField(required=True)
+    image_url = serializers.CharField(required=True,max_length=500)
 '''
 class GamesReview(serializers.Serializer):
     user_id_id = serializers.IntegerField(required=True)

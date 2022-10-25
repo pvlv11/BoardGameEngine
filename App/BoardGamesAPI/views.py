@@ -70,13 +70,12 @@ def getAllGames(request):
 def top_10_games(request):
     if request.method == 'GET':
         result = (table.t_review.objects
-                .values('game_id_id',)
+                .values('game_id_id')
                 .annotate(avg_rank=Avg('review_number'))
-                .order_by('-avg_rank'))
-        
+                .order_by('-avg_rank'))[:10]
+        for i in result:
+            i['image_url'] = table.t_game.objects.get(id=i['game_id_id']).image_url
         serializer = ser.Top10Games(result,many=True)
-        print(serializer.data)
-        #return Response(serializer.data)
         return JsonResponse(serializer.data,safe=False)
 
 @api_view(['GET','PUT','DELETE','UPDATE'])
