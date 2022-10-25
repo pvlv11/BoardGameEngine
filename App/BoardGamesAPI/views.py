@@ -73,8 +73,11 @@ def top_10_games(request):
                 .values('game_id_id')
                 .annotate(avg_rank=Avg('review_number'))
                 .order_by('-avg_rank'))[:10]
+        
         for i in result:
+            i['name'] = table.t_game.objects.get(id=i['game_id_id']).name
             i['image_url'] = table.t_game.objects.get(id=i['game_id_id']).image_url
+            
         serializer = ser.Top10Games(result,many=True)
         return JsonResponse(serializer.data,safe=False)
 
