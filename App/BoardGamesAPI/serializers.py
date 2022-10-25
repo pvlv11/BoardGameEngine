@@ -2,6 +2,8 @@
 #from dataclasses import fields
 #from pyexpat import model
 
+from importlib.metadata import requires
+from operator import truediv
 from rest_framework import serializers
 from .models import *
 
@@ -37,6 +39,7 @@ class GamesReview(serializers.Serializer):
 class Top10Games(serializers.Serializer):
     game_id_id = serializers.IntegerField(required=True)
     avg_rank = serializers.FloatField(required=True)
+    name = serializers.CharField(required=True,max_length=255)
     image_url = serializers.CharField(required=True,max_length=500)
 '''
 class GamesReview(serializers.Serializer):
