@@ -14,8 +14,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 export class HomeComponent implements OnInit {
 
- games: Game[] = [];
- //games: any = [];
+  games: Game[] = [];
+  searchString: String = "";
 
   constructor(private router: Router, private gamesService: GamesService) {
    }
@@ -25,7 +25,11 @@ export class HomeComponent implements OnInit {
   }
 
   goToSearch() {
-    this.router.navigate(['/','search']);
+    const search = this.searchString;
+    this.router.navigate(
+      ['/','search'],
+      {queryParams: { name_string: search}}
+      );
   }
 
 
