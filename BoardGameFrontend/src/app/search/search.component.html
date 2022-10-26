@@ -40,8 +40,8 @@
         
         <div class="search-sort">
             <div class="search">
-                <input placeholder="Search" size="60">
-                <button mat-raised-button>Search</button>  
+                <input placeholder="Search" size="60"  [(ngModel)]="searchStr">
+                <button mat-raised-button (click)="goToSearch()">Search</button>  
             </div>
         
             <div class="sort">

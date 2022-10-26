@@ -22,13 +22,17 @@ export class SearchComponent implements OnInit {
 
   games: Game[] = [];
   searchString: string = "";
+  searchStr: string = "";
 
-  constructor(private router: Router, private gamesService: GamesService, private route: ActivatedRoute) { }
+  constructor(private router: Router, private gamesService: GamesService, private route: ActivatedRoute) {
+    this.router.routeReuseStrategy.shouldReuseRoute = function() {
+      return false;
+  };
+   }
 
   ngOnInit(): void {
     this.route.queryParams
       .subscribe(params => {
-        console.log(params); 
         this.searchString = params['name_string'];
       }
       );
@@ -46,4 +50,14 @@ export class SearchComponent implements OnInit {
     this.games[clickedItem].state = !this.games[clickedItem].state;
  }
 
+ goToSearch() {
+  const search = this.searchStr;
+    this.router.navigate(
+      ['/','search'],
+      {queryParams: { name_string: search }}
+      );
+  }
+  
+
 }
+
