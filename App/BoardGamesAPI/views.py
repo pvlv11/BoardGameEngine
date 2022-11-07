@@ -20,7 +20,7 @@ from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser 
 from django.utils.datastructures import MultiValueDictKeyError
 
-
+from itertools import chain
 # Create your views here.
 #'BoardGames/games/search/by_string'
 #TODO: przetestowac z postmanem
@@ -54,14 +54,70 @@ def populateDataBase(request):
     script.run()
 
 # wyswietl wszytskie gry 
-def getAllGames(request):
+'''def getAllGames(request):
     jsone = {}
     j = 0
     for row in table.t_genre.objects.all():
         jsone[j] = row.genre_name
         j += 1
-    return JsonResponse(jsone)
+    return JsonResponse(jsone)'''
 
+def getAllGames(request):
+    args = request.GET
+    try:
+        game_id = args.__getitem__('game')
+    except MultiValueDictKeyError:
+        game_id = None
+
+    if request.method == 'GET':
+        if game_id is None:
+            count_of_games_in_page = 10
+            try:
+                page_id = int(args.__getitem__('page_id'))
+            except MultiValueDictKeyError:
+                page_id = 1
+
+            games_info = table.t_game.objects.filter(
+                    id__gt=((page_id-1)*count_of_games_in_page),
+                    id__lte=(page_id*count_of_games_in_page))
+
+            output_list = []
+            for i in games_info.values():
+                review = (table.t_review.objects
+                .values('game_id_id')
+                .annotate(avg_rank=Avg('review_number'))
+                .order_by('-avg_rank')).filter(game_id_id=i["id"])
+                list_of_categories = []
+                for j in t_game_genre.objects\
+                            .filter(game_id_id=i["id"]).select_related().values():
+                    list_of_categories.append(t_genre.objects.get(id=j['genre_id_id']).genre_name)
+
+                game_info_dict = i
+                game_info_dict['avg_rank'] = round(review[0]['avg_rank'],2) if review.exists() else 0
+                game_info_dict['genres'] = list_of_categories
+                output_list.append(game_info_dict)
+
+            serializer = ser.fullGameSerializer(output_list,many=True)
+            return JsonResponse(serializer.data,safe=False)
+
+        else:
+            game_info = table.t_game.objects.filter(id=game_id).values()
+            review = (table.t_review.objects
+                .values('game_id_id')
+                .annotate(avg_rank=Avg('review_number'))
+                .order_by('-avg_rank')).filter(game_id_id=game_id)
+            list_of_categories = []
+            for i in t_game_genre.objects.filter(game_id_id=game_id).select_related().values():
+                list_of_categories.append(t_genre.objects.get(id=i['genre_id_id']).genre_name)
+
+            game_info_dict = game_info[0]
+            game_info_dict['avg_rank'] = round(review[0]['avg_rank'],2)
+            game_info_dict['genres'] = list_of_categories
+            serializer = ser.fullGameSerializer([game_info_dict],many=True)
+
+            return JsonResponse(serializer.data,safe=False)
+            
+            
 
 #http://127.0.0.1:8000/BoardGamesAPI/games/top_10_games
 
