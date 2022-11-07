@@ -2,3 +2,4 @@ Django
 djangorestframework
 pandas
 psycopg2
+django-cors-headers
