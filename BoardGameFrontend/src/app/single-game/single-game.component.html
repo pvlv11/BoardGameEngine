@@ -1,30 +1,33 @@
 <body>  
     <div class="info">
         <div class="image">
-            <a [href]="game.img" target="_blank">
-                <img [src]= "game.img">
+            <a [href]="game[0].image_url" target="_blank">
+                <img [src]= "game[0].image_url">
             </a>
         </div>
         <div class="parameters">
-            <h1>{{ game.title }}</h1>
-                <div *ngIf="game.state"><button mat-icon-button (click)="favClick()">
+            <h1>{{ game[0].name }}</h1>
+                <div *ngIf="game[0].state"><button mat-icon-button (click)="favClick()">
                     <mat-icon>favorite</mat-icon>remove from favorites
                 </button></div>
-                <div *ngIf="!game.state"><button mat-icon-button (click)="favClick()">
+                <div *ngIf="!game[0].state"><button mat-icon-button (click)="favClick()">
                     <mat-icon>favorite_border</mat-icon>add to favorites
                 </button></div>
 
-            <div class="rating">users rating: <star-rating [starType]="'svg'" [rating]="game.rating" [labelText]="game.label"
+            <div class="rating">users rating: <star-rating [starType]="'svg'" [rating]="game[0].avg_rank" 
+                [labelText]="game[0].avg_rank.toString()"
                 [labelPosition]="'right'" [showHalfStars]="true" [readOnly]="true"></star-rating></div>
-            <div class="players">players: {{ game.players }}</div>
-            <div class="age">age: {{ game.age }}</div>
-            <div class="time">time: {{ game.time }}</div>
-            <div class="categories">categories: {{ game.categories }}</div>
+            <div class="players">players: {{ game[0].min_player }} - {{ game[0].max_player }}</div>
+            <div class="age">age: {{ game[0].minimal_age }}+</div>
+            <div class="time">time: {{ game[0].avg_time }} min</div>
+            <div class="publisher">publisher: {{ game[0].publisher }} </div>
+            <div class="year">release year: {{ game[0].release_year }}</div>
+            <div class="categories">categories: {{ game[0].genres }}</div> 
         </div>
     </div>
     <div class="description">
         <p style="white-space: pre-wrap">
-            {{ game.description }}
+            Tutaj description gry blablabla...
         </p>
-    </div>
+    </div> 
 </body>

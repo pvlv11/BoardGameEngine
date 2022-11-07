@@ -42,8 +42,10 @@ export class SearchComponent implements OnInit {
     })
   }
 
-  goToGame() {
-    this.router.navigate(['/', 'game']);
+  goToGame(id: number) {
+    this.router.navigate(['/', 'game'],
+    {queryParams: { game: id }}
+    );
   }
 
   favClick(clickedItem: number) {
