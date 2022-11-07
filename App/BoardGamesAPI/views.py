@@ -93,7 +93,11 @@ def getAllGames(request):
                     list_of_categories.append(t_genre.objects.get(id=j['genre_id_id']).genre_name)
 
                 game_info_dict = i
-                game_info_dict['avg_rank'] = round(review[0]['avg_rank'],2) if review.exists() else 0
+                try: 
+                    game_info_dict['avg_rank'] = round(review[0]['avg_rank'],2)
+                except IndexError:
+                    game_info_dict['avg_rank'] = 0.0
+
                 game_info_dict['genres'] = list_of_categories
                 output_list.append(game_info_dict)
 
@@ -111,7 +115,11 @@ def getAllGames(request):
                 list_of_categories.append(t_genre.objects.get(id=i['genre_id_id']).genre_name)
 
             game_info_dict = game_info[0]
-            game_info_dict['avg_rank'] = round(review[0]['avg_rank'],2)
+            try:
+                game_info_dict['avg_rank'] = round(review[0]['avg_rank'],2)
+            except IndexError:
+                game_info_dict['avg_rank'] = 0.0
+
             game_info_dict['genres'] = list_of_categories
             serializer = ser.fullGameSerializer([game_info_dict],many=True)
 
