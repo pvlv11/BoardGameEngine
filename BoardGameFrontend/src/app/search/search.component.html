@@ -40,8 +40,8 @@
         
         <div class="search-sort">
             <div class="search">
-                <input placeholder="Search" size="60">
-                <button mat-raised-button>Search</button>  
+                <input placeholder="Search" size="60"  [(ngModel)]="searchStr">
+                <button mat-raised-button (click)="goToSearch()">Search</button>  
             </div>
         
             <div class="sort">
@@ -60,17 +60,19 @@
         
         <div class="list">
             <li *ngFor="let game of games; let i = index">
-                <div class="image"><img [src]= "game.src" (click)="goToGame()"></div>
-                <div class="description"><a href="./game"><h3>{{ game.title }}</h3></a>
-                {{ game.description | slice:0:300 }}... </div>
+                <div class="image"><img [src]= "game.image_url" (click)="goToGame()"></div>
+                <div class="description"><a href="./game"><h3>{{ game.name }}</h3></a>
+                <!-- {{ game.description | slice:0:300 }}... -->
+                Tutaj dajemy description gry blablablablablabla...
+             </div>
                 <div><button mat-icon-button (click)="favClick(i)">
                     <mat-icon *ngIf="game.state">favorite</mat-icon>
                     <mat-icon *ngIf="!game.state">favorite_border</mat-icon>
                 </button></div>
-                <div class="rating">
+                <!-- <div class="rating">
                     <star-rating [starType]="'svg'" [rating]="game.rating" [labelText]="game.label"
                 [labelPosition]="'right'" [showHalfStars]="true" [readOnly]="true"></star-rating>
-                </div>
+                </div> -->
                 <br>
             </li>
         </div>
