@@ -17,4 +17,8 @@ export class GamesService {
   getSearch(str: string): Observable<any> {
     return this.http.get(`http://127.0.0.1:8000/BoardGamesAPI/games/search_by_string?name_string=${str}`)
   }
+
+  getSingleGame(id: number): Observable<any> {
+    return this.http.get(`http://127.0.0.1:8000/BoardGamesAPI/games/getAllGames?game=${id}`)
+  }
 }

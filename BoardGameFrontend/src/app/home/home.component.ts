@@ -16,19 +16,22 @@ export class HomeComponent implements OnInit {
 
   games: Game[] = [];
   searchString: String = "";
+  selected: any;
 
   constructor(private router: Router, private gamesService: GamesService) {
    }
 
-  goToGame() {
-    this.router.navigate(['/', 'game']);
+  goToGame(id: number) {
+    this.router.navigate(['/', 'game'],
+    {queryParams: { game: id }}
+    );
   }
 
   goToSearch() {
     const search = this.searchString;
     this.router.navigate(
       ['/','search'],
-      {queryParams: { name_string: search}}
+      {queryParams: { name_string: search }}
       );
   }
 

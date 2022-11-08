@@ -1,5 +1,6 @@
 export interface Game {
     game_id_id: number,
+    id: number,
     avg_rank: number,
     name: string,
     image_url: string,
@@ -9,5 +10,7 @@ export interface Game {
     max_player: number, 
     minimal_age: number, 
     publisher: string,
-    state: boolean 
+    state: boolean ,
+    description: string,
+    genres: Array<string>
 }
