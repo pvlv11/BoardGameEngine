@@ -47,21 +47,33 @@ class t_user_view(viewsets.ModelViewSet):
     serializer_class = t_user_Serializer
     queryset = t_user.objects.all()
 """
-
-
+@api_view(['PUT'])
+def register_user(request):
+    args = request.GET
+    try:
+        username = args.__getitem__('Username')
+        mail = args.__getitem__('Mail')
+        password = args.__getitem__('Password')
+    except MultiValueDictKeyError:
+        return JsonResponse({"Massage":"Bad Request"},status=status.HTTP_400_BAD_REQUEST)
+    
+    if request.method == 'PUT':
+        if t_user.objects.filter(Username=username).exists():
+            return JsonResponse({"Massage":"Username is taken"},status=status.HTTP_400_BAD_REQUEST)
+        elif t_user.objects.filter(Mail=mail).exists():
+            return JsonResponse({"Massage":"Email is taken"},status=status.HTTP_400_BAD_REQUEST)
+        else:
+            user_data = {'Username':username,'Mail':mail,'Password':password}
+            
+        serializer = ser.t_user_Serializer(data=user_data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse({"Massage":"User Was Added"},status=status.HTTP_201_CREATED)
 
 def populateDataBase(request):
     script.run()
 
-# wyswietl wszytskie gry 
-'''def getAllGames(request):
-    jsone = {}
-    j = 0
-    for row in table.t_genre.objects.all():
-        jsone[j] = row.genre_name
-        j += 1
-    return JsonResponse(jsone)'''
-
+@api_view(['GET'])
 def getAllGames(request):
     args = request.GET
     try:
@@ -118,17 +130,13 @@ def getAllGames(request):
             try:
                 game_info_dict['avg_rank'] = round(review[0]['avg_rank'],2)
             except IndexError:
-                game_info_dict['avg_rank'] = 0.0
+                game_info_dict['avg_rank'] = round(review[0]['avg_rank'],2)
 
             game_info_dict['genres'] = list_of_categories
             serializer = ser.fullGameSerializer([game_info_dict],many=True)
 
             return JsonResponse(serializer.data,safe=False)
             
-            
-
-#http://127.0.0.1:8000/BoardGamesAPI/games/top_10_games
-
 #def top10_using_serializer(request):
 @api_view(['GET'])
 def top_10_games(request):
@@ -225,3 +233,10 @@ def top10(requst):
 
     return JsonResponse(jsone,safe=False)
 """
+'''def getAllGames(request):
+    jsone = {}
+    j = 0
+    for row in table.t_genre.objects.all():
+        jsone[j] = row.genre_name
+        j += 1
+    return JsonResponse(jsone)'''
