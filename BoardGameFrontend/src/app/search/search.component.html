@@ -75,10 +75,10 @@
                 </div> -->
                 <br>
             </li>
-            <li *ngIf="games.length == 0 && loaded == true">
+            <li *ngIf="games.length == 0 && loaded">
                 No result found for "{{ searchString }}"
             </li> 
-            <li *ngIf="loaded == false" class="loader">
+            <li *ngIf="!loaded" class="loader">
                 <mat-spinner [diameter]="100"></mat-spinner>
             </li>
             <mat-paginator 

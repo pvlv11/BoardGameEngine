@@ -16,7 +16,7 @@ export class HomeComponent implements OnInit {
   games: Game[] = [];
   searchString: String = "";
   selected: any;
-  isLoaded: boolean = false;
+  loaded: boolean = false;
 
   constructor(private router: Router, private gamesService: GamesService) {
    }
@@ -70,8 +70,7 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.gamesService.getTop10().subscribe(data=>{
       this.games = data;
-      this.isLoaded = true;
-      console.log(this.games);
+      this.loaded = true;
     });
   }
 
