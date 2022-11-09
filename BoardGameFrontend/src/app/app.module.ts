@@ -20,6 +20,7 @@ import { SingleGameComponent } from './single-game/single-game.component';
 import { StarRatingModule } from 'angular-star-rating';
 import { SearchComponent } from './search/search.component';
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -44,7 +45,7 @@ import { SearchComponent } from './search/search.component';
     FlexLayoutModule,
     FormsModule,
     ReactiveFormsModule,
-    StarRatingModule.forRoot(),
+    StarRatingModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

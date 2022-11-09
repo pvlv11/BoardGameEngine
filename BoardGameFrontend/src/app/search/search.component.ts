@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Game } from '../models/game';
 import { GamesService } from '../services/games.service';
 import { ActivatedRoute } from '@angular/router';
+import { VirtualScrollerModule } from 'ngx-virtual-scroller';
 
 export interface GameItem { 
   src: string; 
@@ -21,8 +22,10 @@ export interface GameItem {
 export class SearchComponent implements OnInit {
 
   games: Game[] = [];
+  currentGamesToShow: Game[] = [];
   searchString: string = "";
   searchStr: string = "";
+  loaded: boolean = false;
 
   constructor(private router: Router, private gamesService: GamesService, private route: ActivatedRoute) {
     this.router.routeReuseStrategy.shouldReuseRoute = function() {
@@ -39,7 +42,13 @@ export class SearchComponent implements OnInit {
 
     this.gamesService.getSearch(this.searchString).subscribe(data =>{
       this.games = data;
+      this.currentGamesToShow = this.games.slice(0,5);
+      this.loaded = true;
     })
+  }
+
+  onPageChange($event: { pageIndex: number; pageSize: number; }) {
+    this.currentGamesToShow =  this.games.slice($event.pageIndex*$event.pageSize, $event.pageIndex*$event.pageSize + $event.pageSize);
   }
 
   goToGame(id: number) {
