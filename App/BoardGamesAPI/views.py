@@ -20,10 +20,16 @@ from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser 
 from django.utils.datastructures import MultiValueDictKeyError
 
+
 from itertools import chain
 # Create your views here.
 #'BoardGames/games/search/by_string'
+
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.models  import User
 #TODO: przetestowac z postmanem
+@login_required
 def search_by_string(request):
 
     if request.method=='GET':
@@ -47,6 +53,34 @@ class t_user_view(viewsets.ModelViewSet):
     serializer_class = t_user_Serializer
     queryset = t_user.objects.all()
 """
+#User.objects.create_user('john', 'lennon@thebeatles.com', 'johnpassword')
+
+@api_view(['POST'])
+def register_user2(request):
+    args = request.GET
+    try:
+        username = args.__getitem__('username')
+        mail = args.__getitem__('email')
+        password = args.__getitem__('password')
+    except MultiValueDictKeyError:
+        return JsonResponse({"Massage":"Bad Request"},status=status.HTTP_400_BAD_REQUEST)
+    
+    if request.method == 'POST':
+        #User.objects.create_user('john', 'lennon@thebeatles.com', 'johnpassword')
+        if User.objects.filter(username=username).exists():
+            return JsonResponse({"Massage":"Username is taken"},status=status.HTTP_400_BAD_REQUEST)
+        elif User.objects.filter(email=mail).exists():
+            return JsonResponse({"Massage":"Email is taken"},status=status.HTTP_400_BAD_REQUEST)
+        else:
+            user_data = {'username':username,'email':mail,'password':password}
+            
+        #serializer = ser.t_user_Serializer(data=user_data)
+        #serializer.save()
+        User.objects.create_user(username, mail, password)
+        return JsonResponse({"Massage":"User Was Added"},status=status.HTTP_201_CREATED)
+
+
+
 @api_view(['PUT'])
 def register_user(request):
     args = request.GET
@@ -70,6 +104,7 @@ def register_user(request):
             serializer.save()
             return JsonResponse({"Massage":"User Was Added"},status=status.HTTP_201_CREATED)
 
+@login_required
 def populateDataBase(request):
     script.run()
 
@@ -153,6 +188,7 @@ def top_10_games(request):
         serializer = ser.Top10Games(result,many=True)
         return JsonResponse(serializer.data,safe=False)
 
+@login_required
 @api_view(['GET','PUT','DELETE','UPDATE'])
 def games_review(request): 
     args = request.GET
@@ -215,6 +251,22 @@ def games_review(request):
 
         review_info.delete()
         return JsonResponse({'Massage': 'Review was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['GET','POST'])
+def login_view(request):
+    username = request.POST['username']
+    password = request.POST['password']
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        login(request, user)
+        # Redirect to a success page.
+        # u nas return success to frontend
+        response={"sucess":True}
+        return JsonResponse(response,safe=False)
+    else:
+        # Return an 'invalid login' error message.
+        response={"sucess":False}
+        return JsonResponse(response,safe=False)
 
 """
 def top10(requst):

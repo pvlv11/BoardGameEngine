@@ -19,6 +19,7 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('BoardGamesAPI/',include('BoardGamesAPI.urls')),#edit
+    path('users',include('django.contrib.auth.urls'),name='user/register_user'),
 ]
 #http://127.0.0.1:8000/BoardGamesAPI/games/getAllGames
 #http://127.0.0.1:8000/BoardGamesAPI/games/top10
