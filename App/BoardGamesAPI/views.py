@@ -25,10 +25,14 @@ from itertools import chain
 # Create your views here.
 #'BoardGames/games/search/by_string'
 
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models  import User
+
+from django.views.decorators.csrf import csrf_exempt
+
 #TODO: przetestowac z postmanem
+@csrf_exempt
 @login_required
 def search_by_string(request):
 
@@ -54,7 +58,7 @@ class t_user_view(viewsets.ModelViewSet):
     queryset = t_user.objects.all()
 """
 #User.objects.create_user('john', 'lennon@thebeatles.com', 'johnpassword')
-
+@csrf_exempt
 @api_view(['POST'])
 def register_user2(request):
     args = request.GET
@@ -80,8 +84,8 @@ def register_user2(request):
         return JsonResponse({"Massage":"User Was Added"},status=status.HTTP_201_CREATED)
 
 
-
-@api_view(['PUT'])
+@csrf_exempt
+@api_view(['PUT','GET'])
 def register_user(request):
     args = request.GET
     try:
@@ -104,10 +108,12 @@ def register_user(request):
             serializer.save()
             return JsonResponse({"Massage":"User Was Added"},status=status.HTTP_201_CREATED)
 
+@csrf_exempt
 @login_required
 def populateDataBase(request):
     script.run()
 
+@csrf_exempt
 @api_view(['GET'])
 def getAllGames(request):
     args = request.GET
@@ -173,6 +179,7 @@ def getAllGames(request):
             return JsonResponse(serializer.data,safe=False)
             
 #def top10_using_serializer(request):
+@csrf_exempt
 @api_view(['GET'])
 def top_10_games(request):
     if request.method == 'GET':
@@ -187,7 +194,7 @@ def top_10_games(request):
             
         serializer = ser.Top10Games(result,many=True)
         return JsonResponse(serializer.data,safe=False)
-
+@csrf_exempt
 @login_required
 @api_view(['GET','PUT','DELETE','UPDATE'])
 def games_review(request): 
@@ -231,11 +238,11 @@ def games_review(request):
             return JsonResponse({"Massage":"dodales juz recencje do tej gry "},status=status.HTTP_404_NOT_FOUND)
         else:
             try:
-                game_score = args.__getitem__('game_score')            
+                game_score = args.__getitem__("game_score")            
             except MultiValueDictKeyError:
                 return JsonResponse({"Massage":"nie udalo sie "},status=status.HTTP_404_NOT_FOUND)
             
-            description = args.__getitem__('description')
+            description = args.__getitem__("description")
 
             temp={'game_id_id':game_id1,'user_id_id':user_id1,'review_number':game_score,'description':description}
             serializer = ser.GamesReview(data=temp)
@@ -251,11 +258,15 @@ def games_review(request):
 
         review_info.delete()
         return JsonResponse({'Massage': 'Review was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
-
-@api_view(['GET','POST'])
-def login_view(request):
-    username = request.POST['username']
-    password = request.POST['password']
+@csrf_exempt
+@api_view(['POST','GET'])
+def login_view2(request):
+    '''print("heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeere")
+    print(request.GET.keys())
+    print("heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeere")
+    print(request)'''
+    username = request.GET.__getitem__('username')
+    password = request.GET.__getitem__('password')
     user = authenticate(request, username=username, password=password)
     if user is not None:
         login(request, user)
@@ -267,6 +278,14 @@ def login_view(request):
         # Return an 'invalid login' error message.
         response={"sucess":False}
         return JsonResponse(response,safe=False)
+
+
+@api_view(['GET','PUT','DELETE','UPDATE'])
+@csrf_exempt
+def logout_view2(request):
+    logout(request)
+    response={"sucess":True}
+    return JsonResponse(response,safe=False)
 
 """
 def top10(requst):
