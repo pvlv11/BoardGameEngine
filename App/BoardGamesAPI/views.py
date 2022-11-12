@@ -96,17 +96,17 @@ def register_user(request):
         return JsonResponse({"Massage":"Bad Request"},status=status.HTTP_400_BAD_REQUEST)
     
     if request.method == 'PUT':
-        if t_user.objects.filter(Username=username).exists():
+        if User.objects.filter(Username=username).exists():
             return JsonResponse({"Massage":"Username is taken"},status=status.HTTP_400_BAD_REQUEST)
-        elif t_user.objects.filter(Mail=mail).exists():
+        elif User.objects.filter(Mail=mail).exists():
             return JsonResponse({"Massage":"Email is taken"},status=status.HTTP_400_BAD_REQUEST)
         else:
             user_data = {'Username':username,'Mail':mail,'Password':password}
             
-        serializer = ser.t_user_Serializer(data=user_data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse({"Massage":"User Was Added"},status=status.HTTP_201_CREATED)
+        User.objects.create_user(username, mail, password)
+        #if serializer.is_valid():
+        #    serializer.save()
+        return JsonResponse({"Massage":"User Was Added"},status=status.HTTP_201_CREATED)
 
 @csrf_exempt
 @login_required
