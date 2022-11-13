@@ -7,7 +7,7 @@ from .models import *
 
 #from pickle import NONE
 import BoardGamesAPI.models as table
-import BoardGamesAPI.serializers as ser
+import BoardGamesAPI.serializers as ser 
 import BoardGamesAPI.scripts.populate_models as script
 
 from django.contrib.auth.models import User
@@ -83,7 +83,7 @@ def register_user2(request):
         User.objects.create_user(username, mail, password)
         return JsonResponse({"Massage":"User Was Added"},status=status.HTTP_201_CREATED)
 
-
+"""
 @csrf_exempt
 @api_view(['PUT','GET'])
 def register_user(request):
@@ -106,7 +106,7 @@ def register_user(request):
         User.objects.create_user(username, mail, password)
         #if serializer.is_valid():
         #    serializer.save()
-        return JsonResponse({"Massage":"User Was Added"},status=status.HTTP_201_CREATED)
+        return JsonResponse({"Massage":"User Was Added"},status=status.HTTP_201_CREATED)"""
 
 @csrf_exempt
 @login_required
@@ -194,10 +194,12 @@ def top_10_games(request):
             
         serializer = ser.Top10Games(result,many=True)
         return JsonResponse(serializer.data,safe=False)
+
 @csrf_exempt
 @login_required
 @api_view(['GET','PUT','DELETE','UPDATE'])
 def games_review(request): 
+    #All If Statements works correctly for GET method
     args = request.GET
     try:
         user_id1 = args.__getitem__('user')
@@ -207,12 +209,11 @@ def games_review(request):
         game_id1 = args.__getitem__('game')
     except MultiValueDictKeyError:
         game_id1=None
-    
-    #All If Statements works correctly for GET method
+        
     if request.method == 'GET':
         if all(item is not None for item in [user_id1,game_id1]):
-            specific_review = table.t_review.objects.get(user_id=user_id1,game_id=game_id1)
-            serializer = ser.GamesReview(specific_review)
+            specific_review = table.t_review.objects.filter(user_id=user_id1,game_id=game_id1)
+            serializer = ser.GamesReview(specific_review,many=True)
             return JsonResponse(serializer.data,safe=False)
         
         elif all(item is None for item in [user_id1,game_id1]):
@@ -232,7 +233,6 @@ def games_review(request):
 
     #PUT method works correctyl
     elif request.method == 'PUT':
-    
         user_added_review = table.t_review.objects.filter(user_id=user_id1,game_id=game_id1)
         if user_added_review.exists():
             return JsonResponse({"Massage":"dodales juz recencje do tej gry "},status=status.HTTP_404_NOT_FOUND)
@@ -258,6 +258,7 @@ def games_review(request):
 
         review_info.delete()
         return JsonResponse({'Massage': 'Review was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
+        
 @csrf_exempt
 @api_view(['POST','GET'])
 def login_view2(request):

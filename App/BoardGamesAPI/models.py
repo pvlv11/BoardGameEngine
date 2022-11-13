@@ -4,7 +4,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import CheckConstraint, Q, F
 from django.utils.translation import gettext_lazy as _
-
+from django.conf import settings
 
 
 #todo: dodaj te modele jako crudy w panelu administratora zeby moc miec dostep "z reki"
@@ -23,17 +23,18 @@ class t_user(models.Model):
 
 # "%(app_label)s_%(class)user1_id"
 class t_friend_list(models.Model):
-    user1_id = models.ForeignKey(t_user,
-                                 null=False,
-                                 blank=False,
-                                 on_delete=models.CASCADE,
-                                 related_name="user1_id")
+    #user1_id = models.ForeignKey(t_user,
+    #                             null=False,
+    #                             blank=False,
+    #                             on_delete=models.CASCADE,
+    #                             related_name="user1_id")
     user2_Id = models.ForeignKey(t_user,
                                  null=False,
                                  blank=False,
                                  on_delete=models.CASCADE,
                                  related_name="user2_id")
-
+    user1_id = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
+    #user2_id = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
 
     Last_Seen = models.DateField(auto_now=True)
 
@@ -47,7 +48,8 @@ class t_friend_list(models.Model):
 
 
 class t_user_activity(models.Model):
-    User_Id = models.ForeignKey(t_user, on_delete=models.CASCADE)
+    User_Id = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
+    #models.ForeignKey(t_user, on_delete=models.CASCADE)
     Activity_Type = models.CharField(max_length=30, unique=True, null=False, blank=False)
     Activity_Timestamp = models.DateTimeField()
 
@@ -109,8 +111,10 @@ class t_review(models.Model):
     game_id = models.ForeignKey(t_game,
                                 on_delete=models.CASCADE)
 
-    user_id = models.ForeignKey(t_user,
-                                on_delete=models.CASCADE)
+    user_id = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
+    
+    #models.ForeignKey(t_user,
+    #                            on_delete=models.CASCADE)
 
     review_number = models.DecimalField(
         null=False,
@@ -128,8 +132,8 @@ class t_review(models.Model):
 
 
 class t_user_game(models.Model):
-    user_id = models.ForeignKey(t_user,
-                                on_delete=models.CASCADE)
-
+    #user_id = models.ForeignKey(t_user,
+    #                            on_delete=models.CASCADE)
+    user_id = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
     game_id = models.ForeignKey(t_game,
                                 on_delete=models.CASCADE)
