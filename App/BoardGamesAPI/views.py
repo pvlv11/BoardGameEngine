@@ -10,10 +10,10 @@ import BoardGamesAPI.models as table
 import BoardGamesAPI.serializers as ser
 import BoardGamesAPI.scripts.populate_models as script
 
-
+from django.contrib.auth.models import User
 from django.db.models import Avg
 from django.http import JsonResponse
-
+from django.contrib.auth import authenticate, login
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -69,6 +69,23 @@ def register_user(request):
         if serializer.is_valid():
             serializer.save()
             return JsonResponse({"Massage":"User Was Added"},status=status.HTTP_201_CREATED)
+
+@api_view(['PUT','POST'])
+def testView(request):
+    username = request.POST['username']
+    password = request.POST['password']
+
+    user = authenticate(request,username=username,password=password)
+    if user is not None:
+        if user.is_active:
+            login(request,user)
+            return JsonResponse({"Massage":"zalogowany "},status=status.HTTP_200_OK)
+        else:
+            return JsonResponse({"Massage":"nieaktywny "},status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return JsonResponse({"Massage":"dupsko "},status=status.HTTP_404_NOT_FOUND)
+
+
 
 def populateDataBase(request):
     script.run()

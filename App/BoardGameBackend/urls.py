@@ -21,4 +21,4 @@ urlpatterns = [
     path('BoardGamesAPI/',include('BoardGamesAPI.urls')),#edit
 ]
 #http://127.0.0.1:8000/BoardGamesAPI/games/getAllGames
-#http://127.0.0.1:8000/BoardGamesAPI/games/top10
+#http://127.0.0.1:8000/BoardGamesAPI/games/populate

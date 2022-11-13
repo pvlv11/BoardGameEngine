@@ -6,11 +6,13 @@ from django.db.models import CheckConstraint, Q, F
 from django.utils.translation import gettext_lazy as _
 
 
+
 #todo: dodaj te modele jako crudy w panelu administratora zeby moc miec dostep "z reki"
 #https://www.digitalocean.com/community/tutorials/build-a-to-do-application-using-django-and-react
 #wszystkie modele w adminie
 
 # Create your models here.
+
 
 class t_user(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -81,6 +83,8 @@ class t_game(models.Model):
                                                     MinValueValidator(0)])
     publisher = models.CharField(default="No Data",max_length=255)                                                                                                
     image_url = models.CharField(default="No Avaible Image",max_length=255)
+    time_tag = models.CharField(max_length=255)
+    age_tag = models.CharField(max_length=255)
 
 """
     class Meta:
