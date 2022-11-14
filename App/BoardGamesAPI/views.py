@@ -29,7 +29,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models  import User
 
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt,ensure_csrf_cookie
 
 #TODO: przetestowac z postmanem
 @csrf_exempt
@@ -197,7 +197,8 @@ def top_10_games(request):
 
 @csrf_exempt
 @login_required
-@api_view(['GET','PUT','DELETE','UPDATE'])
+@ensure_csrf_cookie
+@api_view(['GET','POST','DELETE','UPDATE'])
 def games_review(request): 
     #All If Statements works correctly for GET method
     args = request.GET
@@ -232,7 +233,7 @@ def games_review(request):
             return JsonResponse(serializer.data,safe=False)
 
     #PUT method works correctyl
-    elif request.method == 'PUT':
+    elif request.method == 'POST':
         user_added_review = table.t_review.objects.filter(user_id=user_id1,game_id=game_id1)
         if user_added_review.exists():
             return JsonResponse({"Massage":"dodales juz recencje do tej gry "},status=status.HTTP_404_NOT_FOUND)
