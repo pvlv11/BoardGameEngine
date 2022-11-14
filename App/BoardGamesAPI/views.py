@@ -49,14 +49,6 @@ def search_by_string(request):
         serializer=ser.t_gameSerializer(found_games, many=True)
         return JsonResponse(serializer.data, safe=False)
 
-'''class t_game_view(ModelViewSet):#viewsets.ViewSet
-    serializer_class = t_gameSerializer
-    queryset = t_game.objects.all()'''
-"""
-class t_user_view(viewsets.ModelViewSet):
-    serializer_class = t_user_Serializer
-    queryset = t_user.objects.all()
-"""
 #User.objects.create_user('john', 'lennon@thebeatles.com', 'johnpassword')
 @csrf_exempt
 @api_view(['POST'])
@@ -82,31 +74,6 @@ def register_user2(request):
         #serializer.save()
         User.objects.create_user(username, mail, password)
         return JsonResponse({"Massage":"User Was Added"},status=status.HTTP_201_CREATED)
-
-"""
-@csrf_exempt
-@api_view(['PUT','GET'])
-def register_user(request):
-    args = request.GET
-    try:
-        username = args.__getitem__('Username')
-        mail = args.__getitem__('Mail')
-        password = args.__getitem__('Password')
-    except MultiValueDictKeyError:
-        return JsonResponse({"Massage":"Bad Request"},status=status.HTTP_400_BAD_REQUEST)
-    
-    if request.method == 'PUT':
-        if User.objects.filter(Username=username).exists():
-            return JsonResponse({"Massage":"Username is taken"},status=status.HTTP_400_BAD_REQUEST)
-        elif User.objects.filter(Mail=mail).exists():
-            return JsonResponse({"Massage":"Email is taken"},status=status.HTTP_400_BAD_REQUEST)
-        else:
-            user_data = {'Username':username,'Mail':mail,'Password':password}
-            
-        User.objects.create_user(username, mail, password)
-        #if serializer.is_valid():
-        #    serializer.save()
-        return JsonResponse({"Massage":"User Was Added"},status=status.HTTP_201_CREATED)"""
 
 @csrf_exempt
 @login_required
@@ -281,7 +248,6 @@ def login_view2(request):
         response={"sucess":False}
         return JsonResponse(response,safe=False)
 
-
 @api_view(['GET','PUT','DELETE','UPDATE'])
 @csrf_exempt
 def logout_view2(request):
@@ -289,6 +255,11 @@ def logout_view2(request):
     response={"sucess":True}
     return JsonResponse(response,safe=False)
 
+def check_user_status(request):
+    if request.user.is_authenticated:
+        return JsonResponse({"user":"user is logged in"})
+    else:
+        return JsonResponse({"user":"User is not logged in"})
 """
 def top10(requst):
     jsone = []
@@ -313,3 +284,35 @@ def top10(requst):
         jsone[j] = row.genre_name
         j += 1
     return JsonResponse(jsone)'''
+"""
+@csrf_exempt
+@api_view(['PUT','GET'])
+def register_user(request):
+    args = request.GET
+    try:
+        username = args.__getitem__('Username')
+        mail = args.__getitem__('Mail')
+        password = args.__getitem__('Password')
+    except MultiValueDictKeyError:
+        return JsonResponse({"Massage":"Bad Request"},status=status.HTTP_400_BAD_REQUEST)
+    
+    if request.method == 'PUT':
+        if User.objects.filter(Username=username).exists():
+            return JsonResponse({"Massage":"Username is taken"},status=status.HTTP_400_BAD_REQUEST)
+        elif User.objects.filter(Mail=mail).exists():
+            return JsonResponse({"Massage":"Email is taken"},status=status.HTTP_400_BAD_REQUEST)
+        else:
+            user_data = {'Username':username,'Mail':mail,'Password':password}
+            
+        User.objects.create_user(username, mail, password)
+        #if serializer.is_valid():
+        #    serializer.save()
+        return JsonResponse({"Massage":"User Was Added"},status=status.HTTP_201_CREATED)"""
+'''class t_game_view(ModelViewSet):#viewsets.ViewSet
+    serializer_class = t_gameSerializer
+    queryset = t_game.objects.all()'''
+"""
+class t_user_view(viewsets.ModelViewSet):
+    serializer_class = t_user_Serializer
+    queryset = t_user.objects.all()
+"""

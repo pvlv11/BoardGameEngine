@@ -12,7 +12,8 @@ urlpatterns=[
     path('games/search_by_string',views.search_by_string,name='games/search_by_string'),
     path('user/register_user',views.register_user2,name='user/register_user'),
     path('user/login_user',views.login_view2,name='user/login_user'),
-    path('user/logout',views.logout_view2,name='user/logout')
+    path('user/logout',views.logout_view2,name='user/logout'),
+    path('user/check_user_status',views.check_user_status,name='user/check_user_status')
     
     ]
     
