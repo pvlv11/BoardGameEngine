@@ -13,6 +13,9 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { MatList, MatListModule } from '@angular/material/list';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 
 @NgModule({
     imports: [
@@ -29,7 +32,9 @@ import { MatList, MatListModule } from '@angular/material/list';
         MatDividerModule,
         MatCheckboxModule,
         MatSelectModule,
-        MatListModule
+        MatListModule,
+        MatPaginatorModule,
+        MatProgressSpinnerModule
     ],
     exports: [
         MatTabsModule,
@@ -44,7 +49,9 @@ import { MatList, MatListModule } from '@angular/material/list';
         MatDividerModule,
         MatCheckboxModule,
         MatSelectModule,
-        MatListModule
+        MatListModule,
+        MatPaginatorModule,
+        MatProgressSpinnerModule
     ]
 })
 export class MaterialModule { }

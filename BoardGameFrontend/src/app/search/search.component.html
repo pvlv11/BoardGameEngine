@@ -59,7 +59,7 @@
 
         
         <div class="list">
-            <li *ngFor="let game of games; let i = index">
+            <li *ngFor="let game of currentGamesToShow; let i = index">
                 <div class="image"><img [src]= "game.image_url" (click)="goToGame(game.id)"></div>
                 <div class="description"><a href="./game?game={{game.id}}"><h3>{{ game.name }}</h3></a>
                 <!-- {{ game.description | slice:0:300 }}... -->
@@ -75,9 +75,18 @@
                 </div> -->
                 <br>
             </li>
-            <li *ngIf="games.length == 0">
-                No result for "{{ searchString }}"
+            <li *ngIf="games.length == 0 && loaded">
+                No result found for "{{ searchString }}"
+            </li> 
+            <li *ngIf="!loaded" class="loader">
+                <mat-spinner [diameter]="100"></mat-spinner>
             </li>
+            <mat-paginator 
+            (page)="onPageChange($event)"
+                [length]="games.length"
+                [pageSize]="5"
+                [pageSizeOptions]="[5, 10, 15, 20]">
+            </mat-paginator>
         </div>
     </div>
 </body>

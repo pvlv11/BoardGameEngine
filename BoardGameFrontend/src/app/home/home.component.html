@@ -12,7 +12,7 @@
     
     <div class="favorites">
         <p>Top 10 most favorite games: </p>
-        <owl-carousel-o [options]="customOptions">
+        <owl-carousel-o [options]="customOptions" *ngIf="loaded">
           <ng-container *ngFor="let game of games; let i = index">
               <ng-template carouselSlide id="i">
                 <img [src]="game.image_url" [alt]="game.name" [title]="game.name" (click)="goToGame(game.game_id_id)">
@@ -22,5 +22,21 @@
               </ng-template>
           </ng-container>
         </owl-carousel-o>
+        <owl-carousel-o [options]="customOptions" *ngIf="!loaded">
+            <ng-container>
+                <ng-template carouselSlide id="1">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif">
+                </ng-template>
+                <ng-template carouselSlide id="2">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif">
+                </ng-template>
+                <ng-template carouselSlide id="3">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif">
+                </ng-template>
+                <ng-template carouselSlide id="4">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif">
+                </ng-template>
+            </ng-container>
+          </owl-carousel-o>
     </div>
 </body>

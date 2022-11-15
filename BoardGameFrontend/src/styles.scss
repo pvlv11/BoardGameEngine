@@ -9,3 +9,7 @@ html, body {
     margin: 0;
     height: 100%;
 }
+
+.mat-progress-spinner circle, .mat-spinner circle {
+    stroke: #653208!important;
+}

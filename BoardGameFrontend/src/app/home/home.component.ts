@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { OwlOptions } from 'ngx-owl-carousel-o';
 import { Game } from '../models/game';
 import { GamesService } from '../services/games.service';
-import { Pipe, PipeTransform } from '@angular/core';
 
 
 @Component({
@@ -17,6 +16,7 @@ export class HomeComponent implements OnInit {
   games: Game[] = [];
   searchString: String = "";
   selected: any;
+  loaded: boolean = false;
 
   constructor(private router: Router, private gamesService: GamesService) {
    }
@@ -37,6 +37,7 @@ export class HomeComponent implements OnInit {
 
 
   customOptions: OwlOptions = {
+    lazyLoad: true,
     loop: true,
     mouseDrag: false,
     touchDrag: false,
@@ -69,7 +70,9 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.gamesService.getTop10().subscribe(data=>{
       this.games = data;
-      console.log(this.games);
+      this.loaded = true;
     });
   }
+
+
 }
