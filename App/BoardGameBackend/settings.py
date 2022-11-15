@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework'
+    'rest_framework',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -50,12 +51,19 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication', 
     ],
 }
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+
 ROOT_URLCONF = 'BoardGameBackend.urls'
 
 TEMPLATES = [
@@ -93,10 +101,11 @@ DATABASES = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('POSTGRES_NAME'),#nazwa naszej bazy danych
-        'USER': os.environ.get('POSTGRES_USER'),#user moze byc postgres czyli glowny user, ale jak nie glowny to trzeba dac nowemu userowi odpowiednie uprawnienia
+        'NAME': os.environ.get('POSTGRES_NAME'),  # nazwa naszej bazy danych
+        # user moze byc postgres czyli glowny user, ale jak nie glowny to trzeba dac nowemu userowi odpowiednie uprawnienia
+        'USER': os.environ.get('POSTGRES_USER'),
         'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-        'HOST': os.environ.get('POSTGRES_HOST'),#nazwa Serwera 
+        'HOST': os.environ.get('POSTGRES_HOST'),  # nazwa Serwera
         'PORT': '5432',
     }
 

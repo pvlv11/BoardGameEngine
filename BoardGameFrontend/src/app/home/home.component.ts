@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { OwlOptions } from 'ngx-owl-carousel-o';
 import { Game } from '../models/game';
 import { GamesService } from '../services/games.service';
+import { Pipe, PipeTransform } from '@angular/core';
 
 
 @Component({
@@ -13,18 +14,25 @@ import { GamesService } from '../services/games.service';
 
 export class HomeComponent implements OnInit {
 
-  games: Game[];
+  games: Game[] = [];
+  searchString: String = "";
+  selected: any;
 
   constructor(private router: Router, private gamesService: GamesService) {
-    this.games = this.gamesService.getTop10();
    }
 
-  goToGame() {
-    this.router.navigate(['/', 'game']);
+  goToGame(id: number) {
+    this.router.navigate(['/', 'game'],
+    {queryParams: { game: id }}
+    );
   }
 
   goToSearch() {
-    this.router.navigate(['/','search']);
+    const search = this.searchString;
+    this.router.navigate(
+      ['/','search'],
+      {queryParams: { name_string: search }}
+      );
   }
 
 
@@ -59,6 +67,9 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.gamesService.getTop10().subscribe(data=>{
+      this.games = data;
+      console.log(this.games);
+    });
   }
-
 }
