@@ -24,7 +24,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 # Create your views here.
 #'BoardGames/games/search/by_string'
 
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout,get_user_model 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models  import User
 
@@ -72,6 +72,8 @@ def register_user2(request):
         #serializer = ser.t_user_Serializer(data=user_data)
         #serializer.save()
         User.objects.create_user(username, mail, password)
+        user = get_user_model().objects.filter(username=username).first()
+        Token.objects.create(user=user)
         return JsonResponse({"Massage":"User Was Added"},status=status.HTTP_201_CREATED)
 
 @csrf_exempt
@@ -247,7 +249,7 @@ def login_view2(request):
         # u nas return success to frontend
 
         response={"message":"user is logged",
-                "userToken":str(Token.objects.get_or_create(user=user)[0]),
+                "userToken":str(Token.objects.get(user=user)),
                 "username":user.username,
                 "email":user.email}#"token":token.key,"username":user.username,"email":user.email}
         return JsonResponse(response,safe=False)
