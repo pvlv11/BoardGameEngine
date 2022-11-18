@@ -11,21 +11,20 @@ import BoardGamesAPI.serializers as ser
 import BoardGamesAPI.scripts.populate_models as script
 
 from django.contrib.auth.models import User
-from django.db.models import Avg
+from django.db.models import Avg,Count
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser 
+from rest_framework.authtoken.models import Token
 from django.utils.datastructures import MultiValueDictKeyError
 
-
-from itertools import chain
 # Create your views here.
 #'BoardGames/games/search/by_string'
 
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout,get_user_model 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models  import User
 
@@ -73,6 +72,8 @@ def register_user2(request):
         #serializer = ser.t_user_Serializer(data=user_data)
         #serializer.save()
         User.objects.create_user(username, mail, password)
+        user = get_user_model().objects.filter(username=username).first()
+        Token.objects.create(user=user)
         return JsonResponse({"Massage":"User Was Added"},status=status.HTTP_201_CREATED)
 
 @csrf_exempt
@@ -179,6 +180,11 @@ def games_review(request):
         game_id1=None
         
     if request.method == 'GET':
+        try:
+            page_id = int(args.__getitem__('page_id'))
+        except MultiValueDictKeyError:
+            page_id = 1
+
         if all(item is not None for item in [user_id1,game_id1]):
             specific_review = table.t_review.objects.filter(user_id=user_id1,game_id=game_id1)
             serializer = ser.GamesReview(specific_review,many=True)
@@ -241,7 +247,11 @@ def login_view2(request):
         login(request, user)
         # Redirect to a success page.
         # u nas return success to frontend
-        response={"sucess":True}
+
+        response={"message":"user is logged",
+                "userToken":str(Token.objects.get(user=user)),
+                "username":user.username,
+                "email":user.email}#"token":token.key,"username":user.username,"email":user.email}
         return JsonResponse(response,safe=False)
     else:
         # Return an 'invalid login' error message.
