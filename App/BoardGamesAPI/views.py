@@ -246,7 +246,7 @@ def login_view2(request):
     else:
         # Return an 'invalid login' error message.
         response={"sucess":False}
-        return JsonResponse(response,safe=False)
+        return JsonResponse(response,safe=False, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET','PUT','DELETE','UPDATE'])
 @csrf_exempt

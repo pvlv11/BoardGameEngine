@@ -36,13 +36,12 @@ export class RegisterComponent implements OnInit {
 
   onSubmit() {
     this.authService.register(this.username, this.email, this.password1).subscribe(data => {
-      console.log("rejestrujemy!")
       this.showSuccess();
       this.router.navigate(['/', 'login']);
     }, 
     (err) => {
-      console.log("nie rejestrujemy!");
       this.showError();
+      this.registerForm.reset();
     });
   }
 
