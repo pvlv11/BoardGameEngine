@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { OwlOptions } from 'ngx-owl-carousel-o';
 import { Game } from '../models/game';
+import { AuthService } from '../services/auth.service';
 import { GamesService } from '../services/games.service';
 
 
@@ -18,7 +19,7 @@ export class HomeComponent implements OnInit {
   selected: any;
   loaded: boolean = false;
 
-  constructor(private router: Router, private gamesService: GamesService) {
+  constructor(private router: Router, private gamesService: GamesService, private authService: AuthService) {
    }
 
   goToGame(id: number) {
@@ -72,6 +73,10 @@ export class HomeComponent implements OnInit {
       this.games = data;
       this.loaded = true;
     });
+
+    this.authService.checkUserStatus().subscribe(data => {
+      console.log(data);
+    })
   }
 
 

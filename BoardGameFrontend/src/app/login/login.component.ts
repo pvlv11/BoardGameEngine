@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { NgToastService } from 'ng-angular-popup';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -10,7 +13,10 @@ export class LoginComponent implements OnInit {
 
   public loginForm!: FormGroup;
 
-  constructor() { }
+  constructor(private router: Router, private authService: AuthService, private toast: NgToastService) { }
+
+  username: string = "";
+  password: string = "";
 
   ngOnInit(): void {
     this.loginForm = new FormGroup({
@@ -21,6 +27,27 @@ export class LoginComponent implements OnInit {
 
   public hasError = (controlName: string, errorName: string) => {
     return this.loginForm.controls[controlName].hasError(errorName);
+  }
+
+  onSubmit() {
+    this.authService.login(this.username, this.password).subscribe(data => {
+      console.log(data);
+      this.showSuccess();
+      this.router.navigate(['/', 'home']);
+    }, 
+    (err) => {
+      console.log(err);
+      this.showError();
+      this.loginForm.reset();
+    });
+  }
+
+  showSuccess() {
+    this.toast.success({detail:"SUCCESS",summary:'User successfully logined!',duration: 2000, position:'tr'});
+  }
+  
+  showError() {
+    this.toast.error({detail:"ERROR",summary:'Username or password incorrect! Try again.',sticky:true, position:'tr'});
   }
 
 }
