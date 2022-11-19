@@ -83,7 +83,7 @@ def populate_database(dataframe):
         first_value = sorted(player_dict.items(),key=lambda x:x[1],reverse=True)[0]
         sugested_player = int(first_value[0])
 
-"""        table_row = t_game(name=row['primary'],game_designer=designer_name,
+        table_row = t_game(name=row['primary'],game_designer=designer_name,
                 game_description=row['description'],release_year=row['yearpublished'],
                 min_game_time=row['minplaytime'],max_game_time=row['maxplaytime'],
                 avg_time=row['playingtime'],min_player=row['minplayers'],
@@ -91,9 +91,9 @@ def populate_database(dataframe):
                 suggested_players=sug_player,minimal_age=sugested_age,
                 publisher=publisher_name,image_url=row['image'])
         
-        table_row.save()"""
+        table_row.save()
         
-       # assign_games_to_genres(row['primary'],row['boardgamecategory'])
+        assign_games_to_genres(row['primary'],row['boardgamecategory'])
 
 
 
