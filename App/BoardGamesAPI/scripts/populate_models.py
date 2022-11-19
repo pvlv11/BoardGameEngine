@@ -54,10 +54,27 @@ def populate_games(dataframe):
         new_publisher = row['publisher'].replace("'","''")
         print(new_publisher)
         new_weight = row['weight'].replace(",",".")
-        
+        age_tag = ''
+        if row['age'] <= 5:
+            age_tag = 'For Toddlers'
+        elif row['age'] <= 13: 
+            age_tag = 'For Children'
+        else:
+            age_tag = 'For Adults' 
+
+        time_tag = ''
+        if row['min_time'] < 60:
+            time_tag = "Quick"
+        elif row['min_time'] < 110:
+            time_tag = 'Average'
+        elif row['min_time'] < 180:
+            time_tag = 'Long'
+        else:
+            time_tag = 'Very Long'
+
         table_row = t_game(name=new_name,release_year=row['year'],avg_time=row['min_time'],
                         min_player=row['min_players'],max_player=row['max_players'],
-                        minimal_age=row['age'],publisher=new_publisher,image_url = row['image_url'])
+                        minimal_age=row['age'],publisher=new_publisher,image_url = row['image_url'],time_tag=time_tag,age_tag=age_tag)
 
         table_row.save()
         

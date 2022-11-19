@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { OwlOptions } from 'ngx-owl-carousel-o';
 import { Game } from '../models/game';
+import { AuthService } from '../services/auth.service';
 import { GamesService } from '../services/games.service';
 
 
@@ -13,22 +14,31 @@ import { GamesService } from '../services/games.service';
 
 export class HomeComponent implements OnInit {
 
-  games: Game[];
+  games: Game[] = [];
+  searchString: String = "";
+  selected: any;
+  loaded: boolean = false;
 
-  constructor(private router: Router, private gamesService: GamesService) {
-    this.games = this.gamesService.getTop10();
+  constructor(private router: Router, private gamesService: GamesService, private authService: AuthService) {
    }
 
-  goToGame() {
-    this.router.navigate(['/', 'game']);
+  goToGame(id: number) {
+    this.router.navigate(['/', 'game'],
+    {queryParams: { game: id }}
+    );
   }
 
   goToSearch() {
-    this.router.navigate(['/','search']);
+    const search = this.searchString;
+    this.router.navigate(
+      ['/','search'],
+      {queryParams: { name_string: search }}
+      );
   }
 
 
   customOptions: OwlOptions = {
+    lazyLoad: true,
     loop: true,
     mouseDrag: false,
     touchDrag: false,
@@ -59,6 +69,15 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.gamesService.getTop10().subscribe(data=>{
+      this.games = data;
+      this.loaded = true;
+    });
+
+    this.authService.checkUserStatus().subscribe(data => {
+      console.log(data);
+    })
   }
+
 
 }

@@ -19,6 +19,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SingleGameComponent } from './single-game/single-game.component';
 import { StarRatingModule } from 'angular-star-rating';
 import { SearchComponent } from './search/search.component';
+import { NgToastModule, NgToastService } from 'ng-angular-popup';
+
 
 @NgModule({
   declarations: [
@@ -45,6 +47,7 @@ import { SearchComponent } from './search/search.component';
     FormsModule,
     ReactiveFormsModule,
     StarRatingModule.forRoot(),
+    NgToastModule
   ],
   providers: [],
   bootstrap: [AppComponent]
