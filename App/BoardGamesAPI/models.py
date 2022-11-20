@@ -66,7 +66,7 @@ class t_game(models.Model):
                             unique=True,
                             null=False,
                             blank=False)
-    game_designer = models.CharField(max_lenght=255,
+    game_designer = models.CharField(max_length=255,
                                     null=False,
                                     blank=False)
     game_description = models.TextField(max_length=2000,

@@ -76,8 +76,8 @@ def register_user2(request):
         Token.objects.create(user=user)
         return JsonResponse({"Massage":"User Was Added"},status=status.HTTP_201_CREATED)
 
-@csrf_exempt
-@login_required
+#@csrf_exempt
+#@login_required
 def populateDataBase(request):
     script.run()
 

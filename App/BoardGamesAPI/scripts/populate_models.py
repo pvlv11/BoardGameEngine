@@ -1,7 +1,8 @@
-#from BoardGamesAPI.models import t_genre,t_game,t_game_genre
+from BoardGamesAPI.models import t_genre,t_game,t_game_genre
 import pandas as pd
 from random import randint
-import os
+from django.http import JsonResponse
+
 
 def populate_genres(dataframe):
     unique_categories = []
@@ -71,35 +72,34 @@ def populate_database(dataframe):
                 .replace(")]), OrderedDict([('@value', 'Recommended'), ('@numvotes', ","")\
                 .replace(")]), OrderedDict([('@value', 'Not Recommended'), ('@numvotes', ", "")\
                 .replace(")])])])","").replace("OrderedDict([('@numplayers', ","").replace("]","")
-        
         for sug_player in player_values.split(','):
             player_vote = sug_player.replace("''"," ").replace("'","")\
                             .strip().replace("+","").split(" ")
             if (len(player_vote) > 1):
-                player_dict[player_vote[0]] = player_vote[1]
+                player_dict[player_vote[0]] = int(player_vote[1])
             else:
                 player_dict[0] = 2
           
-        first_value = sorted(player_dict.items(),key=lambda x:x[1],reverse=True)[0]
-        sugested_player = int(first_value[0])
-
+        first_value = sorted(player_dict.items(),key=lambda x:x[1],reverse=True)
+        sugested_player = int(first_value[0][0])
+        pubilsh_year = row['yearpublished'] if row['yearpublished'] > 0 else randint(2000,2022)
         table_row = t_game(name=row['primary'],game_designer=designer_name,
-                game_description=row['description'],release_year=row['yearpublished'],
+                game_description=row['description'],release_year=pubilsh_year,
                 min_game_time=row['minplaytime'],max_game_time=row['maxplaytime'],
                 avg_time=row['playingtime'],min_player=row['minplayers'],
-                max_player=randint(sugested_player,sugested_player+2),
-                suggested_players=sug_player,minimal_age=sugested_age,
-                publisher=publisher_name,image_url=row['image'])
+                max_player=randint(int(sugested_player),int(sugested_player+2)),
+                suggested_players=sugested_player,suggested_age=sugested_age,
+                minimal_age=row['minage'],publisher=publisher_name,
+                image_url=row['image'])
         
         table_row.save()
         
         assign_games_to_genres(row['primary'],row['boardgamecategory'])
 
-
+#http://127.0.0.1:8000/BoardGamesAPI/games/populate
 
 def run():
-    print("odpalam skrypt")
-    path_to_file = './App/BoardGamesAPI/scripts/games_detailed_info.csv'
+    path_to_file = './BoardGamesAPI/scripts/games_detailed_info.csv'
     pd.set_option('display.max_columns', None)
     df = pd.read_csv(path_to_file,low_memory=False)
     df = df.drop(['Unnamed: 0','type','id','thumbnail','alternate',
@@ -107,9 +107,10 @@ def run():
                 'boardgamefamily','boardgameexpansion','boardgameimplementation',
                 'boardgameartist',],axis=1)
     df = df[df.columns[:15]]
+    df = df.drop_duplicates(subset='primary',keep='first')
+    #print(df.columns)
     populate_genres(df['boardgamecategory'].dropna())
     populate_database(df.dropna())
-    print("skrypt wykonany")
-
+    return JsonResponse({"message":"Success"})
 if __name__ == "__main__":
     run()
