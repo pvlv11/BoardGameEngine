@@ -19,10 +19,18 @@ export class AuthService {
   }
 
   logout(): Observable<any> {
+    localStorage.removeItem('CurrentUser');
     return this.http.get<any>(`http://127.0.0.1:8000/BoardGamesAPI/user/logout`)
   }
 
-  checkUserStatus(): Observable<any> {
-    return this.http.get<any>(`http://127.0.0.1:8000/BoardGamesAPI/user/check_user_status`)
+  // checkUserStatus(): Observable<any> {
+  //   return this.http.get<any>(`http://127.0.0.1:8000/BoardGamesAPI/user/check_user_status`)
+  // }
+
+  checkUserStatus(): boolean {
+    if (localStorage.getItem("CurrentUser") == null)
+      return false;
+    else
+      return true;
   }
 }

@@ -32,7 +32,6 @@ from django.views.decorators.csrf import csrf_exempt,ensure_csrf_cookie
 
 #TODO: przetestowac z postmanem
 @csrf_exempt
-@login_required
 def search_by_string(request):
 
     if request.method=='GET':

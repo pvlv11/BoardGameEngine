@@ -28,8 +28,13 @@ export class MyAccountComponent implements OnInit {
 
   logout() {
     this.authService.logout().subscribe(data => {
-      console.log(data);
+      this.showSuccess();
+      this.router.navigate(['/', 'login']);
     })
+  }
+
+  showSuccess() {
+    this.toast.success({detail:"SUCCESS",summary:'User successfully logged out!', duration: 2000, position:'tr'});
   }
 
 }
