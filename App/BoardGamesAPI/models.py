@@ -60,33 +60,40 @@ class t_genre(models.Model):
                                   null=False,
                                   blank=False)
 
-
 class t_game(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=255,
                             unique=True,
                             null=False,
                             blank=False)
-
+    game_designer = models.CharField(max_length=255,
+                                    null=False,
+                                    blank=False)
+    game_description = models.TextField(max_length=2000,
+                                    null=True,
+                                    blank=True)
     release_year = models.PositiveIntegerField(default=2010)
+    min_game_time = models.PositiveIntegerField()
+    max_game_time = models.PositiveIntegerField()
     avg_time = models.PositiveIntegerField(default=90)
 
-    min_player = models.PositiveSmallIntegerField(default=2,
+    min_player = models.PositiveIntegerField(default=2,
                                                   validators=[
                                                       MinValueValidator(1)
                                                   ])
 
-    max_player = models.PositiveSmallIntegerField(default=4,
+    max_player = models.PositiveIntegerField(default=4,
                                                   validators=[
                                                       MaxValueValidator(15),
                                                   ])
+    suggested_players = models.PositiveIntegerField()
     minimal_age = models.PositiveIntegerField(default=12,
                                                 validators=[
                                                     MinValueValidator(0)])
+    
+    suggested_age = models.PositiveIntegerField()
     publisher = models.CharField(default="No Data",max_length=255)                                                                                                
     image_url = models.CharField(default="No Avaible Image",max_length=255)
-    time_tag = models.CharField(max_length=255)
-    age_tag = models.CharField(max_length=255)
 
 """
     class Meta:

@@ -75,8 +75,8 @@ def register_user2(request):
         Token.objects.create(user=user)
         return JsonResponse({"Massage":"User Was Added"},status=status.HTTP_201_CREATED)
 
-@csrf_exempt
-@login_required
+#@csrf_exempt
+#@login_required
 def populateDataBase(request):
     script.run()
 
@@ -163,10 +163,8 @@ def top_10_games(request):
         return JsonResponse(serializer.data,safe=False)
 
 @csrf_exempt
-@login_required
-@ensure_csrf_cookie
-@api_view(['GET','POST','DELETE','UPDATE'])
-def games_review(request): 
+@api_view(['GET'])
+def get_games_review(request): 
     #All If Statements works correctly for GET method
     args = request.GET
     try:
@@ -204,8 +202,23 @@ def games_review(request):
             serializer = ser.GamesReview(specific_user,many=True)
             return JsonResponse(serializer.data,safe=False)
 
-    #PUT method works correctyl
-    elif request.method == 'POST':
+@csrf_exempt
+@ensure_csrf_cookie
+@login_required
+@api_view(['POST','DELETE'])
+def add_del_review(request):
+
+    args = request.GET
+    try:
+        user_id1 = args.__getitem__('user')
+    except MultiValueDictKeyError:
+        user_id1=None
+    try:
+        game_id1 = args.__getitem__('game')
+    except MultiValueDictKeyError:
+        game_id1=None
+
+    if request.method == 'POST':
         user_added_review = table.t_review.objects.filter(user_id=user_id1,game_id=game_id1)
         if user_added_review.exists():
             return JsonResponse({"Massage":"dodales juz recencje do tej gry "},status=status.HTTP_404_NOT_FOUND)
@@ -244,13 +257,10 @@ def login_view2(request):
     user = authenticate(request, username=username, password=password)
     if user is not None:
         login(request, user)
-        # Redirect to a success page.
-        # u nas return success to frontend
-
         response={"message":"user is logged",
                 "userToken":str(Token.objects.get(user=user)),
                 "username":user.username,
-                "email":user.email}#"token":token.key,"username":user.username,"email":user.email}
+                "email":user.email}
         return JsonResponse(response,safe=False)
     else:
         # Return an 'invalid login' error message.
