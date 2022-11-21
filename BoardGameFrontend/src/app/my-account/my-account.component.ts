@@ -4,11 +4,6 @@ import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { NgToastService } from 'ng-angular-popup';
 
-export interface User {
-  username: string;
-  email: string;
-}
-
 @Component({
   selector: 'app-my-account',
   templateUrl: './my-account.component.html',
@@ -21,10 +16,8 @@ export class MyAccountComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  user: User = {
-    username: 'admin',
-    email: 'admin@gamil.com'
-  }
+  username = localStorage.getItem("Username")?.replace(/['"']+/g, '');
+  email = localStorage.getItem("Email")?.replace(/['"']+/g, '');
 
   logout() {
     this.authService.logout().subscribe(data => {

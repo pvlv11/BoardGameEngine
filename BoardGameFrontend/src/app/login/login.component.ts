@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgToastService } from 'ng-angular-popup';
-import { User } from '../my-account/my-account.component';
+import { User } from '../models/user';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -35,6 +35,8 @@ export class LoginComponent implements OnInit {
     this.authService.login(this.username, this.password).subscribe(data => {
       this.user = data;
       localStorage.setItem("CurrentUser", JSON.stringify(this.user));
+      localStorage.setItem("Username", JSON.stringify(data.username));
+      localStorage.setItem("Email", JSON.stringify(data.email));
       this.showSuccess();
       this.router.navigate(['/', 'home']);
     }, 
