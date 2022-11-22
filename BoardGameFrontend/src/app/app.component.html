@@ -3,25 +3,26 @@
         <li id = "logo">
             BoardGameEngine
         </li>
-        <li>
+        <li *ngIf="userLoggedIn()">
             <a (click)="goToHome()">Home</a>
         </li>
-        <li>
+        <li *ngIf="userLoggedIn()">
             <a (click)="goToFavorites()">Favorites</a>
         </li>
-        <li>
+        <li *ngIf="!userLoggedIn()">
             <a (click)="goToLogin()">Login</a>
         </li>
-        <li>
+        <li *ngIf="!userLoggedIn()">
             <a (click)="goToRegister()">Register</a>
         </li>
-        <li>
+        <li *ngIf="userLoggedIn()">
             <a (click)="goToMyAccount()">My account</a>
         </li>
     </ul>
 </div>
 
 <router-outlet></router-outlet>
+<lib-ng-toast></lib-ng-toast>
 
 
 

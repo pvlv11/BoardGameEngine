@@ -3,15 +3,19 @@
       <mat-card-header>
         <mat-card-title>Register</mat-card-title>
       </mat-card-header>
-      <form class="example-form" #createForm="ngForm" [formGroup]="registerForm">
+      <form class="example-form" #createForm="ngForm" [formGroup]="registerForm" (ngSubmit)=onSubmit()>
         <mat-card-content>
 
           <mat-form-field class="example-full-width">
             <input matInput 
+            type="text"
             placeholder="Username"
             formControlName="username"
-            required>
+            required
+            [(ngModel)]="username">
+            <mat-hint align="end">At least 3 characters</mat-hint>
             <mat-error *ngIf="hasError('username', 'required')">Username is required</mat-error>
+            <mat-error *ngIf="hasError('username', 'minlength')">At least 3 characters</mat-error>
           </mat-form-field>
 
           <mat-form-field class="example-full-width">
@@ -20,8 +24,11 @@
             type="email"
             formControlName="email"
             required
-            ngModel email>
+            ngModel email
+            [(ngModel)]="email">
+            <mat-hint align="end">example@example.example</mat-hint>
             <mat-error *ngIf="hasError('email', 'required')">Email is required</mat-error>
+            <mat-error *ngIf="hasError('email', 'email')">Not a proper email format</mat-error>
           </mat-form-field>
 
           <mat-form-field class="example-full-width">
@@ -29,8 +36,11 @@
             placeholder="Password"
             type="password"
             formControlName="password"
-            required>
+            required
+            [(ngModel)]="password1">
+            <mat-hint align="end">At least 6 characters</mat-hint>
             <mat-error *ngIf="hasError('password', 'required')">Password is required</mat-error>
+            <mat-error *ngIf="hasError('password', 'minlength')">At least 6 characters</mat-error>
           </mat-form-field>
 
           <mat-form-field class="example-full-width">
@@ -38,12 +48,17 @@
              placeholder="Confirm password"
              type="password"
              formControlName="confirmPassword"
-             required>
+             required
+             [(ngModel)]="password2">
+             <mat-hint align="end">Passwords must be equals</mat-hint>
              <mat-error *ngIf="hasError('confirmPassword', 'required')">Confirm password is required</mat-error>
+             <mat-error *ngIf="!checkPasswords(password1, password2)">Passwords are not equal</mat-error>
           </mat-form-field>
 
+          <p class="warning" *ngIf="!checkPasswords(password1, password2)">Passwords are not equal!</p>
+
         </mat-card-content>
-        <button mat-raised-button class="btn-block" [disabled]="!registerForm.valid">Register</button>
+        <button mat-raised-button class="btn-block" [disabled]="disableButton()">Register</button>
       </form>
       <p>Already have an account?</p>
       <a href="./login">Login</a>

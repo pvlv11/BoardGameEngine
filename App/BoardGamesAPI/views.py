@@ -7,23 +7,31 @@ from .models import *
 
 #from pickle import NONE
 import BoardGamesAPI.models as table
-import BoardGamesAPI.serializers as ser
+import BoardGamesAPI.serializers as ser 
 import BoardGamesAPI.scripts.populate_models as script
 
-
-from django.db.models import Avg
+from django.contrib.auth.models import User
+from django.db.models import Avg,Count
 from django.http import JsonResponse
-
+from django.contrib.auth import authenticate, login
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser 
+from rest_framework.authtoken.models import Token
 from django.utils.datastructures import MultiValueDictKeyError
 
-from itertools import chain
 # Create your views here.
 #'BoardGames/games/search/by_string'
+
+from django.contrib.auth import authenticate, login, logout,get_user_model 
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.models  import User
+
+from django.views.decorators.csrf import csrf_exempt,ensure_csrf_cookie
+
 #TODO: przetestowac z postmanem
+@csrf_exempt
 def search_by_string(request):
 
     if request.method=='GET':
@@ -39,29 +47,41 @@ def search_by_string(request):
         serializer=ser.t_gameSerializer(found_games, many=True)
         return JsonResponse(serializer.data, safe=False)
 
-'''class t_game_view(ModelViewSet):#viewsets.ViewSet
-    serializer_class = t_gameSerializer
-    queryset = t_game.objects.all()'''
-"""
-class t_user_view(viewsets.ModelViewSet):
-    serializer_class = t_user_Serializer
-    queryset = t_user.objects.all()
-"""
+#User.objects.create_user('john', 'lennon@thebeatles.com', 'johnpassword')
+@csrf_exempt
+@api_view(['POST'])
+def register_user2(request):
+    args = request.GET
+    try:
+        username = args.__getitem__('username')
+        mail = args.__getitem__('email')
+        password = args.__getitem__('password')
+    except MultiValueDictKeyError:
+        return JsonResponse({"Massage":"Bad Request"},status=status.HTTP_400_BAD_REQUEST)
+    
+    if request.method == 'POST':
+        #User.objects.create_user('john', 'lennon@thebeatles.com', 'johnpassword')
+        if User.objects.filter(username=username).exists():
+            return JsonResponse({"Massage":"Username is taken"},status=status.HTTP_400_BAD_REQUEST)
+        elif User.objects.filter(email=mail).exists():
+            return JsonResponse({"Massage":"Email is taken"},status=status.HTTP_400_BAD_REQUEST)
+        else:
+            user_data = {'username':username,'email':mail,'password':password}
+            
+        #serializer = ser.t_user_Serializer(data=user_data)
+        #serializer.save()
+        User.objects.create_user(username, mail, password)
+        user = get_user_model().objects.filter(username=username).first()
+        Token.objects.create(user=user)
+        return JsonResponse({"Massage":"User Was Added"},status=status.HTTP_201_CREATED)
 
-
-
+#@csrf_exempt
+#@login_required
 def populateDataBase(request):
     script.run()
 
-# wyswietl wszytskie gry 
-'''def getAllGames(request):
-    jsone = {}
-    j = 0
-    for row in table.t_genre.objects.all():
-        jsone[j] = row.genre_name
-        j += 1
-    return JsonResponse(jsone)'''
-
+@csrf_exempt
+@api_view(['GET'])
 def getAllGames(request):
     args = request.GET
     try:
@@ -93,7 +113,11 @@ def getAllGames(request):
                     list_of_categories.append(t_genre.objects.get(id=j['genre_id_id']).genre_name)
 
                 game_info_dict = i
-                game_info_dict['avg_rank'] = round(review[0]['avg_rank'],2) if review.exists() else 0
+                try: 
+                    game_info_dict['avg_rank'] = round(review[0]['avg_rank'],2)
+                except IndexError:
+                    game_info_dict['avg_rank'] = 0.0
+
                 game_info_dict['genres'] = list_of_categories
                 output_list.append(game_info_dict)
 
@@ -111,17 +135,18 @@ def getAllGames(request):
                 list_of_categories.append(t_genre.objects.get(id=i['genre_id_id']).genre_name)
 
             game_info_dict = game_info[0]
-            game_info_dict['avg_rank'] = round(review[0]['avg_rank'],2)
+            try:
+                game_info_dict['avg_rank'] = round(review[0]['avg_rank'],2)
+            except IndexError:
+                game_info_dict['avg_rank'] = round(review[0]['avg_rank'],2)
+
             game_info_dict['genres'] = list_of_categories
             serializer = ser.fullGameSerializer([game_info_dict],many=True)
 
             return JsonResponse(serializer.data,safe=False)
             
-            
-
-#http://127.0.0.1:8000/BoardGamesAPI/games/top_10_games
-
 #def top10_using_serializer(request):
+@csrf_exempt
 @api_view(['GET'])
 def top_10_games(request):
     if request.method == 'GET':
@@ -137,8 +162,10 @@ def top_10_games(request):
         serializer = ser.Top10Games(result,many=True)
         return JsonResponse(serializer.data,safe=False)
 
-@api_view(['GET','PUT','DELETE','UPDATE'])
-def games_review(request): 
+@csrf_exempt
+@api_view(['GET'])
+def get_games_review(request): 
+    #All If Statements works correctly for GET method
     args = request.GET
     try:
         user_id1 = args.__getitem__('user')
@@ -148,12 +175,16 @@ def games_review(request):
         game_id1 = args.__getitem__('game')
     except MultiValueDictKeyError:
         game_id1=None
-    
-    #All If Statements works correctly for GET method
+        
     if request.method == 'GET':
+        try:
+            page_id = int(args.__getitem__('page_id'))
+        except MultiValueDictKeyError:
+            page_id = 1
+
         if all(item is not None for item in [user_id1,game_id1]):
-            specific_review = table.t_review.objects.get(user_id=user_id1,game_id=game_id1)
-            serializer = ser.GamesReview(specific_review)
+            specific_review = table.t_review.objects.filter(user_id=user_id1,game_id=game_id1)
+            serializer = ser.GamesReview(specific_review,many=True)
             return JsonResponse(serializer.data,safe=False)
         
         elif all(item is None for item in [user_id1,game_id1]):
@@ -171,19 +202,33 @@ def games_review(request):
             serializer = ser.GamesReview(specific_user,many=True)
             return JsonResponse(serializer.data,safe=False)
 
-    #PUT method works correctyl
-    elif request.method == 'PUT':
-    
+@csrf_exempt
+@ensure_csrf_cookie
+@login_required
+@api_view(['POST','DELETE'])
+def add_del_review(request):
+
+    args = request.GET
+    try:
+        user_id1 = args.__getitem__('user')
+    except MultiValueDictKeyError:
+        user_id1=None
+    try:
+        game_id1 = args.__getitem__('game')
+    except MultiValueDictKeyError:
+        game_id1=None
+
+    if request.method == 'POST':
         user_added_review = table.t_review.objects.filter(user_id=user_id1,game_id=game_id1)
         if user_added_review.exists():
             return JsonResponse({"Massage":"dodales juz recencje do tej gry "},status=status.HTTP_404_NOT_FOUND)
         else:
             try:
-                game_score = args.__getitem__('game_score')            
+                game_score = args.__getitem__("game_score")            
             except MultiValueDictKeyError:
                 return JsonResponse({"Massage":"nie udalo sie "},status=status.HTTP_404_NOT_FOUND)
             
-            description = args.__getitem__('description')
+            description = args.__getitem__("description")
 
             temp={'game_id_id':game_id1,'user_id_id':user_id1,'review_number':game_score,'description':description}
             serializer = ser.GamesReview(data=temp)
@@ -199,7 +244,41 @@ def games_review(request):
 
         review_info.delete()
         return JsonResponse({'Massage': 'Review was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
+        
+@csrf_exempt
+@api_view(['POST','GET'])
+def login_view2(request):
+    '''print("heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeere")
+    print(request.GET.keys())
+    print("heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeere")
+    print(request)'''
+    username = request.GET.__getitem__('username')
+    password = request.GET.__getitem__('password')
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        login(request, user)
+        response={"message":"user is logged",
+                "userToken":str(Token.objects.get(user=user)),
+                "username":user.username,
+                "email":user.email}
+        return JsonResponse(response,safe=False)
+    else:
+        # Return an 'invalid login' error message.
+        response={"sucess":False}
+        return JsonResponse(response,safe=False, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET','PUT','DELETE','UPDATE'])
+@csrf_exempt
+def logout_view2(request):
+    logout(request)
+    response={"sucess":True}
+    return JsonResponse(response,safe=False)
+
+def check_user_status(request):
+    if request.user.is_authenticated:
+        return JsonResponse({"user":"user is logged in"})
+    else:
+        return JsonResponse({"user":"User is not logged in"})
 """
 def top10(requst):
     jsone = []
@@ -216,4 +295,43 @@ def top10(requst):
 
 
     return JsonResponse(jsone,safe=False)
+"""
+'''def getAllGames(request):
+    jsone = {}
+    j = 0
+    for row in table.t_genre.objects.all():
+        jsone[j] = row.genre_name
+        j += 1
+    return JsonResponse(jsone)'''
+"""
+@csrf_exempt
+@api_view(['PUT','GET'])
+def register_user(request):
+    args = request.GET
+    try:
+        username = args.__getitem__('Username')
+        mail = args.__getitem__('Mail')
+        password = args.__getitem__('Password')
+    except MultiValueDictKeyError:
+        return JsonResponse({"Massage":"Bad Request"},status=status.HTTP_400_BAD_REQUEST)
+    
+    if request.method == 'PUT':
+        if User.objects.filter(Username=username).exists():
+            return JsonResponse({"Massage":"Username is taken"},status=status.HTTP_400_BAD_REQUEST)
+        elif User.objects.filter(Mail=mail).exists():
+            return JsonResponse({"Massage":"Email is taken"},status=status.HTTP_400_BAD_REQUEST)
+        else:
+            user_data = {'Username':username,'Mail':mail,'Password':password}
+            
+        User.objects.create_user(username, mail, password)
+        #if serializer.is_valid():
+        #    serializer.save()
+        return JsonResponse({"Massage":"User Was Added"},status=status.HTTP_201_CREATED)"""
+'''class t_game_view(ModelViewSet):#viewsets.ViewSet
+    serializer_class = t_gameSerializer
+    queryset = t_game.objects.all()'''
+"""
+class t_user_view(viewsets.ModelViewSet):
+    serializer_class = t_user_Serializer
+    queryset = t_user.objects.all()
 """

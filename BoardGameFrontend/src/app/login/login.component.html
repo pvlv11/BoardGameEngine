@@ -3,14 +3,15 @@
       <mat-card-header>
         <mat-card-title>Login</mat-card-title>
       </mat-card-header>
-      <form class="example-form" #createForm="ngForm" [formGroup]="loginForm">
+      <form class="example-form" #createForm="ngForm" [formGroup]="loginForm" (ngSubmit)=onSubmit()>
         <mat-card-content>
 
           <mat-form-field class="example-full-width">
             <input matInput
              placeholder="Username"
              formControlName="username"
-             required>
+             required
+             [(ngModel)]="username">
              <mat-error *ngIf="hasError('username', 'required')">Username is required</mat-error>
           </mat-form-field>
 
@@ -19,7 +20,8 @@
              placeholder="Password"
              type="password"
              formControlName="password"
-             required>
+             required
+             [(ngModel)]="password">
              <mat-error *ngIf="hasError('password', 'required')">Password is required</mat-error>
           </mat-form-field>
 
