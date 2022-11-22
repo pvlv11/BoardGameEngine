@@ -20,9 +20,9 @@ export class AuthService {
   }
 
   logout(): Observable<any> {
-    localStorage.removeItem('CurrentUser');
-    localStorage.removeItem('Username');
-    localStorage.removeItem('Email');
+    sessionStorage.removeItem('CurrentUser');
+    sessionStorage.removeItem('Username');
+    sessionStorage.removeItem('Email');
     return this.http.get<any>(`http://127.0.0.1:8000/BoardGamesAPI/user/logout`)
   }
 
@@ -31,7 +31,7 @@ export class AuthService {
   // }
 
   checkUserStatus(): boolean {
-    if (localStorage.getItem("CurrentUser") == null)
+    if (sessionStorage.getItem("CurrentUser") == null)
       return false;
     else
       return true;
