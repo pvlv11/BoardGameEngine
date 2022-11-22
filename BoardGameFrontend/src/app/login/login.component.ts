@@ -34,9 +34,9 @@ export class LoginComponent implements OnInit {
   onSubmit() {
     this.authService.login(this.username, this.password).subscribe(data => {
       this.user = data;
-      localStorage.setItem("CurrentUser", JSON.stringify(this.user));
-      localStorage.setItem("Username", JSON.stringify(data.username));
-      localStorage.setItem("Email", JSON.stringify(data.email));
+      sessionStorage.setItem("CurrentUser", JSON.stringify(this.user));
+      sessionStorage.setItem("Username", JSON.stringify(data.username));
+      sessionStorage.setItem("Email", JSON.stringify(data.email));
       this.showSuccess();
       this.router.navigate(['/', 'home']);
     }, 
