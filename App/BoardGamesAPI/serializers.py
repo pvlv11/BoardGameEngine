@@ -17,7 +17,10 @@ class t_gameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model=t_game
-        fields = ('id', 'name', 'release_year','avg_time','min_player', 'max_player','minimal_age','publisher','image_url')
+        fields = ('id', 'name','release_year','avg_time',
+                'min_player', 'max_player','minimal_age',
+                'publisher','image_url','game_designer',
+                'game_description','suggested_players','suggested_age')
 
 class fullGameSerializer(serializers.Serializer):
     
