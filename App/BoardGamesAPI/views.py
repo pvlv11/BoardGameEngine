@@ -147,7 +147,7 @@ def getAllGames(request):
             serializer = ser.fullGameSerializer([game_info_dict],many=True)
 
             return JsonResponse(serializer.data,safe=False)
-            
+
 #def top10_using_serializer(request):
 @csrf_exempt
 @api_view(['GET'])
@@ -208,37 +208,65 @@ def get_games_review(request):
 @csrf_exempt
 @ensure_csrf_cookie
 @login_required
-@api_view(['POST','DELETE'])
-def add_del_review(request):
+@api_view(['POST','DELETE','PUT'])
+def add_del_edit_review(request):
 
     args = request.GET
     try:
         user_id1 = args.__getitem__('user')
     except MultiValueDictKeyError:
-        user_id1=None
+        return JsonResponse({"Message":"User need to be provided"})
     try:
         game_id1 = args.__getitem__('game')
     except MultiValueDictKeyError:
-        game_id1=None
+        return JsonResponse({"Message":"You need to give us a game"})
+
 
     if request.method == 'POST':
         user_added_review = table.t_review.objects.filter(user_id=user_id1,game_id=game_id1)
         if user_added_review.exists():
-            return JsonResponse({"Massage":"dodales juz recencje do tej gry "},status=status.HTTP_404_NOT_FOUND)
+            return JsonResponse({"Massage":"You've added review for this game"},status=status.HTTP_404_NOT_FOUND)
         else:
             try:
                 game_score = args.__getitem__("game_score")            
             except MultiValueDictKeyError:
-                return JsonResponse({"Massage":"nie udalo sie "},status=status.HTTP_404_NOT_FOUND)
+                return JsonResponse({"Massage":"You need to specify review score"},status=status.HTTP_404_NOT_FOUND)
             
             description = args.__getitem__("description")
 
-            temp={'game_id_id':game_id1,'user_id_id':user_id1,'review_number':game_score,'description':description}
+            temp={'game_id_id':game_id1,'user_id_id':user_id1,
+                    'review_number':game_score,'description':description}
+            
+
             serializer = ser.GamesReview(data=temp)
             if serializer.is_valid():
                 serializer.save()
                 return JsonResponse({"Massage":"Review was added"},status=status.HTTP_201_CREATED)
   
+    elif request.method == 'PUT':
+        user_added_review = table.t_review.objects.filter(user_id=user_id1,game_id=game_id1)
+        if user_added_review.exists():
+            try:
+                review_description = args.__getitem__('description')
+            except MultiValueDictKeyError:
+                review_description = user_added_review.description
+            
+            try:
+                review_score = args.__getitem__('game_score')
+            except MultiValueDictKeyError:
+                review_score = user_added_review.review_number
+            
+            temp={'game_id_id':game_id1,'user_id_id':user_id1,
+                    'review_number':review_score,'description':review_description}
+
+            serializer = ser.GamesReview(user_added_review.first(),data=temp)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return JsonResponse({"Massage":"Review was edited"},status=status.HTTP_202_ACCEPTED)
+            return JsonResponse({"Massage":"Review couldn't be edited"},status=status.HTTP_400_BAD_REQUEST)
+    
+        else:
+            return JsonResponse({"Massage":"Unable to change review"},status=status.HTTP_404_NOT_FOUND)
     elif request.method == 'DELETE':
         try:
             review_info = table.t_review.objects.get(user_id=user_id1,game_id=game_id1)

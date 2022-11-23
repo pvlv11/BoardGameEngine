@@ -9,7 +9,7 @@ urlpatterns=[
     path('games/top_10_games',views.top_10_games,name='games/top_10_games'),
     
     path('games/get_games_review',views.get_games_review,name='games/get_games_review'),
-    path('games/add_del_review',views.add_del_review,name='games/add_del_review'),
+    path('games/add_del_review',views.add_del_edit_review,name='games/add_del_review'),
 
     path('games/populate',views.populateDataBase,name='games/populateDataBase'),
     path('games/search_by_string',views.search_by_string,name='games/search_by_string'),

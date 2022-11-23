@@ -2,8 +2,6 @@
 #from dataclasses import fields
 #from pyexpat import model
 
-from importlib.metadata import requires
-from operator import truediv
 from rest_framework import serializers
 from .models import *
 
@@ -44,6 +42,17 @@ class GamesReview(serializers.Serializer):
 
     def create(self, validated_data):
         return t_review.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+
+        instance.user_id_id = validated_data.get('user_id_id', instance.user_id_id)
+        instance.game_id_id = validated_data.get('game_id_id', instance.game_id_id)
+        instance.review_number = validated_data.get('review_number', instance.review_number)
+        instance.description = validated_data.get('description', instance.description)
+
+        instance.save()
+        return instance
+    
 """
     class Meta:
         model = t_review
