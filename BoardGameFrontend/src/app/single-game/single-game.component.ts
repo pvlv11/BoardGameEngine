@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ThemePalette } from '@angular/material/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Game } from '../models/game';
+import { AuthService } from '../services/auth.service';
 import { GamesService } from '../services/games.service';
 
 export interface GameItem { 
@@ -33,7 +34,8 @@ interface Rating {
 })
 export class SingleGameComponent implements OnInit {
 
-  constructor(private router: Router, private gamesService: GamesService, private route: ActivatedRoute) { }
+  constructor(private router: Router, private gamesService: GamesService, private route: ActivatedRoute, 
+    private auth: AuthService) { }
 
   id: number = 0;
   game: Game[] = [];
@@ -61,5 +63,9 @@ export class SingleGameComponent implements OnInit {
   favClick() {
     this.game[0].state = !this.game[0].state;
  }
+
+  isLoggedIn() {
+    return this.auth.checkUserStatus();
+  }
 
 }

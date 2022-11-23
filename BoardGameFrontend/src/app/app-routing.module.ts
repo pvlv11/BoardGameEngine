@@ -24,8 +24,7 @@ const routes: Routes = [
   },
   {
     path: 'home',
-    component: HomeComponent,
-    canActivate: [AuthGuardService]
+    component: HomeComponent
   },
   {
     path: '',
@@ -44,13 +43,11 @@ const routes: Routes = [
   },
   {
     path: 'game',
-    component: SingleGameComponent,
-    canActivate: [AuthGuardService]
+    component: SingleGameComponent
   },
   {
     path: 'search',
-    component: SearchComponent,
-    canActivate: [AuthGuardService]
+    component: SearchComponent
   }
 ];
 

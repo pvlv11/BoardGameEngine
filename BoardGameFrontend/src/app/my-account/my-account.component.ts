@@ -16,8 +16,8 @@ export class MyAccountComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  username = localStorage.getItem("Username")?.replace(/['"']+/g, '');
-  email = localStorage.getItem("Email")?.replace(/['"']+/g, '');
+  username = sessionStorage.getItem("Username")?.replace(/['"']+/g, '');
+  email = sessionStorage.getItem("Email")?.replace(/['"']+/g, '');
 
   logout() {
     this.authService.logout().subscribe(data => {
