@@ -18,7 +18,9 @@
                 <div class="rating">users rating: <star-rating [starType]="'svg'" [rating]="game[0].avg_rank" 
                     [labelText]="game[0].avg_rank.toString()"
                     [labelPosition]="'right'" [showHalfStars]="true" [readOnly]="true"></star-rating>
-                    <button mat-icon-button *ngIf="isLoggedIn()"><mat-icon>star_half</mat-icon>rate this game</button></div>
+                    <button mat-icon-button *ngIf="isLoggedIn()" (click)="openDialog()">
+                        <mat-icon>star_half</mat-icon>rate this game</button>
+                </div>
                 <div class="players">players: {{ game[0].min_player }} - {{ game[0].max_player }}</div>
                 <div class="age">age: {{ game[0].minimal_age }}+</div>
                 <div class="time">time: {{ game[0].avg_time }} min</div>
