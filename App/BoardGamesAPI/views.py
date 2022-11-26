@@ -43,8 +43,33 @@ def search_by_string(request):
         try:
             found_games=table.t_game.objects.filter(name__contains=name_we_are_looking_for).values()
         except table.t_game.DoesNotExist:
-            return JsonResponse({"Massage":"game not found \
-                                        try different string"},status=status.HTTP_404_NOT_FOUND)
+            return JsonResponse({"Massage":"game not found try different string"},
+                                status=status.HTTP_404_NOT_FOUND)
+        out_list = []
+        for game in found_games:
+            game_info_dict = game
+            review = (table.t_review.objects
+                    .values('game_id_id')
+                    .annotate(avg_rank=Avg('review_number'))
+                    .order_by('-avg_rank')).filter(game_id_id=found_games['id'])
+            is_favourite = False
+            if request.user.is_authenticated:
+                if t_user_game.objects.filter(game_id=game['id'],
+                                            user_id=request.user.id).exists():
+                    is_favourite = True
+            list_of_categories = []
+            for j in t_game_genre.objects\
+                            .filter(game_id_id=game["id"]).select_related().values():
+                    list_of_categories.append(t_genre.objects.
+                                            get(id=j['genre_id_id']).genre_name)
+            game_info_dict['genres'] = list_of_categories
+            if review.exists():
+                game_info_dict['rank_value'] = round(review[0]['avg_rank'],2)
+            else:
+                game_info_dict['rank_value'] = 0.0
+            
+            game_info_dict['is_favourit'] = is_favourite
+            out_list.append(game_info_dict)
         serializer=ser.t_gameSerializer(found_games, many=True)
         return JsonResponse(serializer.data, safe=False)
 
@@ -86,12 +111,12 @@ def populateDataBase(request):
 def getAllGames(request):
     args = request.GET
     try:
-        game_id = args.__getitem__('game')
+        game_name = args.__getitem__('game')
     except MultiValueDictKeyError:
-        game_id = None
+        game_name = ""
 
     if request.method == 'GET':
-        if game_id is None:
+        if not t_game.objects.filter(name=game_name).exists():
             count_of_games_in_page = 10
             try:
                 page_id = int(args.__getitem__('page_id'))
@@ -100,10 +125,10 @@ def getAllGames(request):
 
             games_info = table.t_game.objects.filter(
                     id__gt=((page_id-1)*count_of_games_in_page),
-                    id__lte=(page_id*count_of_games_in_page))
+                    gameid__lte=(page_id*count_of_games_in_page))
 
             output_list = []
-            for i in games_info.values():
+            for game in games_info.values():
                 
                 review = (table.t_review.objects
                 .values('game_id_id')
@@ -115,12 +140,18 @@ def getAllGames(request):
                             .filter(game_id_id=i["id"]).select_related().values():
                     list_of_categories.append(t_genre.objects.get(id=j['genre_id_id']).genre_name)
 
-                game_info_dict = i
+                is_favourite = False
+                if request.user.is_authenticated:
+                    if t_user_game.objects.filter(game_id=game['id'],
+                                            user_id=request.user.id).exists():
+                        is_favourite = True
+
+                game_info_dict = game
                 if review.exists():
                     game_info_dict['avg_rank'] = round(review[0]['avg_rank'],2)
                 else:
                     game_info_dict['avg_rank'] = 0.0
-
+                game_info_dict['is_favourite'] = is_favourite
                 game_info_dict['genres'] = list_of_categories
                 output_list.append(game_info_dict)
 
@@ -128,14 +159,21 @@ def getAllGames(request):
             return JsonResponse(serializer.data,safe=False)
 
         else:
-            game_info = table.t_game.objects.filter(id=game_id).values()
+            game_info = table.t_game.objects.filter(name=game_name).values()
             review = (table.t_review.objects
                 .values('game_id_id')
                 .annotate(avg_rank=Avg('review_number'))
-                .order_by('-avg_rank')).filter(game_id_id=game_id)
+                .order_by('-avg_rank')).filter(game_id_id=games_info['id'])
+
             list_of_categories = []
-            for i in t_game_genre.objects.filter(game_id_id=game_id).select_related().values():
+            for i in t_game_genre.objects.filter(game_id_id=games_info['id']).select_related().values():
                 list_of_categories.append(t_genre.objects.get(id=i['genre_id_id']).genre_name)
+
+            is_favourite = False
+            if request.user.is_authenticated:
+                if t_user_game.objects.filter(game_id=game['id'],
+                                            user_id=request.user.id).exists():
+                    is_favourite = True
 
             game_info_dict = game_info[0]
             if review.exists():
@@ -143,6 +181,7 @@ def getAllGames(request):
             else:
                 game_info_dict['avg_rank'] = 0.0
 
+            game_info_dict['is_favourite'] = is_favourite
             game_info_dict['genres'] = list_of_categories
             serializer = ser.fullGameSerializer([game_info_dict],many=True)
 
@@ -275,7 +314,104 @@ def add_del_edit_review(request):
 
         review_info.delete()
         return JsonResponse({'Massage': 'Review was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
-        
+
+@csrf_exempt
+@ensure_csrf_cookie
+@login_required
+@api_view(['GET'])
+def get_favourites(request):
+    args = request.GET
+    if request.method == 'GET' and request.user.is_authenticated:
+        found_games=table.t_user_game.objects.filter(user_id=request.user.id).values()
+        if found_games.exists():
+            out_list = []
+            for f_game in found_games:
+                game_info_dict = table.t_game.objects.filter(id=f_game['game_id']).values()
+                review = (table.t_review.objects
+                        .values('game_id_id')
+                        .annotate(avg_rank=Avg('review_number'))
+                        .order_by('-avg_rank')).filter(game_id_id=f_game['game_id'])
+                list_of_categories = []
+                for j in t_game_genre.objects\
+                                .filter(game_id_id=f_game["game_id"]).select_related().values():
+                        list_of_categories.append(t_genre.objects.
+                                                get(id=j['genre_id_id']).genre_name)
+                game_info_dict['genres'] = list_of_categories
+                if review.exists():
+                    game_info_dict['rank_value'] = round(review[0]['avg_rank'],2)
+                else:
+                    game_info_dict['rank_value'] = 0.0
+                
+                game_info_dict['is_favourit'] = True
+                out_list.append(game_info_dict)
+            serializer=ser.t_gameSerializer(found_games, many=True)
+            return JsonResponse(serializer.data, safe=False)
+        else:
+            return JsonResponse({"Message":"You don't haave any games in favourite"},
+                            status=status.HTTP_204_NO_CONTENT)
+    else:
+        return JsonResponse({"Message":"Something went wrong"},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+
+@csrf_exempt
+@ensure_csrf_cookie
+@login_required
+@api_view(['POST'])
+def add_to_favourites(request):
+    args = request.GET
+    try:
+        game_name = args.__getitem__('game')
+    except MultiValueDictKeyError:
+        return JsonResponse({"Message":"Unable to add game"},
+                                status=status.HTTP_400_BAD_REQUEST)
+    game_info = table.t_game.objects.filter(name=game_name).values()
+    if request.user.is_authenticated and game_info.exists() \
+        and request.method == 'POST':
+
+        row_in_table = table.t_user_game.objects.filter(game_id=game_info['id'],user_id=request.user.id)
+        if row_in_table.exists():
+            return JsonResponse({"Message":"Game already in your favorites"},
+                                    status=status.HTTP_403_FORBIDDEN)
+        else:
+            row = {"user_id":request.user.id,"game_id":game_info['id']}
+            serializer = ser.t_favourite_serializer(data=row)
+            if serializer.is_valid():
+                serializer.save()
+                return JsonResponse({"Message":"Game was added to your favourites"})
+
+        return JsonResponse({"Message":"Something went wrong"},
+                            status=status.HTTP_404_NOT_FOUND)
+
+    return JsonResponse({"Message":"Only logged users can add games to favourites"},
+                        status=status.HTTP_401_UNAUTHORIZED)
+
+@csrf_exempt
+@ensure_csrf_cookie
+@login_required
+@api_view(['DELETE'])
+def remove_from_favourites(request):
+    args = request.GET
+    try:
+        game_name = args.__getitem__('game')
+    except MultiValueDictKeyError:
+        return JsonResponse({"Message":"You need to specify game"},
+                                status=status.HTTP_400_BAD_REQUEST)
+    game_info = table.t_game.objects.filter(name=game_name).values()
+    if request.user.is_authenticated and game_info.exists() \
+        and request.method == 'DELETE':
+
+        row_in_table = t_user_game.objects.filter(game_id=game_info['id'],user_id=request.user.id)
+        if row_in_table.exists():
+            row_in_table.delete()
+            return JsonResponse({'Massage': 'Review was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
+        else:
+            return JsonResponse({"Message":"Unable to remove game"},
+                                    status=status.HTTP_400_BAD_REQUEST)
+
+    return JsonResponse({"Message":"Something went wrong"},
+                        status=status.HTTP_400_BAD_REQUEST)
+
 @csrf_exempt
 @api_view(['POST','GET'])
 def login_view2(request):

@@ -13,6 +13,12 @@ urlpatterns=[
 
     path('games/populate',views.populateDataBase,name='games/populateDataBase'),
     path('games/search_by_string',views.search_by_string,name='games/search_by_string'),
+
+    path('games/get_favourite',views.get_favourites,name='games/get_favourite'),
+    path('games/add_favourite',views.add_to_favourites,name='games/add_favourite'),
+    path('games/del_favourite',views.remove_from_favourites,name='games/del_favourite'),
+
+
     path('user/register_user',views.register_user2,name='user/register_user'),
     path('user/login_user',views.login_view2,name='user/login_user'),
     path('user/logout',views.logout_view2,name='user/logout'),
