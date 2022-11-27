@@ -19,6 +19,8 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser 
 from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.serializers import AuthTokenSerializer
+
 from django.utils.datastructures import MultiValueDictKeyError
 
 # Create your views here.
@@ -51,7 +53,7 @@ def search_by_string(request):
             review = (table.t_review.objects
                     .values('game_id_id')
                     .annotate(avg_rank=Avg('review_number'))
-                    .order_by('-avg_rank')).filter(game_id_id=found_games['id'])
+                    .order_by('-avg_rank')).filter(game_id_id=game['id'])
             is_favourite = False
             if request.user.is_authenticated:
                 if t_user_game.objects.filter(game_id=game['id'],
@@ -68,39 +70,12 @@ def search_by_string(request):
             else:
                 game_info_dict['rank_value'] = 0.0
             
-            game_info_dict['is_favourit'] = is_favourite
+            game_info_dict['is_favourite'] = is_favourite
             out_list.append(game_info_dict)
         serializer=ser.t_gameSerializer(found_games, many=True)
         return JsonResponse(serializer.data, safe=False)
 
 #User.objects.create_user('john', 'lennon@thebeatles.com', 'johnpassword')
-@csrf_exempt
-@api_view(['POST'])
-def register_user2(request):
-    args = request.GET
-    try:
-        username = args.__getitem__('username')
-        mail = args.__getitem__('email')
-        password = args.__getitem__('password')
-    except MultiValueDictKeyError:
-        return JsonResponse({"Massage":"Bad Request"},status=status.HTTP_400_BAD_REQUEST)
-    
-    if request.method == 'POST':
-        #User.objects.create_user('john', 'lennon@thebeatles.com', 'johnpassword')
-        if User.objects.filter(username=username).exists():
-            return JsonResponse({"Massage":"Username is taken"},status=status.HTTP_400_BAD_REQUEST)
-        elif User.objects.filter(email=mail).exists():
-            return JsonResponse({"Massage":"Email is taken"},status=status.HTTP_400_BAD_REQUEST)
-        else:
-            user_data = {'username':username,'email':mail,'password':password}
-            
-        #serializer = ser.t_user_Serializer(data=user_data)
-        #serializer.save()
-        User.objects.create_user(username, mail, password)
-        user = get_user_model().objects.filter(username=username).first()
-        Token.objects.create(user=user)
-        return JsonResponse({"Massage":"User Was Added"},status=status.HTTP_201_CREATED)
-
 #@csrf_exempt
 #@login_required
 def populateDataBase(request):
@@ -125,7 +100,7 @@ def getAllGames(request):
 
             games_info = table.t_game.objects.filter(
                     id__gt=((page_id-1)*count_of_games_in_page),
-                    gameid__lte=(page_id*count_of_games_in_page))
+                    id__lte=(page_id*count_of_games_in_page))
 
             output_list = []
             for game in games_info.values():
@@ -133,11 +108,11 @@ def getAllGames(request):
                 review = (table.t_review.objects
                 .values('game_id_id')
                 .annotate(avg_rank=Avg('review_number'))
-                .order_by('-avg_rank')).filter(game_id_id=i["id"])
+                .order_by('-avg_rank')).filter(game_id_id=game["id"])
                 list_of_categories = []
                 
                 for j in t_game_genre.objects\
-                            .filter(game_id_id=i["id"]).select_related().values():
+                            .filter(game_id_id=game["id"]).select_related().values():
                     list_of_categories.append(t_genre.objects.get(id=j['genre_id_id']).genre_name)
 
                 is_favourite = False
@@ -148,14 +123,14 @@ def getAllGames(request):
 
                 game_info_dict = game
                 if review.exists():
-                    game_info_dict['avg_rank'] = round(review[0]['avg_rank'],2)
+                    game_info_dict['rank_value'] = round(review[0]['avg_rank'],2)
                 else:
-                    game_info_dict['avg_rank'] = 0.0
+                    game_info_dict['rank_value'] = 0.0
                 game_info_dict['is_favourite'] = is_favourite
                 game_info_dict['genres'] = list_of_categories
                 output_list.append(game_info_dict)
 
-            serializer = ser.fullGameSerializer(output_list,many=True)
+            serializer = ser.t_gameSerializer(output_list,many=True)
             return JsonResponse(serializer.data,safe=False)
 
         else:
@@ -177,13 +152,13 @@ def getAllGames(request):
 
             game_info_dict = game_info[0]
             if review.exists():
-                game_info_dict['avg_rank'] = round(review[0]['avg_rank'],2)
+                game_info_dict['rank_value'] = round(review[0]['avg_rank'],2)
             else:
-                game_info_dict['avg_rank'] = 0.0
+                game_info_dict['rank_value'] = 0.0
 
             game_info_dict['is_favourite'] = is_favourite
             game_info_dict['genres'] = list_of_categories
-            serializer = ser.fullGameSerializer([game_info_dict],many=True)
+            serializer = ser.t_gameSerializer([game_info_dict],many=True)
 
             return JsonResponse(serializer.data,safe=False)
 
@@ -321,30 +296,34 @@ def add_del_edit_review(request):
 @api_view(['GET'])
 def get_favourites(request):
     args = request.GET
+    print(request.user)
     if request.method == 'GET' and request.user.is_authenticated:
         found_games=table.t_user_game.objects.filter(user_id=request.user.id).values()
         if found_games.exists():
             out_list = []
             for f_game in found_games:
-                game_info_dict = table.t_game.objects.filter(id=f_game['game_id']).values()
+                print(f_game)
+                game_info_dict = table.t_game.objects.filter(id=f_game['game_id_id']).values()[0]
                 review = (table.t_review.objects
                         .values('game_id_id')
                         .annotate(avg_rank=Avg('review_number'))
-                        .order_by('-avg_rank')).filter(game_id_id=f_game['game_id'])
+                        .order_by('-avg_rank')).filter(game_id_id=f_game['game_id_id'])
                 list_of_categories = []
                 for j in t_game_genre.objects\
-                                .filter(game_id_id=f_game["game_id"]).select_related().values():
+                                .filter(game_id_id=f_game["game_id_id"]).select_related().values():
                         list_of_categories.append(t_genre.objects.
                                                 get(id=j['genre_id_id']).genre_name)
+                        
                 game_info_dict['genres'] = list_of_categories
                 if review.exists():
                     game_info_dict['rank_value'] = round(review[0]['avg_rank'],2)
                 else:
                     game_info_dict['rank_value'] = 0.0
                 
-                game_info_dict['is_favourit'] = True
+                game_info_dict['is_favourite'] = True
                 out_list.append(game_info_dict)
-            serializer=ser.t_gameSerializer(found_games, many=True)
+                print(game_info_dict)
+            serializer=ser.t_gameSerializer(out_list, many=True)
             return JsonResponse(serializer.data, safe=False)
         else:
             return JsonResponse({"Message":"You don't haave any games in favourite"},
@@ -353,11 +332,9 @@ def get_favourites(request):
         return JsonResponse({"Message":"Something went wrong"},
                         status=status.HTTP_400_BAD_REQUEST)
 
-
-@csrf_exempt
 @ensure_csrf_cookie
 @login_required
-@api_view(['POST'])
+@api_view(['POST','GET'])
 def add_to_favourites(request):
     args = request.GET
     try:
@@ -365,10 +342,10 @@ def add_to_favourites(request):
     except MultiValueDictKeyError:
         return JsonResponse({"Message":"Unable to add game"},
                                 status=status.HTTP_400_BAD_REQUEST)
-    game_info = table.t_game.objects.filter(name=game_name).values()
-    if request.user.is_authenticated and game_info.exists() \
-        and request.method == 'POST':
-
+    row = table.t_game.objects.filter(name=game_name).values()
+    if request.user.is_authenticated and row.exists() \
+        and request.method == 'GET':
+        game_info = row[0]
         row_in_table = table.t_user_game.objects.filter(game_id=game_info['id'],user_id=request.user.id)
         if row_in_table.exists():
             return JsonResponse({"Message":"Game already in your favorites"},
@@ -389,7 +366,7 @@ def add_to_favourites(request):
 @csrf_exempt
 @ensure_csrf_cookie
 @login_required
-@api_view(['DELETE'])
+@api_view(['GET'])
 def remove_from_favourites(request):
     args = request.GET
     try:
@@ -397,14 +374,15 @@ def remove_from_favourites(request):
     except MultiValueDictKeyError:
         return JsonResponse({"Message":"You need to specify game"},
                                 status=status.HTTP_400_BAD_REQUEST)
-    game_info = table.t_game.objects.filter(name=game_name).values()
-    if request.user.is_authenticated and game_info.exists() \
-        and request.method == 'DELETE':
-
+    row = table.t_game.objects.filter(name=game_name).values()
+    
+    if request.user.is_authenticated and row.exists() \
+        and request.method == 'GET':
+        game_info = row[0]
         row_in_table = t_user_game.objects.filter(game_id=game_info['id'],user_id=request.user.id)
         if row_in_table.exists():
             row_in_table.delete()
-            return JsonResponse({'Massage': 'Review was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
+            return JsonResponse({'Massage': 'Game was deleted from favourites successfully!'}, status=status.HTTP_204_NO_CONTENT)
         else:
             return JsonResponse({"Message":"Unable to remove game"},
                                     status=status.HTTP_400_BAD_REQUEST)
@@ -415,24 +393,21 @@ def remove_from_favourites(request):
 @csrf_exempt
 @api_view(['POST','GET'])
 def login_view2(request):
-    '''print("heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeere")
-    print(request.GET.keys())
-    print("heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeere")
-    print(request)'''
-    username = request.GET.__getitem__('username')
-    password = request.GET.__getitem__('password')
-    user = authenticate(request, username=username, password=password)
-    if user is not None:
-        login(request, user)
-        response={"message":"user is logged",
+    args = request.GET
+    username = args.__getitem__('username')
+    password = args.__getitem__('password')
+    if request.method == "GET":
+        serializer = AuthTokenSerializer(data={'username':username,'password':password})
+        if serializer.is_valid(raise_exception=True):
+            user = serializer.validated_data['user']
+            login(request,user)
+            response={"message":"user is logged",
                 "userToken":str(Token.objects.get(user=user)),
                 "username":user.username,
                 "email":user.email}
-        return JsonResponse(response,safe=False)
-    else:
-        # Return an 'invalid login' error message.
-        response={"sucess":False}
-        return JsonResponse(response,safe=False)
+            return JsonResponse(response,safe=False)
+        else:
+            return JsonResponse({"Message":"Something Went Wrong"},safe=False)
 
 @api_view(['GET','PUT','DELETE','UPDATE'])
 @csrf_exempt
@@ -446,6 +421,40 @@ def check_user_status(request):
         return JsonResponse({"user":"user is logged in"})
     else:
         return JsonResponse({"user":"User is not logged in"})
+
+    
+@api_view(['GET'])
+def register_user2(request):
+    args = request.GET
+    try:
+        username = args.__getitem__('username')
+        mail = args.__getitem__('email')
+        password = args.__getitem__('password')
+    except MultiValueDictKeyError:
+        return JsonResponse({"Massage":"Bad Request"},
+                        status=status.HTTP_400_BAD_REQUEST)
+    if request.method == 'GET':
+        #User.objects.create_user('john', 'lennon@thebeatles.com', 'johnpassword')
+        if User.objects.filter(username=username).exists():
+            return JsonResponse({"Massage":"Username is taken"},
+                            status=status.HTTP_400_BAD_REQUEST)
+        elif User.objects.filter(email=mail).exists():
+            return JsonResponse({"Massage":"Email is taken"},
+                            status=status.HTTP_400_BAD_REQUEST)
+        else:
+            user_data = {'username':username,'email':mail,'password':password}
+        
+        register = register_serializer(data=user_data)
+        if register.is_valid(raise_exception=True):
+            user = register.save()
+            return JsonResponse({"user":user_serializer(user).data,
+                                "token": str(Token.objects.create(user=user))},
+                                status=status.HTTP_201_CREATED)
+        else:
+            return JsonResponse({"Message":"Something Went Wrong"},
+                                status=status.HTTP_400_BAD_REQUEST)
+       
+
 """
 def top10(requst):
     jsone = []

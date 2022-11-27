@@ -4,8 +4,28 @@
 
 from rest_framework import serializers
 from .models import *
+from django.contrib.auth.models import User
 
+class user_serializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id','username','email')
 
+        
+class register_serializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email', 'password')
+
+    def create(self, validated_data):
+        user = User.objects.create_user(validated_data['username'], 
+                                        validated_data['email'], 
+                                        validated_data['password'])
+        
+        user.set_password(validated_data['password'])
+        user.save()
+        return user       
+        
 class t_user_Serializer(serializers.ModelSerializer):
 
     class Meta:
@@ -14,28 +34,22 @@ class t_user_Serializer(serializers.ModelSerializer):
 
 
 class t_gameSerializer(serializers.ModelSerializer):
-
+    rank_value = serializers.FloatField()
+    genres = serializers.ListField(child=serializers.CharField(max_length=255))
+    is_favourite = serializers.BooleanField()
     class Meta:
         model=t_game
         fields = ('id', 'name','release_year','avg_time',
                 'min_player', 'max_player','minimal_age',
                 'publisher','image_url','game_designer',
-                'game_description','suggested_players','suggested_age')
+                'game_description','suggested_players',
+                'suggested_age','rank_value','genres','is_favourite')
 
-class fullGameSerializer(serializers.Serializer):
-    
-    id = serializers.IntegerField(required=True)
-    name = serializers.CharField(required=True,max_length=255)
-    release_year = serializers.IntegerField(required=True)
-    avg_time = serializers.IntegerField(required=True)
-    min_player = serializers.IntegerField(required=True)
-    max_player = serializers.IntegerField(required=True)
-    minimal_age = serializers.IntegerField(required=True)
-    publisher = serializers.CharField(max_length=255)
-    image_url = serializers.CharField(max_length=255)
-    avg_rank = serializers.DecimalField(required=True,max_digits=4,decimal_places=2)
-    genres = serializers.ListField(child=serializers.CharField(max_length=255))
-
+class t_favourite_serializer(serializers.ModelSerializer):
+    class Meta:
+        model = t_user_game
+        fields = ('user_id','game_id')
+        
 class GamesReview(serializers.Serializer):
 
     user_id_id = serializers.IntegerField(required=True)
@@ -56,11 +70,7 @@ class GamesReview(serializers.Serializer):
         instance.save()
         return instance
     
-"""
-    class Meta:
-        model = t_review
-        fields = ('id','game_id_id','user_id_id','review_number','description')
-"""
+
 
 class Top10Games(serializers.Serializer):
     game_id_id = serializers.IntegerField(required=True)
@@ -77,3 +87,9 @@ class GamesReview(serializers.Serializer):
     def create(self, validated_data):
         return t_review.objects.create(**validated_data)
         '''
+
+"""
+    class Meta:
+        model = t_review
+        fields = ('id','game_id_id','user_id_id','review_number','description')
+"""
