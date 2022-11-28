@@ -34,7 +34,6 @@ from django.views.decorators.csrf import csrf_exempt,ensure_csrf_cookie
 
 #TODO: przetestowac z postmanem
 @csrf_exempt
-@login_required
 def search_by_string(request):
 
     if request.method=='GET':
@@ -405,9 +404,12 @@ def login_view2(request):
                 "userToken":str(Token.objects.get(user=user)),
                 "username":user.username,
                 "email":user.email}
+
             return JsonResponse(response,safe=False)
         else:
-            return JsonResponse({"Message":"Something Went Wrong"},safe=False)
+            return JsonResponse({"Message":"Something Went Wrong"},safe=False, status=status.HTTP_400_BAD_REQUEST)
+
+        
 
 @api_view(['GET','PUT','DELETE','UPDATE'])
 @csrf_exempt
