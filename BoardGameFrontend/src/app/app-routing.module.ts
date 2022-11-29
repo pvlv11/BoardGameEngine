@@ -8,15 +8,19 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { SingleGameComponent } from './single-game/single-game.component';
 import { SearchComponent } from './search/search.component';
+import { AuthGuardService } from './services/auth-guard.service';
+import { AuthService } from './services/auth.service';
 
 const routes: Routes = [
   {
     path: 'myAccount',
-    component: MyAccountComponent
+    component: MyAccountComponent,
+    canActivate: [AuthGuardService]
   },
   {
     path: 'favorites',
-    component: FavoritesComponent
+    component: FavoritesComponent,
+    canActivate: [AuthGuardService]
   },
   {
     path: 'home',
@@ -29,11 +33,13 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    component: LoginComponent
+    component: LoginComponent,
+    canActivate: [AuthService]
   },
   {
     path: 'register',
-    component: RegisterComponent
+    component: RegisterComponent,
+    canActivate: [AuthService]
   },
   {
     path: 'game',
@@ -49,6 +55,7 @@ const routes: Routes = [
   imports: [
     CommonModule,
     RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
+  providers: [AuthGuardService]
 })
 export class AppRoutingModule { }

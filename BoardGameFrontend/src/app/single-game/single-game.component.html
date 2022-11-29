@@ -1,33 +1,48 @@
 <body>  
-    <div class="info">
+    <div class="info"> 
         <div class="image">
             <a [href]="game[0].image_url" target="_blank">
                 <img [src]= "game[0].image_url">
             </a>
         </div>
         <div class="parameters">
-            <h1>{{ game[0].name }}</h1>
-                <div *ngIf="game[0].state"><button mat-icon-button (click)="favClick()">
+            <mat-card class="parameters-card"> 
+                <h1>{{ game[0].name }}</h1>
+                <div *ngIf="game[0].state && isLoggedIn()"><button mat-icon-button (click)="favClick()">
                     <mat-icon>favorite</mat-icon>remove from favorites
                 </button></div>
-                <div *ngIf="!game[0].state"><button mat-icon-button (click)="favClick()">
+                <div *ngIf="!game[0].state && isLoggedIn()"><button mat-icon-button (click)="favClick()">
                     <mat-icon>favorite_border</mat-icon>add to favorites
                 </button></div>
 
-            <div class="rating">users rating: <star-rating [starType]="'svg'" [rating]="game[0].avg_rank" 
-                [labelText]="game[0].avg_rank.toString()"
-                [labelPosition]="'right'" [showHalfStars]="true" [readOnly]="true"></star-rating></div>
-            <div class="players">players: {{ game[0].min_player }} - {{ game[0].max_player }}</div>
-            <div class="age">age: {{ game[0].minimal_age }}+</div>
-            <div class="time">time: {{ game[0].avg_time }} min</div>
-            <div class="publisher">publisher: {{ game[0].publisher }} </div>
-            <div class="year">release year: {{ game[0].release_year }}</div>
-            <div class="categories">categories: {{ game[0].genres }}</div> 
+                <div class="rating">users rating: <star-rating [starType]="'svg'" [rating]="game[0].avg_rank" 
+                    [labelText]="game[0].avg_rank.toString()"
+                    [labelPosition]="'right'" [showHalfStars]="true" [readOnly]="true"></star-rating>
+                    <button mat-icon-button *ngIf="isLoggedIn()" (click)="openDialog()">
+                        <mat-icon>star_half</mat-icon>rate this game</button>
+                </div>
+                <div class="players">players: {{ game[0].min_player }} - {{ game[0].max_player }}</div>
+                <div class="age">age: {{ game[0].minimal_age }}+</div>
+                <div class="time">time: {{ game[0].avg_time }} min</div>
+                <div class="publisher">publisher: {{ game[0].publisher }} </div>
+                <div class="year">release year: {{ game[0].release_year }}</div>
+                <div class="categories">categories: {{ game[0].genres }}</div> 
+            </mat-card> 
         </div>
-    </div>
+    </div> 
     <div class="description">
+        <mat-card class="description-card">
         <p style="white-space: pre-wrap">
-            Tutaj description gry blablabla...
+            With elegantly simple gameplay, Ticket to Ride can be learned in under 15 minutes. Players collect cards of various types of train cars they then use to claim railway routes in North America. The longer the routes, the more points they earn. Additional points come to those who fulfill Destination Tickets – goal cards that connect distant cities; and to the player who builds the longest continuous route.
+
+"The rules are simple enough to write on a train ticket – each turn you either draw more cards, claim a route, or get additional Destination Tickets," says Ticket to Ride author, Alan R. Moon. "The tension comes from being forced to balance greed – adding more cards to your hand, and fear – losing a critical route to a competitor."
+
+Ticket to Ride continues in the tradition of Days of Wonder's big format board games featuring high-quality illustrations and components including: an oversize board map of North America, 225 custom-molded train cars, 144 illustrated cards, and wooden scoring markers.
+
+Since its introduction and numerous subsequent awards, Ticket to Ride has become the BoardGameGeek epitome of a "gateway game" -- simple enough to be taught in a few minutes, and with enough action and tension to keep new players involved and in the game for the duration.
+
+Part of the Ticket to Ride series.
         </p>
+    </mat-card> 
     </div> 
 </body>
