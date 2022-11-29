@@ -1,0 +1,19 @@
+$background: #FFE5D0;
+$text-color: #371C05;
+
+button {
+    margin: 15px;
+    background-color:  #653208;
+    color: white;
+    border-radius: 16px;
+}
+
+button:hover {
+    background-color: #9f5417;
+}
+
+h1 {
+    text-align: center;
+    color: $text-color;
+    font-weight: bold;
+}

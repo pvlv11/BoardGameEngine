@@ -64,17 +64,16 @@
             <li *ngFor="let game of currentGamesToShow; let i = index">
                 <div class="image"><img [src]= "game.image_url" (click)="goToGame(game.id)"></div>
                 <div class="description"><a href="./game?game={{game.id}}"><h3>{{ game.name }}</h3></a>
-                <!-- {{ game.description | slice:0:300 }}... -->
-                Tutaj dajemy description gry blablablablablabla...
+                {{ game.game_description | slice:0:300 }}... 
              </div>
-                <div><button mat-icon-button (click)="favClick(i)">
-                    <mat-icon *ngIf="game.state">favorite</mat-icon>
-                    <mat-icon *ngIf="!game.state">favorite_border</mat-icon>
+                <div *ngIf="isLoggedIn()"><button mat-icon-button (click)="favClick(i)">
+                    <mat-icon *ngIf="game.is_favourite">favorite</mat-icon>
+                    <mat-icon *ngIf="!game.is_favourite">favorite_border</mat-icon>
                 </button></div>
-                <!-- <div class="rating">
-                    <star-rating [starType]="'svg'" [rating]="game.rating" [labelText]="game.label"
+                <div class="rating">
+                    <star-rating [starType]="'svg'" [rating]="game.rank_value" [labelText]="game.rank_value.toString()"
                 [labelPosition]="'right'" [showHalfStars]="true" [readOnly]="true"></star-rating>
-                </div> -->
+                </div>
                 <br>
             </li>
             <li *ngIf="games.length == 0 && loaded">

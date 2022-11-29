@@ -73,6 +73,10 @@ export class HomeComponent implements OnInit {
       this.games = data;
       this.loaded = true;
     });
+
+    this.authService.checkUserStatusBack().subscribe(data=> {
+      console.log(data);
+    })
   }
 
 }

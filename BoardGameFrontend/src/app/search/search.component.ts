@@ -4,6 +4,7 @@ import { Game } from '../models/game';
 import { GamesService } from '../services/games.service';
 import { ActivatedRoute } from '@angular/router';
 import { VirtualScrollerModule } from 'ngx-virtual-scroller';
+import { AuthService } from '../services/auth.service';
 
 export interface GameItem { 
   src: string; 
@@ -27,7 +28,8 @@ export class SearchComponent implements OnInit {
   searchStr: string = "";
   loaded: boolean = false;
 
-  constructor(private router: Router, private gamesService: GamesService, private route: ActivatedRoute) {
+  constructor(private router: Router, private gamesService: GamesService, private route: ActivatedRoute,
+    private auth: AuthService) {
     this.router.routeReuseStrategy.shouldReuseRoute = function() {
       return false;
   };
@@ -58,7 +60,7 @@ export class SearchComponent implements OnInit {
   }
 
   favClick(clickedItem: number) {
-    this.games[clickedItem].state = !this.games[clickedItem].state;
+    this.games[clickedItem].is_favourite = !this.games[clickedItem].is_favourite;
  }
 
  goToSearch() {
@@ -67,6 +69,10 @@ export class SearchComponent implements OnInit {
       ['/','search'],
       {queryParams: { name_string: search }}
       );
+  }
+
+  isLoggedIn() {
+    return this.auth.checkUserStatus();
   }
   
 
