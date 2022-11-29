@@ -47,7 +47,7 @@
             <div class="sort">
                 <mat-form-field appearance="fill">
                     <mat-label>Sort</mat-label>
-                    <mat-select>
+                    <mat-select [(value)]="selected" (selectionChange)="sort($event.value)">
                       <mat-option value="A-Z">A-Z</mat-option>
                       <mat-option value="Z-A">Z-A</mat-option>
                       <mat-option value="rating ascending">rating ascending</mat-option>
@@ -58,7 +58,7 @@
         </div>
 
         <div class="list">
-            <li *ngIf="games.length != 0 && loaded">
+            <li *ngIf="games.length != 0 && loaded && sorted">
                 Results for "{{ searchString }}"
             </li> 
             <li *ngFor="let game of currentGamesToShow; let i = index">
@@ -76,10 +76,10 @@
                 </div>
                 <br>
             </li>
-            <li *ngIf="games.length == 0 && loaded">
+            <li *ngIf="games.length == 0 && loaded && sorted">
                 No result found for "{{ searchString }}"
             </li> 
-            <li *ngIf="!loaded" class="loader">
+            <li *ngIf="!loaded || !sorted" class="loader">
                 <mat-spinner [diameter]="100"></mat-spinner>
             </li>
             <mat-paginator 

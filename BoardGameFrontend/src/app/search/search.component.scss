@@ -3,6 +3,7 @@ $text-color: #371C05;
 
 body {
     width: 100%;
+    max-width: 100%;
     min-height: 100%;
     height: auto;
     background-color: $background;
@@ -48,6 +49,9 @@ ul {
 
 .description {
     width: 70%;
+    max-width: 70%;
+    inline-size: 900px;
+    overflow-wrap: break-word;
 }
 
 mat-card-header, mat-card-content {
