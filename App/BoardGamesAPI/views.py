@@ -221,7 +221,6 @@ def get_games_review(request):
 
 @csrf_exempt
 @ensure_csrf_cookie
-@login_required
 @api_view(['POST','DELETE','PUT'])
 def add_del_edit_review(request):
 
@@ -294,9 +293,13 @@ def add_del_edit_review(request):
 @api_view(['GET'])
 def get_favourites(request):
     args = request.GET
-    print(request.user)
+    try:
+        user_id = args.__getitem__('user')
+    except MultiValueDictKeyError:
+        return JsonResponse({"Message":"Something Went Wrong"},
+                            status=status.HTTP_400_BAD_REQUEST)
     if request.method == 'GET':
-        found_games=table.t_user_game.objects.filter(user_id=request.user.id).values()
+        found_games=table.t_user_game.objects.filter(user_id=user_id).values()
         if found_games.exists():
             out_list = []
             for f_game in found_games:
@@ -330,26 +333,27 @@ def get_favourites(request):
         return JsonResponse({"Message":"Something went wrong"},
                         status=status.HTTP_400_BAD_REQUEST)
 
-@ensure_csrf_cookie
 @login_required
 @api_view(['POST'])
 def add_to_favourites(request):
     args = request.GET
     try:
         game_name = args.__getitem__('game')
+        user_id = args.__getitem__('user')
+
     except MultiValueDictKeyError:
-        return JsonResponse({"Message":"Unable to add game"},
+        return JsonResponse({"Message":"Something Went Wrong"},
                                 status=status.HTTP_400_BAD_REQUEST)
     row = table.t_game.objects.filter(name=game_name).values()
     if row.exists() \
         and request.method == 'POST':
         game_info = row[0]
-        row_in_table = table.t_user_game.objects.filter(game_id=game_info['id'],user_id=request.user.id)
+        row_in_table = table.t_user_game.objects.filter(game_id=game_info['id'],user_id=user_id)
         if row_in_table.exists():
             return JsonResponse({"Message":"Game already in your favorites"},
                                     status=status.HTTP_403_FORBIDDEN)
         else:
-            row = {"user_id":request.user.id,"game_id":game_info['id']}
+            row = {"user_id":user_id,"game_id":game_info['id']}
             serializer = ser.t_favourite_serializer(data=row)
             if serializer.is_valid():
                 serializer.save()
@@ -361,23 +365,21 @@ def add_to_favourites(request):
     return JsonResponse({"Message":"Only logged users can add games to favourites"},
                         status=status.HTTP_401_UNAUTHORIZED)
 
-@csrf_exempt
-@ensure_csrf_cookie
-@login_required
-@api_view(['GET'])
+@api_view(['DELETE'])
 def remove_from_favourites(request):
     args = request.GET
     try:
         game_name = args.__getitem__('game')
+        user_id = args.__getitem__('user')
     except MultiValueDictKeyError:
-        return JsonResponse({"Message":"You need to specify game"},
+        return JsonResponse({"Message":"Something Went Wrong"},
                                 status=status.HTTP_400_BAD_REQUEST)
     row = table.t_game.objects.filter(name=game_name).values()
     
     if row.exists() \
-        and request.method == 'GET':
+        and request.method == 'DELETE':
         game_info = row[0]
-        row_in_table = t_user_game.objects.filter(game_id=game_info['id'],user_id=request.user.id)
+        row_in_table = t_user_game.objects.filter(game_id=game_info['id'],user_id=user_id)
         if row_in_table.exists():
             row_in_table.delete()
             return JsonResponse({'Massage': 'Game was deleted from favourites successfully!'}, status=status.HTTP_204_NO_CONTENT)
