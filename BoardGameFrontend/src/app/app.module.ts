@@ -22,6 +22,7 @@ import { SearchComponent } from './search/search.component';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { DialogComponent } from './dialog/dialog.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { HtmlEntitiesPipe } from './pipe/html-entities.pipe';
 
 
 @NgModule({
@@ -36,6 +37,7 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
     SearchComponent,
     DialogComponent,
     PageNotFoundComponent,
+    HtmlEntitiesPipe,
   ],
   imports: [
     BrowserModule,

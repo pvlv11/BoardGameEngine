@@ -6,6 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { VirtualScrollerModule } from 'ngx-virtual-scroller';
 import { AuthService } from '../services/auth.service';
 import { keyValuesToMap } from '@angular/flex-layout/extended/style/style-transforms';
+import { AppComponent } from '../app.component';
 
 export interface GameItem { 
   src: string; 
