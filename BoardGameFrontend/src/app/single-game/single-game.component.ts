@@ -52,7 +52,7 @@ export class SingleGameComponent implements OnInit {
   ngOnInit(): void {
     this.route.queryParams
       .subscribe(params => {
-        this.id = params['game'];
+        this.id = params['game_id'];
       }
       );
 
@@ -72,7 +72,7 @@ export class SingleGameComponent implements OnInit {
   // }
 
   favClick() {
-    this.game[0].state = !this.game[0].state;
+    this.game[0].is_favourite = !this.game[0].is_favourite;
  }
 
   isLoggedIn() {

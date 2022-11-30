@@ -20,6 +20,6 @@ export class GamesService {
   }
 
   getSingleGame(id: number): Observable<any> {
-    return this.http.get(`http://127.0.0.1:8000/BoardGamesAPI/games/getAllGames?game=${id}`)
+    return this.http.get(`http://127.0.0.1:8000/BoardGamesAPI/games/getAllGames?game_id=${id}`)
   }
 }

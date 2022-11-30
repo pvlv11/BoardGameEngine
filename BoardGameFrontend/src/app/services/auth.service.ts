@@ -23,6 +23,7 @@ export class AuthService {
     sessionStorage.removeItem('CurrentUser');
     sessionStorage.removeItem('Username');
     sessionStorage.removeItem('Email');
+    sessionStorage.removeItem('User_id');
     return this.http.get<any>(`http://127.0.0.1:8000/BoardGamesAPI/user/logout`)
   }
 

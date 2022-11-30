@@ -219,6 +219,7 @@ def get_games_review(request):
             serializer = ser.GamesReview(specific_user,many=True)
             return JsonResponse(serializer.data,safe=False)
 
+
 @csrf_exempt
 @ensure_csrf_cookie
 @login_required
@@ -290,7 +291,7 @@ def add_del_edit_review(request):
         review_info.delete()
         return JsonResponse({'Massage': 'Review was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
 
-@ensure_csrf_cookie
+@csrf_exempt
 @api_view(['GET'])
 def get_favourites(request):
     args = request.GET

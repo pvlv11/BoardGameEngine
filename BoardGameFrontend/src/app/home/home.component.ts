@@ -24,7 +24,7 @@ export class HomeComponent implements OnInit {
 
   goToGame(id: number) {
     this.router.navigate(['/', 'game'],
-    {queryParams: { game: id }}
+    {queryParams: { game_id: id }}
     );
   }
 
