@@ -334,7 +334,6 @@ def get_favourites(request):
         return JsonResponse({"Message":"Something went wrong"},
                         status=status.HTTP_400_BAD_REQUEST)
 
-@login_required
 @api_view(['POST'])
 def add_to_favourites(request):
     args = request.GET
@@ -362,9 +361,10 @@ def add_to_favourites(request):
 
         return JsonResponse({"Message":"Something went wrong"},
                             status=status.HTTP_404_NOT_FOUND)
+    return JsonResponse({"Message":"Ok"},
+                        status=status.HTTP_200_OK)
 
-    return JsonResponse({"Message":"Only logged users can add games to favourites"},
-                        status=status.HTTP_401_UNAUTHORIZED)
+
 
 @api_view(['DELETE'])
 def remove_from_favourites(request):

@@ -18,6 +18,10 @@
                 <div class="rating">users rating: <star-rating [starType]="'svg'" [rating]="game[0].rank_value" 
                     [labelText]="game[0].rank_value.toString()"
                     [labelPosition]="'right'" [showHalfStars]="true" [readOnly]="true"></star-rating>
+                </div>
+                <div class="rating" *ngIf="isLoggedIn()">your rating: <star-rating [starType]="'svg'" [rating]="user_current_rating" 
+                    [labelText]="user_current_rating.toString()"
+                    [labelPosition]="'right'" [showHalfStars]="true" [readOnly]="true"></star-rating>
                     <button mat-icon-button *ngIf="isLoggedIn()" (click)="openDialog()">
                         <mat-icon>star_half</mat-icon>rate this game</button>
                 </div>
