@@ -338,15 +338,14 @@ def get_favourites(request):
 def add_to_favourites(request):
     args = request.GET
     try:
-        game_name = args.__getitem__('game')
+        game_id = args.__getitem__('game')
         user_id = args.__getitem__('user')
 
     except MultiValueDictKeyError:
         return JsonResponse({"Message":"Something Went Wrong"},
                                 status=status.HTTP_400_BAD_REQUEST)
-    row = table.t_game.objects.filter(name=game_name).values()
-    if row.exists() \
-        and request.method == 'POST':
+    row = table.t_game.objects.filter(id=game_id).values()
+    if row.exists() and request.method == 'POST':
         game_info = row[0]
         row_in_table = table.t_user_game.objects.filter(game_id=game_info['id'],user_id=user_id)
         if row_in_table.exists():
@@ -369,12 +368,12 @@ def add_to_favourites(request):
 def remove_from_favourites(request):
     args = request.GET
     try:
-        game_name = args.__getitem__('game')
+        game_id = args.__getitem__('game')
         user_id = args.__getitem__('user')
     except MultiValueDictKeyError:
         return JsonResponse({"Message":"Something Went Wrong"},
                                 status=status.HTTP_400_BAD_REQUEST)
-    row = table.t_game.objects.filter(name=game_name).values()
+    row = table.t_game.objects.filter(id=game_id).values()
     
     if row.exists() \
         and request.method == 'DELETE':
