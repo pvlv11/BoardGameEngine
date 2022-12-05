@@ -38,14 +38,17 @@ def search_by_string(request):
 
     if request.method=='GET':
         parameters=request.GET
-        #print(parameters)
         name_we_are_looking_for=parameters.__getitem__('name_string')
-        print(name_we_are_looking_for)
         try:
             found_games=table.t_game.objects.filter(name__contains=name_we_are_looking_for).values()
         except table.t_game.DoesNotExist:
             return JsonResponse({"Massage":"game not found try different string"},
                                 status=status.HTTP_404_NOT_FOUND)
+        try:
+            user_id = parameters.__getitem__('user_id')
+        except MultiValueDictKeyError:
+            user_id = None
+
         out_list = []
         for game in found_games:
             game_info_dict = game
@@ -56,7 +59,7 @@ def search_by_string(request):
             is_favourite = False
         
             if t_user_game.objects.filter(game_id=game['id'],
-                                        user_id=request.user.id).exists():
+                                        user_id=user_id).exists():
                     is_favourite = True
             list_of_categories = []
             for j in t_game_genre.objects\
@@ -88,6 +91,10 @@ def getAllGames(request):
         game_id = args.__getitem__('game_id')
     except MultiValueDictKeyError:
         game_id = None
+    try:
+        user_id = args.__getitem__('user_id')
+    except MultiValueDictKeyError:
+        user_id = None
 
     if request.method == 'GET':
         if not t_game.objects.filter(id=game_id).exists():
@@ -117,7 +124,7 @@ def getAllGames(request):
                 is_favourite = False
                 
                 if t_user_game.objects.filter(game_id=game['id'],
-                                        user_id=request.user.id).exists():
+                                        user_id=user_id).exists():
                     is_favourite = True
 
                 game_info_dict = game
@@ -145,7 +152,7 @@ def getAllGames(request):
 
             is_favourite = False
             if t_user_game.objects.filter(game_id=game_id,
-                                        user_id=request.user.id).exists():
+                                        user_id=user_id).exists():
                 is_favourite = True
 
             game_info_dict = game_info[0]
