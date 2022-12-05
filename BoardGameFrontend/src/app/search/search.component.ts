@@ -35,7 +35,7 @@ export class SearchComponent implements OnInit {
   sorted: boolean = true;
 
   constructor(private router: Router, private gamesService: GamesService, private route: ActivatedRoute,
-    private auth: AuthService, private changeDetection: ChangeDetectorRef) {
+    private auth: AuthService) {
     this.router.routeReuseStrategy.shouldReuseRoute = function() {
       return false;
     };
