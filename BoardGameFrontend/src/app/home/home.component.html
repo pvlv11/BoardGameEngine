@@ -6,7 +6,7 @@
 
 
     <div class="search">   
-        <input placeholder="Search" size="60" [(ngModel)]="searchString">
+        <input placeholder="Search" size="60" [(ngModel)]="searchString"  (keydown.enter)="goToSearch()">
         <button mat-raised-button (click)="goToSearch()">Search</button>  
     </div>
     

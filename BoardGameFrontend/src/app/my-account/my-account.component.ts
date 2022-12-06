@@ -4,11 +4,6 @@ import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { NgToastService } from 'ng-angular-popup';
 
-export interface User {
-  username: string;
-  email: string;
-}
-
 @Component({
   selector: 'app-my-account',
   templateUrl: './my-account.component.html',
@@ -21,15 +16,18 @@ export class MyAccountComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  user: User = {
-    username: 'admin',
-    email: 'admin@gamil.com'
-  }
+  username = sessionStorage.getItem("Username")?.replace(/['"']+/g, '');
+  email = sessionStorage.getItem("Email")?.replace(/['"']+/g, '');
 
   logout() {
     this.authService.logout().subscribe(data => {
-      console.log(data);
+      this.showSuccess();
+      this.router.navigate(['/', 'login']);
     })
+  }
+
+  showSuccess() {
+    this.toast.success({detail:"SUCCESS",summary:'User successfully logged out!', duration: 2000, position:'tr'});
   }
 
 }

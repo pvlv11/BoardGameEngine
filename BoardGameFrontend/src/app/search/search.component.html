@@ -1,6 +1,6 @@
 <body>
     <div class="filter">
-        <mat-card>
+        <mat-card class="filter-matcard">
             <mat-card-header class="card-header">
                 <mat-card-title class="card-title"><h3>FILTERS</h3></mat-card-title>
             </mat-card-header>
@@ -40,7 +40,7 @@
         
         <div class="search-sort">
             <div class="search">
-                <input placeholder="Search" size="60"  [(ngModel)]="searchStr">
+                <input placeholder="Search" size="60"  [(ngModel)]="searchStr"  (keydown.enter)="goToSearch()">
                 <button mat-raised-button (click)="goToSearch()">Search</button>  
             </div>
         
@@ -57,8 +57,10 @@
             </div>
         </div>
 
-        
         <div class="list">
+            <li *ngIf="games.length != 0 && loaded">
+                Results for "{{ searchString }}"
+            </li> 
             <li *ngFor="let game of currentGamesToShow; let i = index">
                 <div class="image"><img [src]= "game.image_url" (click)="goToGame(game.id)"></div>
                 <div class="description"><a href="./game?game={{game.id}}"><h3>{{ game.name }}</h3></a>

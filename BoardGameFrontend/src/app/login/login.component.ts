@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgToastService } from 'ng-angular-popup';
+import { User } from '../models/user';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -17,6 +18,7 @@ export class LoginComponent implements OnInit {
 
   username: string = "";
   password: string = "";
+  user: User[] = [];
 
   ngOnInit(): void {
     this.loginForm = new FormGroup({
@@ -31,7 +33,10 @@ export class LoginComponent implements OnInit {
 
   onSubmit() {
     this.authService.login(this.username, this.password).subscribe(data => {
-      console.log(data);
+      this.user = data;
+      sessionStorage.setItem("CurrentUser", JSON.stringify(this.user));
+      sessionStorage.setItem("Username", JSON.stringify(data.username));
+      sessionStorage.setItem("Email", JSON.stringify(data.email));
       this.showSuccess();
       this.router.navigate(['/', 'home']);
     }, 

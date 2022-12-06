@@ -20,6 +20,7 @@ import { SingleGameComponent } from './single-game/single-game.component';
 import { StarRatingModule } from 'angular-star-rating';
 import { SearchComponent } from './search/search.component';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
+import { DialogComponent } from './dialog/dialog.component';
 
 
 @NgModule({
@@ -32,6 +33,7 @@ import { NgToastModule, NgToastService } from 'ng-angular-popup';
     RegisterComponent,
     SingleGameComponent,
     SearchComponent,
+    DialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -50,6 +52,7 @@ import { NgToastModule, NgToastService } from 'ng-angular-popup';
     NgToastModule
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [DialogComponent]
 })
 export class AppModule { }
