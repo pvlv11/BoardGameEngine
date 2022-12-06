@@ -83,6 +83,26 @@ def search_by_string(request):
 def populateDataBase(request):
     script.run()
 
+@api_view(['GET'])
+def get_data_for_filters(request):
+    output = {}
+    genres = t_genre.objects.all().values_list('genre_name')
+    output['genres'] = [i[0] for i in genres]
+
+    age = t_game.objects.all().values_list('minimal_age').distinct()
+    output['age'] = [i[0] for i in age if i[0] < 25]
+
+    player = t_game.objects.all().values_list('min_player').distinct()
+    output['player'] = [i[0] for i in player]
+
+    time = t_game.objects.all().values_list('min_game_time').distinct()
+    output['time'] = [i[0] for i in time if i[0] < 1000]
+
+    serializer = filterSerializer(data=[output],many=True)  
+    if serializer.is_valid(raise_exception=True):          
+        return JsonResponse(serializer.data,safe=False)
+
+
 @csrf_exempt
 @api_view(['GET'])
 def getAllGames(request):
@@ -417,8 +437,7 @@ def login_view2(request):
         else:
             return JsonResponse({"Message":"Something Went Wrong"},safe=False, status=status.HTTP_400_BAD_REQUEST)
 
-        
-
+    
 @api_view(['GET','PUT','DELETE','UPDATE'])
 @csrf_exempt
 def logout_view2(request):
