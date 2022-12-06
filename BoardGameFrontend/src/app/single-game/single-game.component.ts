@@ -65,6 +65,7 @@ export class SingleGameComponent implements OnInit {
 
     this.gamesService.getSingleGame(this.id).subscribe(data1=> {
        this.game = data1;
+       console.log(this.game);
        this.name = this.game[0].name;
        this.gamesService.getReview(this.user_id, this.game[0].id).subscribe(data2 => {
           this.user_current_rating = data2[0].review_number;
@@ -74,7 +75,18 @@ export class SingleGameComponent implements OnInit {
   }
 
   favClick() {
-    this.game[0].is_favourite = !this.game[0].is_favourite;
+    if(this.game[0].is_favourite) {
+      this.gamesService.removeFavourite(this.user_id, this.game[0].id).subscribe(data => {
+        console.log(data);
+        this.game[0].is_favourite = true;
+      })
+    }
+    else {
+      this.gamesService.addFavourite(this.user_id, this.game[0].id).subscribe(data => {
+        console.log(data);
+        this.game[0].is_favourite = true;
+      })
+    }
  }
 
   isLoggedIn() {

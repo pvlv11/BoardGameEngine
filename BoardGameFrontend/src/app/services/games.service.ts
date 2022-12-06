@@ -40,4 +40,12 @@ export class GamesService {
   getFavourites(user: number): Observable<any> {
     return this.http.get(`http://127.0.0.1:8000/BoardGamesAPI/games/get_favourite?user=${user}`)
   }
+
+  addFavourite(user: number, game: number): Observable<any> {
+    return this.http.post(`http://127.0.0.1:8000/BoardGamesAPI/games/add_favourite?user=${user}&game=${game}`, null)
+  }
+
+  removeFavourite(user: number, game: number): Observable<any> {
+    return this.http.delete(`http://127.0.0.1:8000/BoardGamesAPI/games/del_favourite?user=${user}&game=${game}`)
+  }
 }

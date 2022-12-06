@@ -63,7 +63,7 @@
             </li> 
             <li *ngFor="let game of currentGamesToShow; let i = index">
                 <div class="image"><img [src]= "game.image_url" (click)="goToGame(game.id)"></div>
-                <div class="description"><a href="./game?game={{game.id}}"><h3>{{ game.name }}</h3></a>
+                <div class="description"><a href="./game?game_id={{game.id}}"><h3>{{ game.name }}</h3></a>
                 {{ game.game_description | slice:0:300 | htmlEntities }}... 
              </div>
                 <div *ngIf="isLoggedIn()"><button mat-icon-button (click)="favClick(i)">

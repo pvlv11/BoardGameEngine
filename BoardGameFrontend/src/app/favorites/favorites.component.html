@@ -20,7 +20,7 @@
     <div class="list">
         <li *ngFor="let favorite of currentGamesToShow; let i = index">
             <div class="image"><img [src]= "favorite.image_url" (click)="goToGame(favorite.id)"></div>
-            <div class="description"><a href="./game"><h3>{{ favorite.name }}</h3></a>
+            <div class="description"><a href="./game?game_id={{favorite.id}}"><h3>{{ favorite.name }}</h3></a>
             {{ favorite.game_description | slice:0:300 | htmlEntities }}... </div>
             <div><button mat-icon-button (click)="favClick(i)">
                 <mat-icon *ngIf="favorite.is_favourite">favorite</mat-icon>
