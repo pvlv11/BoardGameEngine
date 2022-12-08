@@ -25,5 +25,7 @@ urlpatterns=[
     path('user/check_user_status',views.check_user_status,name='user/check_user_status'),
     
     path('filters/get_filters',views.get_data_for_filters,name='filters/get_filters'),
+    path('filters/filter_games',views.search_by_strin_with_filters,name='filters/filter_games'),
 
+    
     ]
