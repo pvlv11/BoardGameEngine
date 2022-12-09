@@ -15,12 +15,23 @@ export class GamesService {
     return this.http.get('http://127.0.0.1:8000/BoardGamesAPI/games/top_10_games')
   }
 
-  getSearch(str: string): Observable<any> {
-    return this.http.get(`http://127.0.0.1:8000/BoardGamesAPI/games/search_by_string?name_string=${str}`)
+  getSearch(str: string, user: any): Observable<any> {
+    if (user == 0) {
+      return this.http.get(`http://127.0.0.1:8000/BoardGamesAPI/games/search_by_string?name_string=${str}`)
+    }
+    else {
+      return this.http.get(`http://127.0.0.1:8000/BoardGamesAPI/games/search_by_string?name_string=${str}&user_id=${user}`)
+    }
   }
 
-  getSingleGame(id: number): Observable<any> {
-    return this.http.get(`http://127.0.0.1:8000/BoardGamesAPI/games/getAllGames?game_id=${id}`)
+  getSingleGame(id: number, user: any): Observable<any> {
+    if (user == 0) {
+      return this.http.get(`http://127.0.0.1:8000/BoardGamesAPI/games/getAllGames?game_id=${id}`)
+    }
+    else {
+      return this.http.get(`http://127.0.0.1:8000/BoardGamesAPI/games/getAllGames?game_id=${id}&user_id=${user}`)
+    }
+
   }
 
   getReview(user: number, game: number): Observable<any> {
@@ -48,4 +59,5 @@ export class GamesService {
   removeFavourite(user: number, game: number): Observable<any> {
     return this.http.delete(`http://127.0.0.1:8000/BoardGamesAPI/games/del_favourite?user=${user}&game=${game}`)
   }
+
 }

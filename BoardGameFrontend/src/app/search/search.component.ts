@@ -33,6 +33,8 @@ export class SearchComponent implements OnInit {
   loaded: boolean = false;
   selected: string = "";
   sorted: boolean = true;
+  user_id: any = sessionStorage.getItem('User_id');
+
 
   constructor(private router: Router, private gamesService: GamesService, private route: ActivatedRoute,
     private auth: AuthService) {
@@ -47,12 +49,21 @@ export class SearchComponent implements OnInit {
         this.searchString = params['name_string'];
       }
       );
-
-    this.gamesService.getSearch(this.searchString).subscribe(data =>{
-      this.games = data;
-      this.currentGamesToShow = this.games.slice(0,5);
-      this.loaded = true;
-    })
+    if (this.isLoggedIn()) {
+      let user = sessionStorage.getItem("User_id");
+      this.gamesService.getSearch(this.searchString, user).subscribe(data =>{
+        this.games = data;
+        this.currentGamesToShow = this.games.slice(0,5);
+        this.loaded = true;
+      })
+    }
+    else {
+      this.gamesService.getSearch(this.searchString, 0).subscribe(data =>{
+        this.games = data;
+        this.currentGamesToShow = this.games.slice(0,5);
+        this.loaded = true;
+      })
+    }
   }
 
   onPageChange($event: { pageIndex: number; pageSize: number; }) {
@@ -66,15 +77,35 @@ export class SearchComponent implements OnInit {
   }
 
   favClick(clickedItem: number) {
-    this.games[clickedItem].is_favourite = !this.games[clickedItem].is_favourite;
+    if (this.games[clickedItem].is_favourite) {
+      this.gamesService.removeFavourite(this.user_id, this.games[clickedItem].id).subscribe(data => {
+        this.games[clickedItem].is_favourite = false;
+      })
+    }
+    else {
+      this.gamesService.addFavourite(this.user_id, this.games[clickedItem].id).subscribe(data => {
+        this.games[clickedItem].is_favourite = true;
+      })
+    }
  }
 
  goToSearch() {
-  const search = this.searchStr;
+  if(this.isLoggedIn()) {
+    let user = localStorage.getItem("User_id");
+    const search = this.searchStr;
     this.router.navigate(
       ['/','search'],
-      {queryParams: { name_string: search }}
+      {queryParams: { name_string: search, user_id: user }}
+    );
+  }
+  else {
+    let user = 0;
+    const search = this.searchStr;
+    this.router.navigate(
+      ['/','search'],
+      {queryParams: { name_string: search, user_id: user }}
       );
+  }
   }
 
   isLoggedIn() {

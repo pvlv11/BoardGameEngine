@@ -28,6 +28,7 @@ export class FavoritesComponent implements OnInit {
   ngOnInit(): void {
     this.gamesService.getFavourites(this.user_id).subscribe(data => {
       this.favorites = data;
+      this.favorites.reverse();
       this.currentGamesToShow = this.favorites.slice(0,5);
       console.log(this.favorites);
     })
@@ -38,12 +39,24 @@ export class FavoritesComponent implements OnInit {
   }
 
   favClick(clickedItem: number) {
-    this.favorites[clickedItem].state = !this.favorites[clickedItem].state;
-    for (let item of this.favorites) {  
-       if ( item !== this.favorites[clickedItem] ) { 
-           item.state = true; 
-       }
+    if (this.favorites[clickedItem].is_favourite) {
+      this.gamesService.removeFavourite(this.user_id, this.favorites[clickedItem].id).subscribe(data => {
+        console.log(data);
+        this.favorites[clickedItem].is_favourite = false;
+      })
     }
+    else {
+      this.gamesService.addFavourite(this.user_id, this.favorites[clickedItem].id).subscribe(data => {
+        console.log(data);
+        this.favorites[clickedItem].is_favourite = true;
+      })
+    }
+    // this.favorites[clickedItem].state = !this.favorites[clickedItem].state;
+    // for (let item of this.favorites) {  
+    //    if ( item !== this.favorites[clickedItem] ) { 
+    //        item.state = true; 
+    //    }
+    // }
  }
 
  sort(value: string) {

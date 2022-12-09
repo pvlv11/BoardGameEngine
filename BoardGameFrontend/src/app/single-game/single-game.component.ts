@@ -63,14 +63,24 @@ export class SingleGameComponent implements OnInit {
       }
       );
 
-    this.gamesService.getSingleGame(this.id).subscribe(data1=> {
-       this.game = data1;
-       console.log(this.game);
-       this.name = this.game[0].name;
-       this.gamesService.getReview(this.user_id, this.game[0].id).subscribe(data2 => {
-          this.user_current_rating = data2[0].review_number;
+      if (this.isLoggedIn()) {
+        this.gamesService.getSingleGame(this.id, this.user_id).subscribe(data1=> {
+          this.game = data1;
+          this.name = this.game[0].name;
+          this.gamesService.getReview(this.user_id, this.game[0].id).subscribe(data2 => {
+             this.user_current_rating = data2[0].review_number;
+          });
        });
-    });
+      }
+      else {
+        this.gamesService.getSingleGame(this.id, 0).subscribe(data1=> {
+          this.game = data1;
+          this.name = this.game[0].name;
+          // this.gamesService.getReview(this.user_id, this.game[0].id).subscribe(data2 => {
+          //    this.user_current_rating = data2[0].review_number;
+          // });
+       });
+      }
 
   }
 
@@ -78,7 +88,7 @@ export class SingleGameComponent implements OnInit {
     if(this.game[0].is_favourite) {
       this.gamesService.removeFavourite(this.user_id, this.game[0].id).subscribe(data => {
         console.log(data);
-        this.game[0].is_favourite = true;
+        this.game[0].is_favourite = false;
       })
     }
     else {
