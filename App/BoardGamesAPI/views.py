@@ -12,7 +12,7 @@ import BoardGamesAPI.scripts.populate_models as script
 
 from django.contrib.auth.models import User
 from django.db.models import Avg,Count
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 from django.contrib.auth import authenticate, login
 from rest_framework.response import Response
 from rest_framework import status
@@ -23,6 +23,7 @@ from rest_framework.authtoken.serializers import AuthTokenSerializer
 
 from django.utils.datastructures import MultiValueDictKeyError
 
+from csv import writer
 # Create your views here.
 #'BoardGames/games/search/by_string'
 
@@ -109,13 +110,20 @@ def search_by_strin_with_filters(request):
 
         filtered_games = t_game_genre.objects.all().distinct('game_id_id')
         if filter_age is not None:
-            filtered_games = filtered_games.filter(game_id_id__minimal_age=filter_age)
+            min_age = int(filter_age.split('-')[0])
+            max_age = int(filter_age.split('-')[1])
+
+            filtered_games = filtered_games.filter(game_id_id__minimal_age__gte=min_age,game_id_id__minimal_age__lte=max_age)
         
         if filter_player is not None:
-            filtered_games = filtered_games.filter(game_id_id__min_player=filter_player)
+            min_player = int(filter_player.split('-')[0])
+            max_player = int(filter_player.split('-')[1])
+            filtered_games = filtered_games.filter(game_id_id__min_player__gte=min_player,game_id_id__min_player__lte=max_player)
         
         if filter_time is not None:
-            filtered_games = filtered_games.filter(game_id_id__min_game_time=filter_time)
+            min_time = int(filter_time.split('-')[0])
+            max_time = int(filter_time.split('-')[1])
+            filtered_games = filtered_games.filter(game_id_id__min_game_time__gte=min_time,game_id_id__min_game_time__lte=max_time)
         
         if filter_genre != '':
             filtered_games = filtered_games.filter(genre_id_id__genre_name=filter_genre)
@@ -469,8 +477,7 @@ def login_view2(request):
             return JsonResponse(response,safe=False)
         else:
             return JsonResponse({"Message":"Something Went Wrong"},safe=False, status=status.HTTP_400_BAD_REQUEST)
-
-    
+   
 @api_view(['GET','PUT','DELETE','UPDATE'])
 @csrf_exempt
 def logout_view2(request):
@@ -516,7 +523,17 @@ def register_user2(request):
             return JsonResponse({"Message":"Something Went Wrong"},
                                 status=status.HTTP_400_BAD_REQUEST)
        
-
+def send_csv_to_model(request):
+    response = HttpResponse(
+        content_type='text/csv',
+        headers={'Content-Disposition': 'attachment; filename="RevieDB.csv"'},
+    )
+    write = writer(response)
+    review_rows = t_review.objects.all().values_list()
+    for i in review_rows:
+        write.writerow([i[1],i[2],i[3]])
+    
+    return response
 """
 def top10(requst):
     jsone = []
