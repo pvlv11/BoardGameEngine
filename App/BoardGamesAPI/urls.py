@@ -22,6 +22,10 @@ urlpatterns=[
     path('user/register_user',views.register_user2,name='user/register_user'),
     path('user/login_user',views.login_view2,name='user/login_user'),
     path('user/logout',views.logout_view2,name='user/logout'),
-    path('user/check_user_status',views.check_user_status,name='user/check_user_status')
+    path('user/check_user_status',views.check_user_status,name='user/check_user_status'),
+    
+    path('filters/get_filters',views.get_data_for_filters,name='filters/get_filters'),
+    path('filters/filter_games',views.search_by_strin_with_filters,name='filters/filter_games'),
+
     
     ]
