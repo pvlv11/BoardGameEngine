@@ -60,4 +60,8 @@ export class GamesService {
     return this.http.delete(`http://127.0.0.1:8000/BoardGamesAPI/games/del_favourite?user=${user}&game=${game}`)
   }
 
+  getFilters(): Observable<any> {
+    return this.http.get('http://127.0.0.1:8000/BoardGamesAPI/filters/get_filters')
+  }
+
 }

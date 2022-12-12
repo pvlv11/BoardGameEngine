@@ -35,6 +35,11 @@ export class SearchComponent implements OnInit {
   sorted: boolean = true;
   user_id: any = sessionStorage.getItem('User_id');
 
+  ages: number[] = [];
+  genres: string[] = [];
+  players: number[] = [];
+  time: number[] = [];
+
 
   constructor(private router: Router, private gamesService: GamesService, private route: ActivatedRoute,
     private auth: AuthService) {
@@ -64,6 +69,14 @@ export class SearchComponent implements OnInit {
         this.loaded = true;
       })
     }
+
+    this.gamesService.getFilters().subscribe(data => {
+      this.ages = data[0].age;
+      this.genres = data[0].genres;
+      this.players = data[0].player;
+      this.time = data[0].time;
+      console.log(data);
+    })
   }
 
   onPageChange($event: { pageIndex: number; pageSize: number; }) {
