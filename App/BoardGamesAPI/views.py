@@ -107,20 +107,20 @@ def search_by_strin_with_filters(request):
             user_id = parameters.__getitem__('user_id')
         except MultiValueDictKeyError:
             user_id = None
-
+        
         filtered_games = t_game_genre.objects.all().distinct('game_id_id')
-        if filter_age is not None:
+        if filter_age is not None and filter_age != "-1":
             min_age = int(filter_age.split('-')[0])
             max_age = int(filter_age.split('-')[1])
 
             filtered_games = filtered_games.filter(game_id_id__minimal_age__gte=min_age,game_id_id__minimal_age__lte=max_age)
         
-        if filter_player is not None:
+        if filter_player is not None and filter_player!="-1":
             min_player = int(filter_player.split('-')[0])
             max_player = int(filter_player.split('-')[1])
             filtered_games = filtered_games.filter(game_id_id__min_player__gte=min_player,game_id_id__min_player__lte=max_player)
         
-        if filter_time is not None:
+        if filter_time is not None and filter_time!="-1":
             min_time = int(filter_time.split('-')[0])
             max_time = int(filter_time.split('-')[1])
             filtered_games = filtered_games.filter(game_id_id__min_game_time__gte=min_time,game_id_id__min_game_time__lte=max_time)
