@@ -121,7 +121,7 @@ class t_review(models.Model):
     
     #models.ForeignKey(t_user,
     #                            on_delete=models.CASCADE)
-
+    creation_date = models.DateTimeField(auto_now_add=True)
     review_number = models.DecimalField(
         null=False,
         blank=False,

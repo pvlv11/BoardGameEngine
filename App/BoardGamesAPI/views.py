@@ -168,7 +168,12 @@ def search_by_strin_with_filters(request):
 #@csrf_exempt
 #@login_required
 def populateDataBase(request):
-    script.run()
+    print("I'm Going to Load DataSet To Data Base")
+    out = script.run()
+    if out:
+        return JsonResponse({"Message":"Success"})
+    else:
+        return JsonResponse({"Message":"Failed To Load Data to DataBase"})
 
 @api_view(['GET'])
 def get_data_for_filters(request):
@@ -177,13 +182,13 @@ def get_data_for_filters(request):
     output['genres'] = [i[0] for i in genres]
 
     age = t_game.objects.all().values_list('minimal_age').distinct()
-    output['age'] = [i[0] for i in age if i[0] < 25 and i[0] > 0]
+    output['age'] = [i[0] for i in age] #if i[0] < 25 and i[0] > 0]
 
     player = t_game.objects.all().values_list('min_player').distinct()
-    output['player'] = [i[0] for i in player if i[0] > 0]
+    output['player'] = [i[0] for i in player] #if i[0] > 0]
 
     time = t_game.objects.all().values_list('min_game_time').distinct()
-    output['time'] = [i[0] for i in time if i[0] < 1000 and i[0] > 0]
+    output['time'] = [i[0] for i in time]# if i[0] < 1000 and i[0] > 0]
 
     serializer = filterSerializer(data=[output],many=True)  
     if serializer.is_valid(raise_exception=True):          
@@ -525,14 +530,15 @@ def register_user2(request):
                                 status=status.HTTP_400_BAD_REQUEST)
        
 def send_csv_to_model(request):
+    from datetime import date
     response = HttpResponse(
         content_type='text/csv',
         headers={'Content-Disposition': 'attachment; filename="RevieDB.csv"'},
     )
     write = writer(response)
-    review_rows = t_review.objects.all().values_list()
+    review_rows = t_review.objects.filter(creation_date__contains=date.today()).values_list()
     for i in review_rows:
-        write.writerow([i[1],i[2],i[3]])
+        write.writerow([i[1],i[2],i[4],i[3].date()])
     
     return response
 """
