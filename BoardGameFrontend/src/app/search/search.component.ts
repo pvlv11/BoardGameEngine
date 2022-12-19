@@ -7,6 +7,9 @@ import { VirtualScrollerModule } from 'ngx-virtual-scroller';
 import { AuthService } from '../services/auth.service';
 import { keyValuesToMap } from '@angular/flex-layout/extended/style/style-transforms';
 import { AppComponent } from '../app.component';
+import { FormGroup } from '@angular/forms';
+import { NgToastService } from 'ng-angular-popup';
+
 
 export interface GameItem { 
   src: string; 
@@ -26,6 +29,8 @@ export interface GameItem {
 })
 export class SearchComponent implements OnInit {
 
+  public filterForm!: FormGroup;
+
   games: any[] = [];
   currentGamesToShow: Game[] = [];
   searchString: string = "";
@@ -39,10 +44,17 @@ export class SearchComponent implements OnInit {
   genres: string[] = [];
   players: number[] = [];
   time: number[] = [];
+  minPlayers!: number;
+  maxPlayers!: number;
+  minTime!: number;
+  maxTime!: number;
+  minAge!: number;
+  maxAge!: number;
+  category!: string;
 
 
   constructor(private router: Router, private gamesService: GamesService, private route: ActivatedRoute,
-    private auth: AuthService) {
+    private auth: AuthService, private toast: NgToastService) {
     this.router.routeReuseStrategy.shouldReuseRoute = function() {
       return false;
     };
@@ -189,6 +201,48 @@ export class SearchComponent implements OnInit {
         this.sorted = true;
         break;
     }
+  }
+
+  filter() {
+    let error = false;
+    if (this.minTime > this.maxTime) {
+      this.toast.error({detail:"ERROR",summary:"Max time can't be smaller than min time!",sticky:true, position:'tr'});
+      error = true;
+    }
+    if (this.minAge > this.maxAge) {
+      this.toast.error({detail:"ERROR",summary:"Max age can't be smaller than min time!",sticky:true, position:'tr'});
+      error = true;
+    }
+    if (this.minPlayers > this.maxPlayers) {
+      this.toast.error({detail:"ERROR",summary:"Max players can't be smaller than min players!",sticky:true, position:'tr'});
+      error = true;
+    }
+
+    if ((this.minTime == undefined && this.maxTime != undefined) || (this.maxTime == undefined && this.minTime != undefined)) {
+      this.toast.error({detail:"ERROR",summary:"Min or max time can't be empty if the other one isn't!",sticky:true, position:'tr'});
+      error = true;
+    }
+
+    if ((this.minAge == undefined && this.maxAge != undefined) || (this.maxAge == undefined && this.minAge != undefined)) {
+      this.toast.error({detail:"ERROR",summary:"Min or max age can't be empty if the other one isn't!",sticky:true, position:'tr'});
+      error = true;
+
+    }
+
+    if ((this.minPlayers == undefined && this.maxPlayers != undefined) || (this.maxPlayers == undefined && this.minPlayers != undefined)) {
+      this.toast.error({detail:"ERROR",summary:"Min or max players can't be empty if the other one isn't!",sticky:true, position:'tr'});
+      error = true;
+    }
+
+    if (!error) {
+      if (this.isLoggedIn()) {
+        // z uzytkownikiem
+      }
+      else {
+        // bez uzytkownika
+      }
+    }
+    
   }
   
 

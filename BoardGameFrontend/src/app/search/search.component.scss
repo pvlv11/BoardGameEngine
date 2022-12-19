@@ -27,7 +27,7 @@ button:hover {
     background-color: #9f5417;
 }
 
-input {
+.input-search {
     background-color: white;
     border-radius: 16px;
     border: 2px solid #000000;
@@ -35,6 +35,11 @@ input {
     font-size: 14pt;
     margin: 10px;
     padding: 5px;
+}
+
+.filter-input {
+    margin: 10px;
+    width: 40px;
 }
 
 ul {
@@ -65,6 +70,7 @@ mat-card-title {
 
 .filter-matcard {
     background-color: #dab79a;
+    max-width: 170px;
 }
 
 .sort {
@@ -89,7 +95,7 @@ li {
 }
 
 .list {
-    margin: 10px;
+    margin: 5px;
 }
 
 img {
@@ -103,12 +109,19 @@ img:hover {
     opacity: 0.5;
 }
 
-mat-paginator {
-    background-color: transparent;
-}
-
 .loader {
     justify-content: center;
 }
 
+p {
+    margin: 0px;
+}
+
+input {
+    background-color: transparent;
+}
+
+mat-paginator{
+    background-color: transparent;
+}
 

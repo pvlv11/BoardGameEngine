@@ -64,4 +64,13 @@ export class GamesService {
     return this.http.get('http://127.0.0.1:8000/BoardGamesAPI/filters/get_filters')
   }
 
+  // filterGames(user: number, category?: string, age_filter?: string, time_filter?: string, players_filter?: string): Observable<any> {
+  //   if (user == 0) {
+      
+  //   }
+  //   else {
+      
+  //   }
+  // }
+
 }
