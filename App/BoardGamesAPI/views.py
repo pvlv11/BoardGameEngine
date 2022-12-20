@@ -41,7 +41,7 @@ def search_by_string(request):
         parameters=request.GET
         name_we_are_looking_for=parameters.__getitem__('name_string')
         try:
-            found_games=table.t_game.objects.filter(name__contains=name_we_are_looking_for).values()
+            found_games=table.t_game.objects.filter(name__icontains=name_we_are_looking_for).values()
         except table.t_game.DoesNotExist:
             return JsonResponse({"Massage":"game not found try different string"},
                                 status=status.HTTP_404_NOT_FOUND)
@@ -99,6 +99,11 @@ def search_by_strin_with_filters(request):
             filter_time = None
 
         try:
+            searched_game = parameters.__getitem__('searched_game')
+        except MultiValueDictKeyError:
+            searched_game = None
+
+        try:
             filter_genre = parameters.__getitem__('genre_filter')
         except MultiValueDictKeyError:
             filter_genre = ''              
@@ -108,7 +113,11 @@ def search_by_strin_with_filters(request):
         except MultiValueDictKeyError:
             user_id = None
         
-        filtered_games = t_game_genre.objects.all().distinct('game_id_id')
+        if searched_game is not None and searched_game!="":
+            filtered_games = t_game_genre.objects.all().distinct('game_id_id').filter(game_id_id__name__icontains=searched_game)
+        else:
+            filtered_games = t_game_genre.objects.all().distinct('game_id_id')
+
         if filter_age is not None and filter_age != "-1":
             min_age = int(filter_age.split('-')[0])
             max_age = int(filter_age.split('-')[1])
