@@ -87,7 +87,6 @@ export class SearchComponent implements OnInit {
       this.genres = data[0].genres;
       this.players = data[0].player;
       this.time = data[0].time;
-      console.log(data);
     })
   }
 
@@ -235,14 +234,48 @@ export class SearchComponent implements OnInit {
     }
 
     if (!error) {
-      if (this.isLoggedIn()) {
-        // z uzytkownikiem
+      let age_filter;
+      let time_filter;
+      let players_filter;
+      let genre_filter;
+      if (this.minAge == undefined) {
+        age_filter = -1;
       }
       else {
-        // bez uzytkownika
+        age_filter = `${this.minAge}-${this.maxAge}`;
+      }
+      if (this.minTime == undefined) {
+        time_filter = -1;
+      }
+      else {
+        time_filter = `${this.minTime}-${this.maxTime}`;
+      }
+      if (this.minPlayers == undefined) {
+        players_filter = -1;
+      }
+      else {
+        players_filter = `${this.minAge}-${this.maxAge}`;
+      }
+
+      this.loaded = false;
+      this.currentGamesToShow = [];
+
+      if (this.isLoggedIn()) {
+        let user = sessionStorage.getItem("User_id");
+        this.gamesService.filterGames(user, this.category, age_filter, time_filter, players_filter).subscribe(data =>{
+          this.games = data;
+          this.currentGamesToShow = this.games.slice(0,5);
+          this.loaded = true;
+      })
+      }
+      else {
+        this.gamesService.filterGames(0, this.category, age_filter, time_filter, players_filter).subscribe(data =>{
+          this.games = data;
+          this.currentGamesToShow = this.games.slice(0,5);
+          this.loaded = true;
+        })
       }
     }
-    
   }
   
 

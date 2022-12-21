@@ -64,13 +64,24 @@ export class GamesService {
     return this.http.get('http://127.0.0.1:8000/BoardGamesAPI/filters/get_filters')
   }
 
-  // filterGames(user: number, category?: string, age_filter?: string, time_filter?: string, players_filter?: string): Observable<any> {
-  //   if (user == 0) {
+  filterGames(user: any, category: any, age_filter: any, time_filter: any, players_filter: any): Observable<any> {
+    if (user == 0) {
+      if (category == undefined) {
+        return this.http.get(`http://127.0.0.1:8000/BoardGamesAPI/filters/filter_games?age_filter=${age_filter}&player_filter=${players_filter}&time_filter=${time_filter}`)
+      }
+      else {
+        return this.http.get(`http://127.0.0.1:8000/BoardGamesAPI/filters/filter_games?age_filter=${age_filter}&player_filter=${players_filter}&time_filter=${time_filter}&genre_filter=${category}`)
+      }
+    }
+    else {
+      if (category == undefined) {
+        return this.http.get(`http://127.0.0.1:8000/BoardGamesAPI/filters/filter_games?user_id=${user}&age_filter=${age_filter}&player_filter=${players_filter}&time_filter=${time_filter}`)
+      }
+      else {
+        return this.http.get(`http://127.0.0.1:8000/BoardGamesAPI/filters/filter_games?user_id=${user}&age_filter=${age_filter}&player_filter=${players_filter}&time_filter=${time_filter}&genre_filter=${category}`)
+      }
       
-  //   }
-  //   else {
-      
-  //   }
-  // }
+    }
+  }
 
 }
