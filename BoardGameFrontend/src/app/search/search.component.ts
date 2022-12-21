@@ -254,7 +254,7 @@ export class SearchComponent implements OnInit {
         players_filter = -1;
       }
       else {
-        players_filter = `${this.minAge}-${this.maxAge}`;
+        players_filter = `${this.minPlayers}-${this.maxPlayers}`;
       }
 
       this.loaded = false;
@@ -262,14 +262,16 @@ export class SearchComponent implements OnInit {
 
       if (this.isLoggedIn()) {
         let user = sessionStorage.getItem("User_id");
-        this.gamesService.filterGames(user, this.category, age_filter, time_filter, players_filter).subscribe(data =>{
+        this.gamesService.filterGames(user, this.category, age_filter, time_filter, players_filter, this.searchString).subscribe(data =>{
+          console.log(data);
           this.games = data;
           this.currentGamesToShow = this.games.slice(0,5);
           this.loaded = true;
       })
       }
       else {
-        this.gamesService.filterGames(0, this.category, age_filter, time_filter, players_filter).subscribe(data =>{
+        this.gamesService.filterGames(0, this.category, age_filter, time_filter, players_filter, this.searchStr).subscribe(data =>{
+          console.log(data);
           this.games = data;
           this.currentGamesToShow = this.games.slice(0,5);
           this.loaded = true;
