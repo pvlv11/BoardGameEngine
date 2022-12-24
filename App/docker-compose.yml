@@ -25,10 +25,10 @@ services:
       - pgAdmin:/var/lib/pgadmin
 
   app:
-    build: .
+    build: './API'
     container_name: BoardGame_Service
     volumes:
-      - .:/BoardGame_Service
+      - ./API:/BoardGame_Service
     command: bash -c "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"  
     ports:
       - "8000:8000"
@@ -42,7 +42,23 @@ services:
     depends_on:
       - db
 
+  recomendation:
+    build: 
+        './Recomendations'
+    volumes:
+      - ./Recomendations:/Recomendation_Service
+    environment:
+      - POSTGRES_HOST=baza_postgre
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=Admin1234
+
+    depends_on:
+      - db
+      - app
 
 volumes:
   postgreSQLData:
   pgAdmin:
+  BoardGame_Service:
+  Recomendations:
