@@ -29,7 +29,7 @@ services:
     container_name: BoardGame_Service
     volumes:
       - ./API:/BoardGame_Service
-    command: bash -c "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"  
+    command: bash -c "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000 --noreload"  
     ports:
       - "8000:8000"
 
@@ -57,8 +57,26 @@ services:
       - db
       - app
 
+  angular: # name of the first service
+    container_name: angularcontainer
+    build: 
+      context: './BoardGameFrontend'
+      dockerfile: dockerfile
+    ports:
+      - 4200:4200
+    volumes:
+            - './BoardGameFrontend:/app'
+            - '/app/node_modules'
+    depends_on:
+      - db
+      - app
+    #working_dir: ./BoardGameFrontend
+    command: sh -c "npm i && ng serve --host 0.0.0.0 --disable-host-check"
+   
+
 volumes:
   postgreSQLData:
   pgAdmin:
   BoardGame_Service:
-  Recomendations:
+  Recomendation_Service:
+  BoardGame_Frontend:

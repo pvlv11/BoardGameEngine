@@ -7,6 +7,8 @@ RUN mkdir /Recomendation_Service
 WORKDIR /Recomendation_Service
 ADD . /Recomendation_Service/
 
+RUN pip install apscheduler
 RUN pip install -r requirements.txt
 
 CMD ["python","./SendRequest.py"]
+
