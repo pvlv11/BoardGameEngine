@@ -10,8 +10,7 @@ class user_serializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id','username','email')
-
-        
+       
 class register_serializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -31,7 +30,6 @@ class t_user_Serializer(serializers.ModelSerializer):
     class Meta:
         model=t_user
         fields= ('Username', 'Mail', 'Password')#case specific czyli doslownie to co w modelu
-
 
 class t_gameSerializer(serializers.ModelSerializer):
     rank_value = serializers.FloatField()
@@ -70,13 +68,19 @@ class GamesReview(serializers.Serializer):
         instance.save()
         return instance
     
-
-
 class Top10Games(serializers.Serializer):
     game_id_id = serializers.IntegerField(required=True)
     avg_rank = serializers.FloatField(required=True)
     name = serializers.CharField(required=True,max_length=255)
     image_url = serializers.CharField(required=True,max_length=500)
+
+class filterSerializer(serializers.Serializer):
+    genres = serializers.ListField(child=serializers.CharField(max_length=255))
+    player = serializers.ListField(child=serializers.IntegerField(min_value=0))
+    age = serializers.ListField(child=serializers.IntegerField(min_value=0))
+    time = serializers.ListField(child=serializers.IntegerField(min_value=0))
+
+
 '''
 class GamesReview(serializers.Serializer):
     user_id_id = serializers.IntegerField(required=True)

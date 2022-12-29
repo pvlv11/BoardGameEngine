@@ -26,11 +26,9 @@ services:
 
   app:
     build: .
-#    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     container_name: BoardGame_Service
     volumes:
       - .:/BoardGame_Service
-  #--noinput && python3 manage.py createsuperuser
     command: bash -c "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"  
     ports:
       - "8000:8000"

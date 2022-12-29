@@ -10,6 +10,7 @@ import { SingleGameComponent } from './single-game/single-game.component';
 import { SearchComponent } from './search/search.component';
 import { AuthGuardService } from './services/auth-guard.service';
 import { AuthService } from './services/auth.service';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
 const routes: Routes = [
   {
@@ -48,6 +49,11 @@ const routes: Routes = [
   {
     path: 'search',
     component: SearchComponent
+  }, 
+  {
+    path: '**',
+    pathMatch: 'full', 
+    component: PageNotFoundComponent 
   }
 ];
 

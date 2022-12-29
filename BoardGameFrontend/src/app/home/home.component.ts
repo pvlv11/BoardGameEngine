@@ -18,22 +18,32 @@ export class HomeComponent implements OnInit {
   searchString: String = "";
   selected: any;
   loaded: boolean = false;
+  user_id: any = sessionStorage.getItem("User_id");
 
   constructor(private router: Router, private gamesService: GamesService, private authService: AuthService) {
    }
 
   goToGame(id: number) {
     this.router.navigate(['/', 'game'],
-    {queryParams: { game: id }}
+    {queryParams: { game_id: id }}
     );
   }
 
   goToSearch() {
-    const search = this.searchString;
-    this.router.navigate(
-      ['/','search'],
-      {queryParams: { name_string: search }}
+    if (this.isLoggenIn()) {
+      const search = this.searchString;
+      this.router.navigate(
+        ['/','search'],
+        {queryParams: { name_string: search, user_id: this.user_id }}
       );
+    }
+    else {
+      const search = this.searchString;
+      this.router.navigate(
+        ['/','search'],
+        {queryParams: { name_string: search }}
+      );
+    }
   }
 
 
@@ -73,6 +83,19 @@ export class HomeComponent implements OnInit {
       this.games = data;
       this.loaded = true;
     });
+
+    this.authService.checkUserStatusBack().subscribe(data=> {
+      console.log(data);
+    })
+  }
+
+  isLoggenIn() {
+    if (this.authService.checkUserStatus()) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 
 }

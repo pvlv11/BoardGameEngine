@@ -21,6 +21,8 @@ import { StarRatingModule } from 'angular-star-rating';
 import { SearchComponent } from './search/search.component';
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { DialogComponent } from './dialog/dialog.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { HtmlEntitiesPipe } from './pipe/html-entities.pipe';
 
 
 @NgModule({
@@ -34,6 +36,8 @@ import { DialogComponent } from './dialog/dialog.component';
     SingleGameComponent,
     SearchComponent,
     DialogComponent,
+    PageNotFoundComponent,
+    HtmlEntitiesPipe,
   ],
   imports: [
     BrowserModule,

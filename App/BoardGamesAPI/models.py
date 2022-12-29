@@ -46,7 +46,6 @@ class t_friend_list(models.Model):
             models.UniqueConstraint(fields=['user1_id', 'user2_Id'], name="cant be your own friend")
         ]
 
-
 class t_user_activity(models.Model):
     User_Id = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
     #models.ForeignKey(t_user, on_delete=models.CASCADE)
@@ -122,7 +121,7 @@ class t_review(models.Model):
     
     #models.ForeignKey(t_user,
     #                            on_delete=models.CASCADE)
-
+    creation_date = models.DateTimeField(auto_now_add=True)
     review_number = models.DecimalField(
         null=False,
         blank=False,

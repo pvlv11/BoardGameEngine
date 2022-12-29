@@ -2,19 +2,26 @@ from BoardGamesAPI.models import t_genre,t_game,t_game_genre
 import pandas as pd
 from random import randint
 from django.http import JsonResponse
+from django.db.utils import IntegrityError
 
 
 def populate_genres(dataframe):
     unique_categories = []
     for i in dataframe:
-        for cat in i[1:len(i)-1].split(','):
-            new_cat = cat.strip().replace("'","")
+        for category in i[1:len(i)-1].split(','):
+            new_cat = category.strip().replace("'","")
             if new_cat not in unique_categories:
                 unique_categories.append(new_cat)
 
     for cat in unique_categories:
-        table_row = t_genre(genre_name=cat)
-        table_row.save()
+        try:
+            table_row = t_genre(genre_name=cat)
+            table_row.save()
+        except IntegrityError:
+            return False
+        
+    return True
+
 
 """
 bgg_url
@@ -79,7 +86,12 @@ def populate_database(dataframe):
                 player_dict[player_vote[0]] = int(player_vote[1])
             else:
                 player_dict[0] = 2
-          
+        min_age = 0
+        if row['minage'] > 18:
+            min_age = 18
+        else:
+            min_age = row['minage']
+
         first_value = sorted(player_dict.items(),key=lambda x:x[1],reverse=True)
         sugested_player = int(first_value[0][0])
         pubilsh_year = row['yearpublished'] if row['yearpublished'] > 0 else randint(2000,2022)
@@ -89,7 +101,7 @@ def populate_database(dataframe):
                 avg_time=row['playingtime'],min_player=row['minplayers'],
                 max_player=randint(int(sugested_player),int(sugested_player+2)),
                 suggested_players=sugested_player,suggested_age=sugested_age,
-                minimal_age=row['minage'],publisher=publisher_name,
+                minimal_age=min_age,publisher=publisher_name,
                 image_url=row['image'])
         
         table_row.save()
@@ -108,9 +120,12 @@ def run():
                 'boardgameartist',],axis=1)
     df = df[df.columns[:15]]
     df = df.drop_duplicates(subset='primary',keep='first')
-    #print(df.columns)
-    populate_genres(df['boardgamecategory'].dropna())
-    populate_database(df.dropna())
-    return JsonResponse({"message":"Success"})
-if __name__ == "__main__":
-    run()
+    out = populate_genres(df['boardgamecategory'].dropna())
+    print(out)
+    if out:
+        populate_database(df.dropna())
+        return True
+    else:
+        return False
+
+

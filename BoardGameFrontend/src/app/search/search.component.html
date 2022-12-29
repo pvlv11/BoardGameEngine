@@ -7,31 +7,44 @@
             <mat-card-content>
                 <h4>PLAYERS</h4>
                 <ul>
-                    <li><mat-checkbox color="secondary">2 players</mat-checkbox></li>
-                    <li><mat-checkbox color="secondary">3-5 players</mat-checkbox></li>
-                    <li><mat-checkbox color="secondary">5+ players</mat-checkbox></li>
+                    <li>
+                        <p>from:<input type=number class="filter-input" min="1" [(ngModel)]="minPlayers"></p>
+                    </li>
+                    <li>
+                        <p>to:<input type=number class="filter-input" min="{{minPlayers}}" [(ngModel)]="maxPlayers"></p>
+                    </li>
                 </ul>
                 <h4>TIME</h4>
                 <ul>
-                    <li><mat-checkbox color="secondary">>15 min</mat-checkbox></li>
-                    <li><mat-checkbox color="secondary">>30 min</mat-checkbox></li>
-                    <li><mat-checkbox color="secondary">>60 min</mat-checkbox></li>
-                    <li><mat-checkbox color="secondary">60+ min</mat-checkbox></li>
+                    <li>
+                        <p>from:<input type=number class="filter-input" min="1" [(ngModel)]="minTime"></p>
+                    </li>
+                    <li>
+                        <p>to:<input type=number class="filter-input" min="{{minTime}}" [(ngModel)]="maxTime"></p>
+                    </li>
                 </ul>
                 <h4>AGE</h4>
                 <ul>
-                    <li><mat-checkbox color="secondary">8+</mat-checkbox></li>
-                    <li><mat-checkbox color="secondary">12+</mat-checkbox></li>
-                    <li><mat-checkbox color="secondary">16+</mat-checkbox></li>
+                    <li>
+                        <p>from:<input type=number class="filter-input" min="1" [(ngModel)]="minAge"></p>
+                    </li>
+                    <li>
+                        <p>to:<input type=number class="filter-input" min="{{minAge}}" [(ngModel)]="maxAge"></p>
+                    </li>
                 </ul>
                 <h4>CATEGORIES</h4>
+
+                <mat-form-field>
+                    <mat-label>Select category</mat-label>
+                    <mat-select [(value)]="category">
+                        <mat-option *ngFor="let category of genres" value="{{category}}">{{ category }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
                 <ul>
-                    <li><mat-checkbox color="secondary">abstract strategy</mat-checkbox></li>
-                    <li><mat-checkbox color="secondary">area control</mat-checkbox></li>
-                    <li><mat-checkbox color="secondary">cooperative</mat-checkbox></li>
-                    <li><mat-checkbox color="secondary">eurogame</mat-checkbox></li>
-                    <li><mat-checkbox color="secondary">party</mat-checkbox></li>
+                    <li><button mat-raised-button (click)="filter()">Filter</button>  </li>
                 </ul>
+
             </mat-card-content>
         </mat-card>
     </div>
@@ -40,14 +53,14 @@
         
         <div class="search-sort">
             <div class="search">
-                <input placeholder="Search" size="60"  [(ngModel)]="searchStr"  (keydown.enter)="goToSearch()">
+                <input class="input-search" placeholder="Search" size="60"  [(ngModel)]="searchStr"  (keydown.enter)="goToSearch()">
                 <button mat-raised-button (click)="goToSearch()">Search</button>  
             </div>
         
             <div class="sort">
                 <mat-form-field appearance="fill">
                     <mat-label>Sort</mat-label>
-                    <mat-select>
+                    <mat-select [(value)]="selected" (selectionChange)="sort($event.value)">
                       <mat-option value="A-Z">A-Z</mat-option>
                       <mat-option value="Z-A">Z-A</mat-option>
                       <mat-option value="rating ascending">rating ascending</mat-option>
@@ -58,29 +71,28 @@
         </div>
 
         <div class="list">
-            <li *ngIf="games.length != 0 && loaded">
+            <li *ngIf="games.length != 0 && loaded && sorted">
                 Results for "{{ searchString }}"
             </li> 
             <li *ngFor="let game of currentGamesToShow; let i = index">
                 <div class="image"><img [src]= "game.image_url" (click)="goToGame(game.id)"></div>
-                <div class="description"><a href="./game?game={{game.id}}"><h3>{{ game.name }}</h3></a>
-                <!-- {{ game.description | slice:0:300 }}... -->
-                Tutaj dajemy description gry blablablablablabla...
+                <div class="description"><a href="./game?game_id={{game.id}}"><h3>{{ game.name }}</h3></a>
+                {{ game.game_description | slice:0:300 | htmlEntities }}... 
              </div>
-                <div><button mat-icon-button (click)="favClick(i)">
-                    <mat-icon *ngIf="game.state">favorite</mat-icon>
-                    <mat-icon *ngIf="!game.state">favorite_border</mat-icon>
+                <div *ngIf="isLoggedIn()"><button mat-icon-button (click)="favClick(i)">
+                    <mat-icon *ngIf="game.is_favourite">favorite</mat-icon>
+                    <mat-icon *ngIf="!game.is_favourite">favorite_border</mat-icon>
                 </button></div>
-                <!-- <div class="rating">
-                    <star-rating [starType]="'svg'" [rating]="game.rating" [labelText]="game.label"
+                <div class="rating">
+                    <star-rating [starType]="'svg'" [rating]="game.rank_value" [labelText]="game.rank_value.toString()"
                 [labelPosition]="'right'" [showHalfStars]="true" [readOnly]="true"></star-rating>
-                </div> -->
+                </div>
                 <br>
             </li>
-            <li *ngIf="games.length == 0 && loaded">
+            <li *ngIf="games.length == 0 && loaded && sorted">
                 No result found for "{{ searchString }}"
             </li> 
-            <li *ngIf="!loaded" class="loader">
+            <li *ngIf="!loaded || !sorted" class="loader">
                 <mat-spinner [diameter]="100"></mat-spinner>
             </li>
             <mat-paginator 
