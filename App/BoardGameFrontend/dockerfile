@@ -18,14 +18,14 @@ EXPOSE 4200
 
 ENV PATH /app/node_modules/.bin:$PATH
 
-COPY package.json /app/package.json
+COPY package*.json ./
 
 RUN npm install -g npm@6
 RUN npm install -g @angular/cli@14.1.3
-RUN ng update @angular/cli @angular/core
+
 
 RUN npm install
-COPY . /app
+COPY ./src .
 
 
 #CMD ng serve --host 0.0.0.0

@@ -65,8 +65,8 @@ services:
     ports:
       - 4200:4200
     volumes:
-            - './BoardGameFrontend:/app'
-            - '/app/node_modules'
+            - './BoardGameFrontend/src:/app'
+            #- 'node_modules:/app/node_modules'
     depends_on:
       - db
       - app
@@ -79,4 +79,4 @@ volumes:
   pgAdmin:
   BoardGame_Service:
   Recomendation_Service:
-  BoardGame_Frontend:
+  #node_modules:
