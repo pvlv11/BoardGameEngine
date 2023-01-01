@@ -1,0 +1,10 @@
+
+<h1 mat-dialog-title> {{ data.name }}</h1>
+<mat-dialog-content>
+    <star-rating [starType]="'svg'" [rating]="0" (starClickChange)="onClick($event)"></star-rating>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button mat-dialog-close>Cancel</button>
+  <button mat-raised-button [mat-dialog-close]="data.user_rating">Ok</button>
+</mat-dialog-actions>
+

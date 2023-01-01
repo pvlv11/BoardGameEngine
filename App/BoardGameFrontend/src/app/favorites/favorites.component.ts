@@ -1,12 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-
-export interface FavoriteItem { 
-  src: string; 
-  title: string;
-  description: string;
-  state: boolean;
-}
+import { FactoryOrValue } from 'rxjs';
+import { Game } from '../models/game';
+import { GamesService } from '../services/games.service';
 
 @Component({
   selector: 'app-favorites',
@@ -15,40 +11,106 @@ export interface FavoriteItem {
 })
 export class FavoritesComponent implements OnInit {
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private gamesService: GamesService) { }
 
-  goToGame() {
-    this.router.navigate(['/', 'game']);
+  favorites: any[] = [];
+  user_id: any = sessionStorage.getItem('User_id');
+  searchText: string = "";
+  currentGamesToShow: Game[] = [];
+  selected: string = "";
+
+  goToGame(id: number) {
+    this.router.navigate(['/', 'game'],
+    {queryParams: { game_id: id }}
+    );
   }
 
-  favorites: FavoriteItem[] = [
-    {
-      src:'https://cf.geekdo-images.com/x3zxjr-Vw5iU4yDPg70Jgw__imagepage/img/-17KkOmxbTu2slJTabGrkO8ZW8s=/fit-in/900x600/filters:no_upscale():strip_icc()/pic3490053.jpg',
-      title:'Brass: Birmingham',
-      description: 'Brass: Birmingham features a deceptively straightforward rule set which creates interesting gameplay dynamics including a highly innovative variable turn order system and robust gift economy. Unlike its predicessor, Brass: Birmingham features a dynamic board setup, making each game unfold completely differently each time you play. ' +
-      'Brass: Birmingham features meticulously crafted illustrations by Damien Mammoliti and Mr. Cuddington, elegant graphic design, and high quality components. ' +
-      'If you’ve played Brass in the past, learning how to play Birmingham will be a snap as it uses most of the same core ruleset. But Brass: Birmingham creates an entirely new and unique experience from its predecessor with a new mechanics, new industries, and new strategies waiting for you to discover.',
-      state: true
-    },
-    {
-      src:'https://cf.geekdo-images.com/7k_nOxpO9OGIjhLq2BUZdA__imagepage/img/zoz-t_z9nqqxL7OwQenbqp9PRl8=/fit-in/900x600/filters:no_upscale():strip_icc()/pic3163924.jpg',
-      title:'Scythe',
-      description: 'It is a time of unrest in 1920s Europa. The ashes from the first great war still darken the snow. The capitalistic city-state known simply as The Factory, which fueled the war with heavily armored mechs, has closed its doors, drawing the attention of several nearby countries. ' +
-      'Other than each player’s individual hidden objective cards, the only elements of luck are encounter cards that players will draw as they interact with the citizens of newly explored lands and combat cards that give you a temporary boost in combat. Combat is also driven by choices, not luck or randomness.',
-      state: true
-    }
-  ]
-
   ngOnInit(): void {
+    this.gamesService.getFavourites(this.user_id).subscribe(data => {
+      this.favorites = data;
+      this.favorites.reverse();
+      this.currentGamesToShow = this.favorites.slice(0,5);
+      console.log(this.favorites);
+    })
+  }
+
+  onPageChange($event: { pageIndex: number; pageSize: number; }) {
+    this.currentGamesToShow =  this.favorites.slice($event.pageIndex*$event.pageSize, $event.pageIndex*$event.pageSize + $event.pageSize);
   }
 
   favClick(clickedItem: number) {
-    this.favorites[clickedItem].state = !this.favorites[clickedItem].state;
-    for (let item of this.favorites) {  
-       if ( item !== this.favorites[clickedItem] ) { 
-           item.state = true; 
-       }
+    if (this.favorites[clickedItem].is_favourite) {
+      this.gamesService.removeFavourite(this.user_id, this.favorites[clickedItem].id).subscribe(data => {
+        console.log(data);
+        this.favorites[clickedItem].is_favourite = false;
+      })
     }
+    else {
+      this.gamesService.addFavourite(this.user_id, this.favorites[clickedItem].id).subscribe(data => {
+        console.log(data);
+        this.favorites[clickedItem].is_favourite = true;
+      })
+    }
+    // this.favorites[clickedItem].state = !this.favorites[clickedItem].state;
+    // for (let item of this.favorites) {  
+    //    if ( item !== this.favorites[clickedItem] ) { 
+    //        item.state = true; 
+    //    }
+    // }
  }
+
+ sort(value: string) {
+  switch(value) {
+    case 'A-Z':
+      this.favorites.sort((a, b) => {
+        if (a.name < b.name) {
+            return -1;
+        }
+        if (a.name > b.name) {
+            return 1;
+        }
+        return 0;
+      });
+      this.currentGamesToShow = this.favorites.slice(0,5);
+      break;
+    case 'Z-A':
+      this.favorites.sort((a, b) => {
+        if (a.name < b.name) {
+            return 1;
+        }
+        if (a.name > b.name) {
+            return -1;
+        }
+        return 0;
+      });
+      this.currentGamesToShow = this.favorites.slice(0,5);
+      break;
+    case 'rating ascending':
+      let sortedArr = this.favorites.sort((a, b) => {
+        if (a.rank_value < b.rank_value) {
+            return 1;
+        }
+        if (a.rank_value > b.rank_value) {
+            return -1;
+        }
+        return 0;
+      });
+      this.favorites = sortedArr;
+      this.currentGamesToShow = this.favorites.slice(0,5);
+      break;
+    case 'rating descending':
+      this.favorites.sort((a, b) => {
+        if (a.rank_value < b.rank_value) {
+            return -1;
+        }
+        if (a.rank_value > b.rank_value) {
+            return 1;
+        }
+        return 0;
+      });
+      this.currentGamesToShow = this.favorites.slice(0,5);
+      break;
+  }
+}
 
 }

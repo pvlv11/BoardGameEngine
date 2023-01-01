@@ -2,6 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { ThemePalette } from '@angular/material/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { switchMap } from 'rxjs';
 import { DialogComponent } from '../dialog/dialog.component';
 import { Game } from '../models/game';
 import { AuthService } from '../services/auth.service';
@@ -42,37 +43,60 @@ export interface DialogData {
 export class SingleGameComponent implements OnInit {
 
   constructor(private router: Router, private gamesService: GamesService, private route: ActivatedRoute, 
-    private auth: AuthService, public dialog: MatDialog) { }
+    private auth: AuthService, public dialog: MatDialog) {
+      this.router.routeReuseStrategy.shouldReuseRoute = function() {
+        return false;
+      };
+     }
 
   id: number = 0;
   game: Game[] = [];
   name: string = "";
   user_rating: number = 0;
+  user_current_rating: number = 0;
+  user_id: any = sessionStorage.getItem('User_id');
 
   ngOnInit(): void {
     this.route.queryParams
       .subscribe(params => {
-        this.id = params['game'];
+        this.id = params['game_id'];
       }
       );
 
-    this.gamesService.getSingleGame(this.id).subscribe(data =>{
-      this.game = data;
-      console.log(this.game[0]);
-      this.name = this.game[0].name;
-    })
+      if (this.isLoggedIn()) {
+        this.gamesService.getSingleGame(this.id, this.user_id).subscribe(data1=> {
+          this.game = data1;
+          this.name = this.game[0].name;
+          this.gamesService.getReview(this.user_id, this.game[0].id).subscribe(data2 => {
+             this.user_current_rating = data2[0].review_number;
+          });
+       });
+      }
+      else {
+        this.gamesService.getSingleGame(this.id, 0).subscribe(data1=> {
+          this.game = data1;
+          this.name = this.game[0].name;
+          // this.gamesService.getReview(this.user_id, this.game[0].id).subscribe(data2 => {
+          //    this.user_current_rating = data2[0].review_number;
+          // });
+       });
+      }
 
   }
 
-  // rating: Rating = {
-  //   value: 4,
-  //   max: 5,
-  //   color: "accent",
-  //   readonly: true
-  // }
-
   favClick() {
-    this.game[0].state = !this.game[0].state;
+    if(this.game[0].is_favourite) {
+      this.gamesService.removeFavourite(this.user_id, this.game[0].id).subscribe(data => {
+        console.log(data);
+        this.game[0].is_favourite = false;
+      })
+    }
+    else {
+      this.gamesService.addFavourite(this.user_id, this.game[0].id).subscribe(data => {
+        console.log(data);
+        this.game[0].is_favourite = true;
+      })
+    }
  }
 
   isLoggedIn() {
@@ -80,16 +104,6 @@ export class SingleGameComponent implements OnInit {
   }
 
   openDialog(): void {
-    // const dialogRef = this.dialog.open(Dialog, {
-    //   width: '250px',
-    //   data: {name: this.name, user_rating: this.user_rating}
-    // });
-
-    // dialogRef.afterClosed().subscribe(result => {
-    //   console.log('The dialog was closed');
-    //   this.user_rating = result;
-    //   console.log(result);
-    // });
 
      let dialogRef = this.dialog.open(DialogComponent, {
       width: '250px',
@@ -99,8 +113,28 @@ export class SingleGameComponent implements OnInit {
      dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
       this.user_rating = result;
-      console.log(this.user_rating);
+      if (this.user_current_rating == 0) {
+        this.postReview();
+      }
+      else {
+        this.putReview();
+      }
      });
+  }
+
+  postReview() {
+    console.log("post");
+    this.gamesService.addReview(this.user_id, this.game[0].id, this.user_rating).subscribe(data => {
+      console.log(data);
+    })
+    window.location.reload();
+  }
+ 
+  putReview() {
+    this.gamesService.editReview(this.user_id, this.game[0].id, this.user_rating).subscribe(data => {
+      console.log(data);
+    })
+    this.ngOnInit();
   }
 
 }

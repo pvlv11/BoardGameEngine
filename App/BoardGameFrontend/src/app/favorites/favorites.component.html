@@ -4,23 +4,40 @@
             <h1>My favorites</h1>
         </div>
         
-        <div class="search">
-            <input placeholder="Search" size="60">
-            <button mat-raised-button>Search</button>  
+        <div class="sort">
+            <mat-form-field appearance="fill">
+                <mat-label>Sort</mat-label>
+            <mat-select [(value)]="selected" (selectionChange)="sort($event.value)"> 
+                  <mat-option value="A-Z">A-Z</mat-option>
+                  <mat-option value="Z-A">Z-A</mat-option>
+                  <mat-option value="rating ascending">rating ascending</mat-option>
+                  <mat-option value="rating descending">rating descending</mat-option>
+                </mat-select>
+              </mat-form-field>
         </div>
     </div>
 
     <div class="list">
-        <li *ngFor="let favorite of favorites; let i = index">
-            <div class="image"><img [src]= "favorite.src" (click)="goToGame()"></div>
-            <div class="description"><a href="./game"><h3>{{ favorite.title }}</h3></a>
-            {{ favorite.description | slice:0:300 }}... </div>
+        <li *ngFor="let favorite of currentGamesToShow; let i = index">
+            <div class="image"><img [src]= "favorite.image_url" (click)="goToGame(favorite.id)"></div>
+            <div class="description"><a href="./game?game_id={{favorite.id}}"><h3>{{ favorite.name }}</h3></a>
+            {{ favorite.game_description | slice:0:300 | htmlEntities }}... </div>
             <div><button mat-icon-button (click)="favClick(i)">
-                <mat-icon *ngIf="favorite.state">favorite</mat-icon>
-                <mat-icon *ngIf="!favorite.state">favorite_border</mat-icon>
+                <mat-icon *ngIf="favorite.is_favourite">favorite</mat-icon>
+                <mat-icon *ngIf="!favorite.is_favourite">favorite_border</mat-icon>
             </button></div>
+            <div class="rating">
+                <star-rating [starType]="'svg'" [rating]="favorite.rank_value" [labelText]="favorite.rank_value.toString()"
+            [labelPosition]="'right'" [showHalfStars]="true" [readOnly]="true"></star-rating>
+            </div>
             <br>
         </li>
+        <mat-paginator 
+            (page)="onPageChange($event)"
+                [length]="favorites.length"
+                [pageSize]="5"
+                [pageSizeOptions]="[5, 10, 15, 20]">
+            </mat-paginator>
     </div>
 
 </body>

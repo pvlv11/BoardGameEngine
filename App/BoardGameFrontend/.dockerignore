@@ -1,5 +1,13 @@
-**/dist
-.git
+node_modules
 npm-debug.log
-.coverage
-.coverage.*
+Dockerfile*
+docker-compose*
+.dockerignore
+.git
+.gitignore
+.env
+*/bin
+*/obj
+README.md
+LICENSE
+.vscode
