@@ -26,9 +26,9 @@ services:
 
   app:
     build: './API'
-    container_name: BoardGame_Service
+    container_name: Backend
     volumes:
-      - ./API:/BoardGame_Service
+      - ./API:/BoardGame_Backend
     command: bash -c "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000 --noreload"  
     ports:
       - "8000:8000"
@@ -42,41 +42,40 @@ services:
     depends_on:
       - db
 
-  recomendation:
-    build: 
-        './Recomendations'
-    volumes:
-      - ./Recomendations:/Recomendation_Service
-    environment:
-      - POSTGRES_HOST=baza_postgre
-      - POSTGRES_NAME=postgres
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=Admin1234
-
-    depends_on:
-      - db
-      - app
-
   angular: # name of the first service
-    container_name: angularcontainer
+    container_name: Frontend
     build: 
       context: './BoardGameFrontend'
       dockerfile: dockerfile
+
+    command:  sh -c "ng serve --host 0.0.0.0 --proxy-config proxy.conf.json"
     ports:
       - 4200:4200
     volumes:
-            - './BoardGameFrontend/src:/app'
-            #- 'node_modules:/app/node_modules'
+            - './BoardGameFrontend:/BoardGame_Frontend'
     depends_on:
       - db
       - app
-    #working_dir: ./BoardGameFrontend
-    command: sh -c "npm i && ng serve --host 0.0.0.0 --disable-host-check"
    
-
 volumes:
   postgreSQLData:
   pgAdmin:
-  BoardGame_Service:
+  BoardGame_Backend:
   Recomendation_Service:
-  #node_modules:
+  BoardGame_Frontend:
+
+
+    #recomendation:
+  #  build: 
+  #      './Recomendations'
+  #  volumes:
+  #    - ./Recomendations:/Recomendation_Service
+  #  environment:
+  #    - POSTGRES_HOST=baza_postgre
+  #    - POSTGRES_NAME=postgres
+  #    - POSTGRES_USER=user
+  #    - POSTGRES_PASSWORD=Admin1234
+
+  #  depends_on:
+  #    - db
+  #    - app
