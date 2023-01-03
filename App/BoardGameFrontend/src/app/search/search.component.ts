@@ -170,7 +170,7 @@ export class SearchComponent implements OnInit {
         this.currentGamesToShow = this.games.slice(0,5);
         this.sorted = true;
         break;
-      case 'rating ascending':
+      case 'rating descending':
         this.sorted = false;
         let sortedArr = this.games.sort((a, b) => {
           if (a.rank_value < b.rank_value) {
@@ -185,7 +185,7 @@ export class SearchComponent implements OnInit {
         this.currentGamesToShow = this.games.slice(0,5);
         this.sorted = true;
         break;
-      case 'rating descending':
+      case 'rating ascending':
         this.sorted = false;
         this.games.sort((a, b) => {
           if (a.rank_value < b.rank_value) {
