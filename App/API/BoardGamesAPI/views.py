@@ -546,6 +546,7 @@ def send_csv_to_model(request):
     )
     write = writer(response)
     review_rows = t_review.objects.filter(creation_date__contains=date.today()).values_list()
+    print(review_rows)
     for i in review_rows:
         write.writerow([i[1],i[2],i[4],i[3].date()])
     

@@ -9,6 +9,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+BoardGameFrontend
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
