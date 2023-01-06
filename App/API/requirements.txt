@@ -1,6 +1,8 @@
+apscheduler
 Django
 djangorestframework
 pandas
 psycopg2
 django-cors-headers
+tensorflow==2.11.0
 keras

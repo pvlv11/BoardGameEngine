@@ -1,11 +1,14 @@
-FROM python:3
+FROM python:3.9
+
+RUN apt update && \
+    apt install --no-install-recommends -y build-essential gcc && \
+    apt clean && rm -rf /var/lib/apt/lists/*
+
 #ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-#RUN mkdir /BoardGame_Backen
 WORKDIR /BoardGame_Backend
 ADD . /BoardGame_Backend/
 
-RUN pip install apscheduler
-#RUN pip install tensorflow
-RUN pip install -r requirements.txt
+RUN pip3 --no-cache-dir install -r requirements.txt
+
