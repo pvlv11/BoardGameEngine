@@ -17,7 +17,7 @@
               <ng-template carouselSlide id="i">
                 <img [src]="game.image_url" [alt]="game.name" [title]="game.name" (click)="goToGame(game.game_id_id)">
                 <p class="slide">{{ i+1 + ": " + game.name }}</p>
-                <p class="slide"><star-rating [starType]="'svg'" [rating]="game.avg_rank" [labelText]="game.avg_rank.toString()"
+                <p class="slide"><star-rating [starType]="'svg'" [rating]="game.avg_rank" [labelText]="game.avg_rank.toFixed(2).toString()"
                     [labelPosition]="'right'" [showHalfStars]="true" [readOnly]="true"></star-rating></p>
               </ng-template>
           </ng-container>
