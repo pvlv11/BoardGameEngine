@@ -57,7 +57,7 @@ def search_by_string(request):
         except MultiValueDictKeyError:
             user_id = None
 
-        filtered_rows = table.t_game_genre.objects.all().distinct('game_id_id').filter(genre_id_id__genre_name=string_to_be_searched).values()
+        filtered_rows = table.t_game_genre.objects.all().distinct('game_id_id').filter(genre_id_id__genre_name__icontains=string_to_be_searched).values()
         if not filtered_rows:
             filtered_rows = table.t_game_genre.objects.all().distinct('game_id_id').filter(game_id_id__name__icontains=string_to_be_searched).values()
 
