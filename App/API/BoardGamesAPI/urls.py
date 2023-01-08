@@ -27,5 +27,6 @@ urlpatterns=[
     path('filters/get_filters',views.get_data_for_filters,name='filters/get_filters'),
     path('filters/filter_games',views.search_by_strin_with_filters,name='filters/filter_games'),
 
-    path('recomendation/get_recomendation',views.send_csv_to_model,name='recomendation/get_recomendation')
+    path('recomendation/get_recomendation',views.send_csv_to_model,name='recomendation/get_recomendation'),
+    path('recomendation/user_recomendation',views.user_recomendation,name='recomendation/user_recomendation')
     ]

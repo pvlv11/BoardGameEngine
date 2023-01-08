@@ -551,6 +551,27 @@ def send_csv_to_model(request):
         write.writerow([i[1],i[2],i[4],i[3].date()])
     
     return response
+
+def user_recomendation(request):
+    parameters = request.GET
+    try:
+        user_id = parameters.__getitem__('user_id')
+    except MultiValueDictKeyError:
+        return JsonResponse({"Message":"Only Logged user can ask for recomendation"},
+                            status=status.HTTP_400_BAD_REQUEST)
+    
+    return JsonResponse({'Message':'Your request was succesful and we recived user id'},
+                            status=status.HTTP_200_OK)
+    
+    """
+    
+    tutaj dzieeje się magia z silnikiem rekomendacji
+    jak już będziesz parsował id rekomendacji to skorzystaj z serializera t_gameSerializer, 
+    do niego podajesz listę słowników, w funkcjach powyżej masz pokazane jak to się robi
+
+    
+    """
+
 """
 def top10(requst):
     jsone = []
