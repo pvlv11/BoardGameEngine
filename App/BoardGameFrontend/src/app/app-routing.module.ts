@@ -11,6 +11,7 @@ import { SearchComponent } from './search/search.component';
 import { AuthGuardService } from './services/auth-guard.service';
 import { AuthService } from './services/auth.service';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { RecommendationsComponent } from './recommendations/recommendations.component';
 
 const routes: Routes = [
   {
@@ -26,6 +27,11 @@ const routes: Routes = [
   {
     path: 'home',
     component: HomeComponent
+  },
+  {
+    path: 'recommendations',
+    component: RecommendationsComponent,
+    canActivate: [AuthGuardService]
   },
   {
     path: '',

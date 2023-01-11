@@ -23,6 +23,7 @@ import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { DialogComponent } from './dialog/dialog.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { HtmlEntitiesPipe } from './pipe/html-entities.pipe';
+import { RecommendationsComponent } from './recommendations/recommendations.component';
 
 
 @NgModule({
@@ -38,6 +39,7 @@ import { HtmlEntitiesPipe } from './pipe/html-entities.pipe';
     DialogComponent,
     PageNotFoundComponent,
     HtmlEntitiesPipe,
+    RecommendationsComponent,
   ],
   imports: [
     BrowserModule,
