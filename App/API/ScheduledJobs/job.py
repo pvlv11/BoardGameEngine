@@ -15,6 +15,7 @@ def priiny_schedule():
 
 def model_job():
 
+    print('starting job')
     # id_gry, id_user, date, rating
     review_rows = table.t_review.objects.filter(
         creation_date__contains=date.today()).values_list()
@@ -27,11 +28,16 @@ def model_job():
         games.append(row[1])
         ratings.append(row[4])
 
-    users = np.array(users)
-    games = np.array(games)
-    ratings = np.array(ratings)
+    users = np.asarray(users).astype('int32')
+    games = np.asarray(games).astype('int32')
+    ratings = np.asarray(ratings).astype('float32')
+
+    print('got data, lodaing model')
 
     model = load_model('./model_saved')
+
+    print('loaded model, fitting it')
+
     x = model.fit(
         x=[users, games],
         y=ratings,
@@ -39,4 +45,5 @@ def model_job():
         batch_size=128
     )
 
+    print('saving model')
     model.save('./model_saved')
