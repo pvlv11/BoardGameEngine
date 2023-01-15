@@ -601,7 +601,11 @@ def user_recomendation(request):
     try:
         user_id = parameters.__getitem__('user_id')
         _, titles = loaded(np.array([str(user_id)]))
-        data = {"games": str(titles)}
+        titles = [title.decode() for title in np.array(titles[0]).tolist()]
+        for title in titles:
+            game_info_dict = table.t_game_genre.objects.all().distinct('game_id_id')\
+                .filter(game_id_id__name=title).values.list()
+
         return JsonResponse(data, safe=False)
     except MultiValueDictKeyError:
         return JsonResponse({"Message": "Only Logged user can ask for recomendation"},
