@@ -602,9 +602,32 @@ def user_recomendation(request):
         user_id = parameters.__getitem__('user_id')
         _, titles = loaded(np.array([str(user_id)]))
         titles = [title.decode() for title in np.array(titles[0]).tolist()]
-        for title in titles:
-            game_info_dict = table.t_game_genre.objects.all().distinct('game_id_id')\
-                .filter(game_id_id__name=title).values.list()
+        out_list = []
+        for i in titles:
+            game_info_dict = t_game.objects.all().filter(name=i).values()[0]
+            game_id = game_info_dict['id']
+
+            review = (table.t_review.objects
+                      .values('game_id_id')
+                      .annotate(avg_rank=Avg('review_number'))
+                      .order_by('-avg_rank')).filter(game_id_id=game_id)
+
+            list_of_categories = []
+            for j in t_game_genre.objects\
+                    .filter(game_id_id=game_id).select_related().values():
+                list_of_categories.append(t_genre.objects.
+                                          get(id=j['genre_id_id']).genre_name)
+
+            game_info_dict['genres'] = list_of_categories
+            if review.exists():
+                game_info_dict['rank_value'] = round(review[0]['avg_rank'], 2)
+            else:
+                game_info_dict['rank_value'] = 0.0
+
+            game_info_dict['is_favourite'] = True
+            out_list.append(game_info_dict)
+        serializer = ser.t_gameSerializer(out_list, many=True)
+        return JsonResponse(serializer.data, safe=False)
 
         return JsonResponse(data, safe=False)
     except MultiValueDictKeyError:
