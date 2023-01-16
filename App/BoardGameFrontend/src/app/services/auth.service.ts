@@ -1,14 +1,27 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { CookieService } from 'ngx-cookie';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  constructor(private http: HttpClient, public router: Router) { }
+  private httpOptions: any;
+  private httpHeaders: any;
+
+  constructor(private http: HttpClient, public router: Router, private cookieService: CookieService) { 
+    let csrf = this.cookieService.get("csrftoken");
+    if (typeof(csrf) === 'undefined') {
+      csrf = '';
+    }
+    this.httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json', 'X-CSRFToken': csrf })
+    };
+    console.log(csrf);
+  }
 
 
   register(username: string, email: string, password: string): Observable<any> {
@@ -28,7 +41,7 @@ export class AuthService {
   }
 
   checkUserStatusBack(): Observable<any> {
-    return this.http.get<any>(`http://127.0.0.1:8000/BoardGamesAPI/user/check_user_status`)
+    return this.http.get<any>(`http://127.0.0.1:8000/BoardGamesAPI/user/check_user_status`);
   }
 
   checkUserStatus(): boolean {

@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
 import { FavoritesComponent } from './favorites/favorites.component';
 import { RouterModule } from '@angular/router';
 import { MyAccountComponent } from './my-account/my-account.component';
@@ -24,6 +24,9 @@ import { DialogComponent } from './dialog/dialog.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { HtmlEntitiesPipe } from './pipe/html-entities.pipe';
 import { RecommendationsComponent } from './recommendations/recommendations.component';
+import { HttpClientXsrfModule } from '@angular/common/http';
+import { CookieModule } from 'ngx-cookie';
+import { HttpRequestInterceptor } from './interceptors/HttpRequestInterceptor';
 
 
 @NgModule({
@@ -55,9 +58,13 @@ import { RecommendationsComponent } from './recommendations/recommendations.comp
     FormsModule,
     ReactiveFormsModule,
     StarRatingModule.forRoot(),
-    NgToastModule
+    NgToastModule,
+    HttpClientXsrfModule.withOptions({
+      headerName: 'X-CSRFToken'
+    }),
+    CookieModule.withOptions()
   ],
-  providers: [],
+  providers: [[{ provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true }]],
   bootstrap: [AppComponent],
   entryComponents: [DialogComponent]
 })
