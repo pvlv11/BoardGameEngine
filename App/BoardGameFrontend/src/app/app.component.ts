@@ -15,6 +15,10 @@ export class AppComponent {
     this.router.navigate(['/', 'favorites']);
   }
 
+  goToRecommendations() {
+    this.router.navigate(['/','recommendations']);
+  }
+
   goToMyAccount() {
     this.router.navigate(['/', 'myAccount']);
   }

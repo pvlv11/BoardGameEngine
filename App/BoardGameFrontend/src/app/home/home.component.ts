@@ -85,7 +85,7 @@ export class HomeComponent implements OnInit {
     });
 
     this.authService.checkUserStatusBack().subscribe(data=> {
-      console.log(data);
+       console.log(data);
     })
   }
 

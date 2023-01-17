@@ -7,6 +7,9 @@
             <a (click)="goToHome()">Home</a>
         </li>
         <li *ngIf="userLoggedIn()">
+            <a (click)="goToRecommendations()">Recommendations</a>
+        </li>
+        <li *ngIf="userLoggedIn()">
             <a (click)="goToFavorites()">Favorites</a>
         </li>
         <li *ngIf="!userLoggedIn()">

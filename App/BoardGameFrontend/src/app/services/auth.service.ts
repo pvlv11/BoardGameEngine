@@ -1,14 +1,28 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { CookieService } from 'ngx-cookie';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  constructor(private http: HttpClient, public router: Router) { }
+  private httpOptions: any;
+  private httpHeaders: any;
+  status: string = '';
+
+  constructor(private http: HttpClient, public router: Router, private cookieService: CookieService) { 
+    let csrf = this.cookieService.get("csrftoken");
+    if (typeof(csrf) === 'undefined') {
+      csrf = '';
+    }
+    this.httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json', 'X-CSRFToken': csrf })
+    };
+    console.log(csrf);
+  }
 
 
   register(username: string, email: string, password: string): Observable<any> {
@@ -32,9 +46,9 @@ export class AuthService {
   }
 
   checkUserStatus(): boolean {
-    if (sessionStorage.getItem("CurrentUser") == null)
+    if (sessionStorage.getItem('CurrentUser') == undefined)
       return false;
-    else
+    else 
       return true;
   }
 
@@ -44,6 +58,18 @@ export class AuthService {
       return false;
     }
       return true;
+
+    // this.checkUserStatusBack().subscribe(data => {
+    //   this.status = data.user;
+    // })
+
+    // if (this.status == 'user is logged in') {
+    //   this.router.navigate(['home']);
+    //   return false;
+    // }
+    // else {
+    //   return true;
+    // }
   }
 
 }
