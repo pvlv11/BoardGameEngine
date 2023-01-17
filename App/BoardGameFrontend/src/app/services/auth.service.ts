@@ -11,6 +11,7 @@ export class AuthService {
 
   private httpOptions: any;
   private httpHeaders: any;
+  status: string = '';
 
   constructor(private http: HttpClient, public router: Router, private cookieService: CookieService) { 
     let csrf = this.cookieService.get("csrftoken");
@@ -41,13 +42,13 @@ export class AuthService {
   }
 
   checkUserStatusBack(): Observable<any> {
-    return this.http.get<any>(`http://127.0.0.1:8000/BoardGamesAPI/user/check_user_status`);
+    return this.http.get<any>(`http://127.0.0.1:8000/BoardGamesAPI/user/check_user_status`)
   }
 
   checkUserStatus(): boolean {
-    if (sessionStorage.getItem("CurrentUser") == null)
+    if (sessionStorage.getItem('CurrentUser') == undefined)
       return false;
-    else
+    else 
       return true;
   }
 
@@ -57,6 +58,18 @@ export class AuthService {
       return false;
     }
       return true;
+
+    // this.checkUserStatusBack().subscribe(data => {
+    //   this.status = data.user;
+    // })
+
+    // if (this.status == 'user is logged in') {
+    //   this.router.navigate(['home']);
+    //   return false;
+    // }
+    // else {
+    //   return true;
+    // }
   }
 
 }
