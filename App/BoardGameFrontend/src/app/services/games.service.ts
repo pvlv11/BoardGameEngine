@@ -84,4 +84,8 @@ export class GamesService {
     }
   }
 
+  getRecommendations(user: number): Observable<any> {
+    return this.http.get(`http://127.0.0.1:8000/BoardGamesAPI/recomendation/user_recomendation?user_id=${user}`)
+  }
+
 }

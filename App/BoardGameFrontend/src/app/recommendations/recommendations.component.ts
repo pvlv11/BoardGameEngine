@@ -12,7 +12,7 @@ export class RecommendationsComponent implements OnInit {
 
   constructor(private router: Router, private gamesService: GamesService) { }
 
-  favorites: any[] = [];
+  recommendations: any[] = [];
   user_id: any = sessionStorage.getItem('User_id');
   searchText: string = "";
   currentGamesToShow: Game[] = [];
@@ -25,29 +25,29 @@ export class RecommendationsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.gamesService.getFavourites(this.user_id).subscribe(data => {
-      this.favorites = data;
-      this.favorites.reverse();
-      this.currentGamesToShow = this.favorites.slice(0,5);
-      console.log(this.favorites);
+    this.gamesService.getRecommendations(this.user_id).subscribe(data => {
+      this.recommendations = data;
+      this.currentGamesToShow = this.recommendations.slice(0,5);
+      console.log("rekomendacje");
+      console.log(this.recommendations);
     })
   }
 
   onPageChange($event: { pageIndex: number; pageSize: number; }) {
-    this.currentGamesToShow =  this.favorites.slice($event.pageIndex*$event.pageSize, $event.pageIndex*$event.pageSize + $event.pageSize);
+    this.currentGamesToShow =  this.recommendations.slice($event.pageIndex*$event.pageSize, $event.pageIndex*$event.pageSize + $event.pageSize);
   }
 
   favClick(clickedItem: number) {
-    if (this.favorites[clickedItem].is_favourite) {
-      this.gamesService.removeFavourite(this.user_id, this.favorites[clickedItem].id).subscribe(data => {
+    if (this.recommendations[clickedItem].is_favourite) {
+      this.gamesService.removeFavourite(this.user_id, this.recommendations[clickedItem].id).subscribe(data => {
         console.log(data);
-        this.favorites[clickedItem].is_favourite = false;
+        this.recommendations[clickedItem].is_favourite = false;
       })
     }
     else {
-      this.gamesService.addFavourite(this.user_id, this.favorites[clickedItem].id).subscribe(data => {
+      this.gamesService.addFavourite(this.user_id, this.recommendations[clickedItem].id).subscribe(data => {
         console.log(data);
-        this.favorites[clickedItem].is_favourite = true;
+        this.recommendations[clickedItem].is_favourite = true;
       })
     }
  }
@@ -55,7 +55,7 @@ export class RecommendationsComponent implements OnInit {
  sort(value: string) {
   switch(value) {
     case 'A-Z':
-      this.favorites.sort((a, b) => {
+      this.recommendations.sort((a, b) => {
         if (a.name < b.name) {
             return -1;
         }
@@ -64,10 +64,10 @@ export class RecommendationsComponent implements OnInit {
         }
         return 0;
       });
-      this.currentGamesToShow = this.favorites.slice(0,5);
+      this.currentGamesToShow = this.recommendations.slice(0,5);
       break;
     case 'Z-A':
-      this.favorites.sort((a, b) => {
+      this.recommendations.sort((a, b) => {
         if (a.name < b.name) {
             return 1;
         }
@@ -76,10 +76,10 @@ export class RecommendationsComponent implements OnInit {
         }
         return 0;
       });
-      this.currentGamesToShow = this.favorites.slice(0,5);
+      this.currentGamesToShow = this.recommendations.slice(0,5);
       break;
     case 'rating ascending':
-      let sortedArr = this.favorites.sort((a, b) => {
+      let sortedArr = this.recommendations.sort((a, b) => {
         if (a.rank_value < b.rank_value) {
             return 1;
         }
@@ -88,11 +88,11 @@ export class RecommendationsComponent implements OnInit {
         }
         return 0;
       });
-      this.favorites = sortedArr;
-      this.currentGamesToShow = this.favorites.slice(0,5);
+      this.recommendations = sortedArr;
+      this.currentGamesToShow = this.recommendations.slice(0,5);
       break;
     case 'rating descending':
-      this.favorites.sort((a, b) => {
+      this.recommendations.sort((a, b) => {
         if (a.rank_value < b.rank_value) {
             return -1;
         }
@@ -101,7 +101,7 @@ export class RecommendationsComponent implements OnInit {
         }
         return 0;
       });
-      this.currentGamesToShow = this.favorites.slice(0,5);
+      this.currentGamesToShow = this.recommendations.slice(0,5);
       break;
   }
 }
