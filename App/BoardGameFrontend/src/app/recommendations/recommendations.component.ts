@@ -78,7 +78,7 @@ export class RecommendationsComponent implements OnInit {
       });
       this.currentGamesToShow = this.recommendations.slice(0,5);
       break;
-    case 'rating ascending':
+    case 'rating descending':
       let sortedArr = this.recommendations.sort((a, b) => {
         if (a.rank_value < b.rank_value) {
             return 1;
@@ -91,7 +91,7 @@ export class RecommendationsComponent implements OnInit {
       this.recommendations = sortedArr;
       this.currentGamesToShow = this.recommendations.slice(0,5);
       break;
-    case 'rating descending':
+    case 'rating ascending':
       this.recommendations.sort((a, b) => {
         if (a.rank_value < b.rank_value) {
             return -1;

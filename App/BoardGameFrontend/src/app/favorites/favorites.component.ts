@@ -85,7 +85,7 @@ export class FavoritesComponent implements OnInit {
       });
       this.currentGamesToShow = this.favorites.slice(0,5);
       break;
-    case 'rating ascending':
+    case 'rating descending':
       let sortedArr = this.favorites.sort((a, b) => {
         if (a.rank_value < b.rank_value) {
             return 1;
@@ -98,7 +98,7 @@ export class FavoritesComponent implements OnInit {
       this.favorites = sortedArr;
       this.currentGamesToShow = this.favorites.slice(0,5);
       break;
-    case 'rating descending':
+    case 'rating ascending':
       this.favorites.sort((a, b) => {
         if (a.rank_value < b.rank_value) {
             return -1;
