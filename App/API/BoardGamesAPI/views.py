@@ -157,7 +157,7 @@ def search_by_strin_with_filters(request):
                         status=status.HTTP_400_BAD_REQUEST)
 
 
-@csrf_exempt
+
 @api_view(['GET'])
 def getAllGames(request):
     args = request.GET
@@ -172,7 +172,8 @@ def getAllGames(request):
 
     if request.method == 'GET':
         if game_id is None:
-            return JsonResponse({"Message": "You have to specify game"}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({"Message": "You have to specify game"},
+             status=status.HTTP_400_BAD_REQUEST)
         else:
             game_info = t_game_genre.objects.all().distinct(
                 'game_id_id').filter(game_id_id__id=game_id)
@@ -481,14 +482,18 @@ def login_view2(request):
     args = request.GET
     username = args.__getitem__('username')
     password = args.__getitem__('password')
+    #print(username, password)
     if request.method == "GET":
+        user = authenticate(username=username, password=password)
+        
         serializer = AuthTokenSerializer(
             data={'username': username, 'password': password})
-        if serializer.is_valid(raise_exception=True):
-            user = serializer.validated_data['user']
+        if user is not None:
+        #if #serializer.is_valid(raise_exception=True):
+            #user = serializer.validated_data['user']
             login(request, user)
             response = {"message": "user is logged",
-                        "userToken": str(Token.objects.get(user=user)),
+                        "userToken": "legacy",
                         "user_id": user.id,
                         "username": user.username,
                         "email": user.email}
@@ -498,7 +503,7 @@ def login_view2(request):
             return JsonResponse({"Message": "Something Went Wrong"}, safe=False, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'PUT', 'DELETE', 'UPDATE'])
+@api_view(['GET'])
 @csrf_exempt
 def logout_view2(request):
     logout(request)
@@ -538,8 +543,7 @@ def register_user2(request):
         register = register_serializer(data=user_data)
         if register.is_valid(raise_exception=True):
             user = register.save()
-            return JsonResponse({"user": user_serializer(user).data,
-                                "token": str(Token.objects.create(user=user))},
+            return JsonResponse({"user": user_serializer(user).data},
                                 status=status.HTTP_201_CREATED)
         else:
             return JsonResponse({"Message": "Something Went Wrong"},
