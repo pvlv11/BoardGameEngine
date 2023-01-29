@@ -42,3 +42,5 @@ App/API/model_saved/fingerprint.pb
 App/API/model_saved/saved_model.pb
 App/API/model_saved/variables/variables.data-00000-of-00001
 App/API/model_saved/variables/variables.index
+#BoardGameFrontend/.angular
+.vscode*

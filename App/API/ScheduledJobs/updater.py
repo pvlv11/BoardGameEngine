@@ -5,5 +5,5 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 def start():
     schedule = BackgroundScheduler()
-    schedule.add_job(model_job, 'interval', seconds=100)
+    #schedule.add_job(model_job, 'interval', seconds=100)
     schedule.start()

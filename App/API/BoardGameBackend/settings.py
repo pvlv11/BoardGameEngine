@@ -58,9 +58,9 @@ MIDDLEWARE = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication', 
+        'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
-       # 'rest_framework.authentication.SessionAuthentication'
+        # 'rest_framework.authentication.SessionAuthentication'
     ],
 }
 
@@ -70,14 +70,17 @@ REST_FRAMEWORK = {
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:4200'
+    'http://localhost:4200',
+    'http://127.0.0.1:4200'
 ]
 
 CORS_ORIGIN_WHITELIST = [
+    'http://127.0.0.1:4200'
     'http://localhost:4200'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:4200'
     'http://localhost:4200',
 ]
 CSRF_COOKIE_SECURE = True
